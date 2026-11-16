@@ -1,0 +1,15 @@
+jaffy
+=====
+
+Portions of this project are ports of code from the upstream `taffy`
+crate (DioxusLabs/taffy, baseline commit 1abd8eea).
+
+Upstream copyright:
+  Copyright (c) 2018 Visly Inc.
+  Copyright (c) 2026 Taffy Authors
+
+Upstream license: MIT OR Apache-2.0 (dual license).
+See the `upstream/` submodule for the original code and license texts.
+
+Files marked `JAFFY: port of upstream <path>` derive from that upstream
+source and retain the original copyright.

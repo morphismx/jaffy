@@ -1,0 +1,11 @@
+[package]
+name = "serde-golden"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+taffy = { path = "../../upstream", features = ["serde"] }
+serde_json = "1"
+
+[workspace]
