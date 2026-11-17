@@ -1,4 +1,4 @@
-/// net.morphismmc.jaffy.style.flex
+/// Upstream: `src/style/flex.rs`
 @NullMarked
 package net.morphismmc.jaffy.style.flex;
 

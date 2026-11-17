@@ -1,4 +1,4 @@
-/// net.morphismmc.jaffy.style.grid
+/// Upstream: `src/style/grid.rs`
 @NullMarked
 package net.morphismmc.jaffy.style.grid;
 

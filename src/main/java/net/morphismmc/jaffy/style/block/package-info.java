@@ -1,4 +1,4 @@
-/// net.morphismmc.jaffy.style.block
+/// Upstream: `src/style/block.rs`
 @NullMarked
 package net.morphismmc.jaffy.style.block;
 

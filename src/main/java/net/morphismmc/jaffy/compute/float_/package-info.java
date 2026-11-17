@@ -1,4 +1,4 @@
-/// net.morphismmc.jaffy.compute.float_
+/// Upstream: `src/compute/float.rs`
 @NullMarked
 package net.morphismmc.jaffy.compute.float_;
 

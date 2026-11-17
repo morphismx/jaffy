@@ -1,4 +1,4 @@
-/// net.morphismmc.jaffy.style.available_space
+/// Upstream: `src/style/available_space.rs`
 @NullMarked
 package net.morphismmc.jaffy.style.available_space;
 

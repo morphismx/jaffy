@@ -1,4 +1,4 @@
-/// net.morphismmc.jaffy.style.float_
+/// Upstream: `src/style/float.rs`
 @NullMarked
 package net.morphismmc.jaffy.style.float_;
 
