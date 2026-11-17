@@ -1,0 +1,5 @@
+# Commits ignored by `git blame`.
+# For local blame use: git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# style: apply open-java-format
+be1bb19ddb72868f87de6f29e0a2fc6fe5bd4fc4
