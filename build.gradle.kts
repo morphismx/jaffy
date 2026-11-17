@@ -54,7 +54,8 @@ dependencies {
 
     // Shared infrastructure extracted to the `just` library: F32/Opt/OptF32/Result
     // family, float functional interfaces, and Rust formatting (infra/fmt).
-    // `api` because LongObjResult/Result appear in public signatures (TaffyTree).
+    // `api` because just.result.Result appears in public signatures
+    // (AbsoluteAxis.tryFrom, RepetitionCount.tryFrom).
     // Published via `just`'s `publishToMavenLocal` (mavenLocal above).
     api("net.morphismmc:just:1.0-SNAPSHOT")
 
