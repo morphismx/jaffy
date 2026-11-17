@@ -98,9 +98,8 @@ public final class DetailedGridTracksInfo {
             }
             if (track.isCollapsed) {
                 int index = positions.size();
-                if (!collapsedTracks.isEmpty()
-                        && collapsedTracks.get(collapsedTracks.size() - 1).end() == index) {
-                    TrackRange last = collapsedTracks.get(collapsedTracks.size() - 1);
+                if (!collapsedTracks.isEmpty() && collapsedTracks.getLast().end() == index) {
+                    TrackRange last = collapsedTracks.getLast();
                     collapsedTracks.set(collapsedTracks.size() - 1, new TrackRange(last.start(), index + 1));
                 } else {
                     collapsedTracks.add(new TrackRange(index, index + 1));
@@ -120,7 +119,7 @@ public final class DetailedGridTracksInfo {
         // single grid line was positioned by content alignment
         @Opt
         float emptyAxisLine =
-                pc.positions().isEmpty() && !gridTracks.isEmpty() ? gridTracks.get(0).offset : OptF32.NONE;
+                pc.positions().isEmpty() && !gridTracks.isEmpty() ? gridTracks.getFirst().offset : OptF32.NONE;
         DetailedGridTracksInfo info = new DetailedGridTracksInfo();
         info.negativeImplicitTracks = trackCount.negativeImplicit();
         info.explicitTracks = trackCount.explicit();
@@ -255,7 +254,7 @@ public final class DetailedGridTracksInfo {
             if (startIdx < positions.size()) {
                 pos = absoluteTrackEdge(startIdx, true, isReversed);
             } else if (!positions.isEmpty()) {
-                LineF32 track = positions.get(positions.size() - 1);
+                LineF32 track = positions.getLast();
                 pos = isReversed ? track.start() : track.end();
             } else {
                 pos = emptyAxisLine;
@@ -271,7 +270,7 @@ public final class DetailedGridTracksInfo {
             if (endIdx > 0 && line < positions.size()) {
                 pos = absoluteTrackEdge(line, false, isReversed);
             } else if (!positions.isEmpty()) {
-                LineF32 track = positions.get(0);
+                LineF32 track = positions.getFirst();
                 pos = isReversed ? track.end() : track.start();
             } else {
                 pos = emptyAxisLine;

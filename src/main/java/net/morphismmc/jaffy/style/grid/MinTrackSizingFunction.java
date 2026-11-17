@@ -55,7 +55,7 @@ public sealed interface MinTrackSizingFunction {
 
         @Override
         public boolean rustEq(MinTrackSizingFunction other) {
-            return other instanceof Primitive p && bits == p.bits;
+            return other instanceof Primitive(long oBits) && bits == oBits;
         }
     }
 
@@ -95,7 +95,7 @@ public sealed interface MinTrackSizingFunction {
 
         @Override
         public boolean rustEq(MinTrackSizingFunction other) {
-            return other instanceof Calc c && bits == c.bits && calc == c.calc;
+            return other instanceof Calc(long oBits, Object oCalc) && bits == oBits && calc == oCalc;
         }
     }
 

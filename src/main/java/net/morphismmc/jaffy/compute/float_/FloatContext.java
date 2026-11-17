@@ -112,7 +112,7 @@ public final class FloatContext {
 
     /// Whether the float context contains any floats that extend to or below minY
     public boolean hasActiveFloats(float minY) {
-        return hasFloats && !segments.isEmpty() && segments.get(segments.size() - 1).yEnd > minY;
+        return hasFloats && !segments.isEmpty() && segments.getLast().yEnd > minY;
     }
 
     /// Set the width of the `FloatContext`
@@ -323,7 +323,7 @@ public final class FloatContext {
             // it. The first float itself may be above the top of the block formatting context
             // (`y < 0`): its containing block (CSS2 float rule 4) may be pulled up by a negative
             // margin.
-            float lastYEnd = segments.isEmpty() ? Float.NEGATIVE_INFINITY : segments.get(segments.size() - 1).yEnd;
+            float lastYEnd = segments.isEmpty() ? Float.NEGATIVE_INFINITY : segments.getLast().yEnd;
             if (startY > lastYEnd) {
                 segments.add(new Segment(lastYEnd, startY, FloatInsets.ZERO, new boolean[2]));
             }
@@ -377,7 +377,7 @@ public final class FloatContext {
         if (end == OptI32.NONE) {
             // The float extends below all existing segments: add a segment for the part of it
             // below the last segment (its insets are set along with the other segments below)
-            float lastYEnd = segments.get(segments.size() - 1).yEnd;
+            float lastYEnd = segments.getLast().yEnd;
             float endY = startY + floatedBox.height();
             if (endY > lastYEnd) {
                 segments.add(new Segment(lastYEnd, endY, containingBlockInsets, new boolean[2]));
@@ -633,7 +633,7 @@ public final class FloatContext {
                     slotHeight);
         }
         // Below all floats
-        float yBelow = F32.max(segments.get(segments.size() - 1).yEnd, minYv);
+        float yBelow = F32.max(segments.getLast().yEnd, minYv);
         return new BfcSlot(
                 OptI32.NONE, marginInsets.left(), yBelow, noFloatWidth, noFloatWidth, Float.POSITIVE_INFINITY);
     }

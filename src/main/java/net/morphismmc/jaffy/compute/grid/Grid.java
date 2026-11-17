@@ -1115,7 +1115,7 @@ public final class Grid {
     /// Resolve a grid line (by track vector index) used as an end edge to a position
     private static float lineAsEndEdge(List<GridTrack> tracks, int index) {
         if (index == 0) {
-            return 1 < tracks.size() ? tracks.get(1).offset : tracks.get(0).offset;
+            return 1 < tracks.size() ? tracks.get(1).offset : tracks.getFirst().offset;
         }
         return tracks.get(index).offset;
     }
@@ -1126,7 +1126,7 @@ public final class Grid {
             // The gutter's offset is the physical right edge of the track that follows the line
             return tracks.get(index).offset;
         } else if (index == 0) {
-            return tracks.get(0).offset;
+            return tracks.getFirst().offset;
         } else {
             // No track follows the line: resolve to the line itself, which is the physical
             // left edge of the track that precedes it (the trailing gutter is assigned its
@@ -1138,7 +1138,7 @@ public final class Grid {
     /// Resolve a grid line used as an inline-end edge to a physical left x-position (RTL)
     private static float rtlLineAsEndEdge(List<GridTrack> tracks, int index) {
         if (index == 0) {
-            return tracks.get(0).offset;
+            return tracks.getFirst().offset;
         }
         return tracks.get(index - 1).offset;
     }

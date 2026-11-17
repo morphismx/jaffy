@@ -16,5 +16,5 @@ public enum AxisStaticEdge {
     /// Center the box within the area
     CENTER,
     /// Align the end (right/bottom) edge of the box's margin box to the end of the area
-    END;
+    END
 }

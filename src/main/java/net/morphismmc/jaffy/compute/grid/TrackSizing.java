@@ -530,7 +530,8 @@ public final class TrackSizing {
         List<GridItem> remainingItems = sortedItems;
         while (!remainingItems.isEmpty()) {
             // Get the row index of the current row
-            int currentRow = remainingItems.get(0).placement(otherAxis).start().value();
+            int currentRow =
+                    remainingItems.getFirst().placement(otherAxis).start().value();
 
             // Find the item index of the first item that is in a different row (or None if we've reached the end of the
             // list)
@@ -690,7 +691,7 @@ public final class TrackSizing {
             // 2. Size tracks to fit non-spanning items: For each track with an intrinsic track sizing function and not
             // a flexible sizing function,
             // consider the items in it with a span of 1:
-            int batchSpan = batch.items().get(0).span(axis);
+            int batchSpan = batch.items().getFirst().span(axis);
             if (!batch.isFlex() && batchSpan == 1) {
                 for (GridItem item : batch.items()) {
                     int trackIndex = item.placementIndexes(axis).start() + 1;

@@ -6,5 +6,5 @@ public enum ClearState {
     /// Cleared some values
     CLEARED,
     /// Everything was already cleared
-    ALREADY_EMPTY;
+    ALREADY_EMPTY
 }

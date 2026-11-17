@@ -107,7 +107,7 @@ final class TaffyView<NodeContext>
                 output = Compute.computeHiddenLayout(tree, node);
             } else if (!hasChildren) {
                 NodeData data = tree.taffy.nodes.index(node);
-                @Nullable NodeContext nodeContext = data.hasContext ? tree.taffy.nodeContextData.getMut(node) : null;
+                NodeContext nodeContext = data.hasContext ? tree.taffy.nodeContextData.getMut(node) : null;
                 output = tree.measureFunction.measure(in, node, nodeContext, data.style);
             } else {
                 output = switch (displayMode) {

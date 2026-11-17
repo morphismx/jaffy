@@ -58,7 +58,7 @@ final class TrackIntervals {
             intervals.add(new OccupiedInterval(start, end, state));
             return;
         }
-        OccupiedInterval last = intervals.get(intervals.size() - 1);
+        OccupiedInterval last = intervals.getLast();
         if (last.end <= start) {
             if (last.state == state && last.end == start) {
                 last.end = end;
@@ -80,10 +80,8 @@ final class TrackIntervals {
         }
 
         // The painted range, merged with the preceding interval if it touches and has the same state
-        if (!result.isEmpty()
-                && result.get(result.size() - 1).state == state
-                && result.get(result.size() - 1).end == start) {
-            result.get(result.size() - 1).end = end;
+        if (!result.isEmpty() && result.getLast().state == state && result.getLast().end == start) {
+            result.getLast().end = end;
         } else {
             result.add(new OccupiedInterval(start, end, state));
         }
@@ -98,10 +96,8 @@ final class TrackIntervals {
             } else {
                 continue;
             }
-            if (!result.isEmpty()
-                    && result.get(result.size() - 1).state == trimmed.state
-                    && result.get(result.size() - 1).end == trimmed.start) {
-                result.get(result.size() - 1).end = trimmed.end;
+            if (!result.isEmpty() && result.getLast().state == trimmed.state && result.getLast().end == trimmed.start) {
+                result.getLast().end = trimmed.end;
             } else {
                 result.add(trimmed);
             }

@@ -23,10 +23,10 @@ public sealed interface ExpandedLengthPercentageAuto {
     /// `PartialEq` -> rustEq: f32 fields compare IEEE (`==`), Calc handle identity.
     default boolean rustEq(ExpandedLengthPercentageAuto other) {
         return switch (this) {
-            case Length l -> other instanceof Length o && l.val == o.val;
-            case Percent p -> other instanceof Percent o && p.val == o.val;
-            case Auto a -> other instanceof Auto;
-            case Calc c -> other instanceof Calc o && c.handle == o.handle;
+            case Length(float v) -> other instanceof Length(float ov) && v == ov;
+            case Percent(float v) -> other instanceof Percent(float ov) && v == ov;
+            case Auto() -> other instanceof Auto;
+            case Calc(Object h) -> other instanceof Calc(Object oh) && h == oh;
         };
     }
 }

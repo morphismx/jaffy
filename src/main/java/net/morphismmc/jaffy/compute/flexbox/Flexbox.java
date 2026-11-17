@@ -706,7 +706,7 @@ public final class Flexbox {
             float crossAxisPaddingBorder = constants.contentBoxInset.crossAxisSum(constants.dir);
             float crossMinSize = constants.minSize.cross(constants.dir);
             float crossMaxSize = constants.maxSize.cross(constants.dir);
-            flexLines.get(0).crossSize = OptF32.unwrapOr(
+            flexLines.getFirst().crossSize = OptF32.unwrapOr(
                     OptF32.maybeMaxF(
                             OptF32.maybeSubF(
                                     OptF32.maybeClampO(nodeSize.cross(constants.dir), crossMinSize, crossMaxSize),
@@ -738,7 +738,7 @@ public final class Flexbox {
                 float crossAxisPaddingBorder = constants.contentBoxInset.crossAxisSum(constants.dir);
                 float crossMinSize = OptF32.maybeSubF(constants.minSize.cross(constants.dir), crossAxisPaddingBorder);
                 float crossMaxSize = OptF32.maybeSubF(constants.maxSize.cross(constants.dir), crossAxisPaddingBorder);
-                FlexLine first = flexLines.get(0);
+                FlexLine first = flexLines.getFirst();
                 first.crossSize = F32.maybeClampO(first.crossSize, crossMinSize, crossMaxSize);
             }
         }
@@ -2720,9 +2720,8 @@ public final class Flexbox {
         // "startmost" refers to the line's visual position: for wrap-reverse
         // containers the cross axis is flipped, so the startmost line is the
         // last line in flex-line order rather than the first.
-        FlexLine firstLine = flexLines.isEmpty()
-                ? null
-                : constants.isWrapReverse ? flexLines.get(flexLines.size() - 1) : flexLines.get(0);
+        FlexLine firstLine =
+                flexLines.isEmpty() ? null : constants.isWrapReverse ? flexLines.getLast() : flexLines.getFirst();
         float firstVerticalBaseline = OptF32.NONE;
         if (firstLine != null) {
             if (constants.isColumn) {
@@ -2730,9 +2729,7 @@ public final class Flexbox {
                 // startmost item in the line, which for reverse-direction
                 // containers is the last item in flex order.
                 if (!firstLine.items.isEmpty()) {
-                    FlexItem item = constants.dir.isReverse()
-                            ? firstLine.items.get(firstLine.items.size() - 1)
-                            : firstLine.items.get(0);
+                    FlexItem item = constants.dir.isReverse() ? firstLine.items.getLast() : firstLine.items.getFirst();
                     firstVerticalBaseline = item.baseline;
                 }
             } else {
@@ -2744,7 +2741,7 @@ public final class Flexbox {
                     }
                 }
                 if (item == null && !firstLine.items.isEmpty()) {
-                    item = firstLine.items.get(0);
+                    item = firstLine.items.getFirst();
                 }
                 if (item != null) {
                     firstVerticalBaseline = item.baseline;

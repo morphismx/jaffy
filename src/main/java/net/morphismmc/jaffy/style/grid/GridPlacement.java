@@ -50,19 +50,19 @@ public sealed interface GridPlacement {
     /// return the generic equivalent of `self` unmodified.
     default GenericGridPlacement<OriginZeroLine> intoOriginZeroPlacementIgnoringNamed(int explicitTrackCount) {
         return switch (this) {
-            case Auto a -> new GenericGridPlacement.Auto<>();
+            case Auto() -> new GenericGridPlacement.Auto<>();
             // Spans are clamped between 1 (a zero span is an invalid value
             // which is treated as 1) and the maximum track limit
-            case Span s ->
+            case Span(int span) ->
                 new GenericGridPlacement.Span<>(
-                        s.span < 1 ? 1 : s.span > Coordinates.MAX_GRID_TRACKS ? Coordinates.MAX_GRID_TRACKS : s.span);
+                        span < 1 ? 1 : span > Coordinates.MAX_GRID_TRACKS ? Coordinates.MAX_GRID_TRACKS : span);
             // Grid line zero is an invalid index, so it gets treated as Auto
-            case Line l ->
-                l.line().asI16() == 0
+            case Line(GridLine line) ->
+                line.asI16() == 0
                         ? new GenericGridPlacement.Auto<>()
-                        : new GenericGridPlacement.Line<>(l.line().intoOriginZeroLine(explicitTrackCount));
-            case NamedLine n -> new GenericGridPlacement.Auto<>();
-            case NamedSpan n -> new GenericGridPlacement.Auto<>();
+                        : new GenericGridPlacement.Line<>(line.intoOriginZeroLine(explicitTrackCount));
+            case NamedLine(_, _) -> new GenericGridPlacement.Auto<>();
+            case NamedSpan(_, _) -> new GenericGridPlacement.Auto<>();
         };
     }
 }

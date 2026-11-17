@@ -42,7 +42,7 @@ public sealed interface AvailableSpace {
 
     /// Convert to Option — Definite values become Some(value), constraints None.
     default @Opt float intoOption() {
-        return this instanceof Definite d ? d.value : OptF32.NONE;
+        return this instanceof Definite(float v) ? v : OptF32.NONE;
     }
 
     /// `unwrap_or` — the definite value or a default value
@@ -77,23 +77,23 @@ public sealed interface AvailableSpace {
 
     /// `map_definite_value` — maps the contained value if definite
     default AvailableSpace mapDefiniteValue(FloatUnaryOperator mapFunction) {
-        return this instanceof Definite d ? new Definite(mapFunction.applyAsFloat(d.value)) : this;
+        return this instanceof Definite(float v) ? new Definite(mapFunction.applyAsFloat(v)) : this;
     }
 
     /// `compute_free_space` given the passed used_space
     default float computeFreeSpace(float usedSpace) {
         return switch (this) {
-            case MaxContent m ->
+            case MaxContent() ->
                 java.lang.Float.POSITIVE_INFINITY; // f32::INFINITY; java.lang.Float qualified — style.Float shadows
-            case MinContent m -> 0.0f;
-            case Definite d -> d.value - usedSpace;
+            case MinContent() -> 0.0f;
+            case Definite(float v) -> v - usedSpace;
         };
     }
 
     /// `is_roughly_equal` — definite values within f32::EPSILON compare equal
     default boolean isRoughlyEqual(AvailableSpace other) {
-        if (this instanceof Definite a && other instanceof Definite b) {
-            return Math.abs(a.value - b.value) < Math.ulp(1.0f); // f32::EPSILON == ulp(1.0)
+        if (this instanceof Definite(float a) && other instanceof Definite(float b)) {
+            return Math.abs(a - b) < Math.ulp(1.0f); // f32::EPSILON == ulp(1.0)
         }
         if (this instanceof MinContent) {
             return other instanceof MinContent;
@@ -110,44 +110,44 @@ public sealed interface AvailableSpace {
     /// `MaybeMath<f32>::maybe_min` — Min/MaxContent become Definite(rhs)
     default AvailableSpace maybeMinF(float rhs) {
         return switch (this) {
-            case Definite d -> new Definite(F32.min(d.value, rhs));
-            case MinContent m -> new Definite(rhs);
-            case MaxContent m -> new Definite(rhs);
+            case Definite(float v) -> new Definite(F32.min(v, rhs));
+            case MinContent() -> new Definite(rhs);
+            case MaxContent() -> new Definite(rhs);
         };
     }
 
     /// `MaybeMath<f32>::maybe_max` — Min/MaxContent stay unchanged
     default AvailableSpace maybeMaxF(float rhs) {
         return switch (this) {
-            case Definite d -> new Definite(F32.max(d.value, rhs));
-            case MinContent m -> m;
-            case MaxContent m -> m;
+            case Definite(float v) -> new Definite(F32.max(v, rhs));
+            case MinContent() -> this;
+            case MaxContent() -> this;
         };
     }
 
     /// `MaybeMath<f32>::maybe_clamp`
     default AvailableSpace maybeClampF(float min, float max) {
         return switch (this) {
-            case Definite d -> new Definite(F32.max(F32.min(d.value, max), min));
-            case MinContent m -> m;
-            case MaxContent m -> m;
+            case Definite(float v) -> new Definite(F32.max(F32.min(v, max), min));
+            case MinContent() -> this;
+            case MaxContent() -> this;
         };
     }
 
     /// `MaybeMath<f32>::maybe_add`
     default AvailableSpace maybeAddF(float rhs) {
-        return this instanceof Definite d ? new Definite(d.value + rhs) : this;
+        return this instanceof Definite(float v) ? new Definite(v + rhs) : this;
     }
 
     /// `MaybeMath<f32>::maybe_sub`
     default AvailableSpace maybeSubF(float rhs) {
-        return this instanceof Definite d ? new Definite(d.value - rhs) : this;
+        return this instanceof Definite(float v) ? new Definite(v - rhs) : this;
     }
 
     /// `MaybeMath<Option<f32>>::maybe_min`
     default AvailableSpace maybeMinO(@Opt float rhs) {
-        if (this instanceof Definite d) {
-            return OptF32.isSome(rhs) ? new Definite(F32.min(d.value, rhs)) : d;
+        if (this instanceof Definite(float v)) {
+            return OptF32.isSome(rhs) ? new Definite(F32.min(v, rhs)) : this;
         }
         if (this instanceof MinContent) {
             return OptF32.isSome(rhs) ? new Definite(rhs) : this;
@@ -158,45 +158,45 @@ public sealed interface AvailableSpace {
 
     /// `MaybeMath<Option<f32>>::maybe_max` — Min/MaxContent always win
     default AvailableSpace maybeMaxO(@Opt float rhs) {
-        if (this instanceof Definite d) {
-            return OptF32.isSome(rhs) ? new Definite(F32.max(d.value, rhs)) : d;
+        if (this instanceof Definite(float v)) {
+            return OptF32.isSome(rhs) ? new Definite(F32.max(v, rhs)) : this;
         }
         return this;
     }
 
     /// `MaybeMath<Option<f32>>::maybe_clamp`
     default AvailableSpace maybeClampO(@Opt float min, @Opt float max) {
-        if (!(this instanceof Definite d)) {
+        if (!(this instanceof Definite(float v))) {
             return this;
         }
         if (OptF32.isSome(min) && OptF32.isSome(max)) {
-            return new Definite(F32.max(F32.min(d.value, max), min));
+            return new Definite(F32.max(F32.min(v, max), min));
         }
         if (OptF32.isNone(min) && OptF32.isSome(max)) {
-            return new Definite(F32.min(d.value, max));
+            return new Definite(F32.min(v, max));
         }
         if (OptF32.isSome(min) && OptF32.isNone(max)) {
-            return new Definite(F32.max(d.value, min));
+            return new Definite(F32.max(v, min));
         }
-        return d;
+        return this;
     }
 
     /// `MaybeMath<Option<f32>>::maybe_add`
     default AvailableSpace maybeAddO(@Opt float rhs) {
-        return this instanceof Definite d && OptF32.isSome(rhs) ? new Definite(d.value + rhs) : this;
+        return this instanceof Definite(float v) && OptF32.isSome(rhs) ? new Definite(v + rhs) : this;
     }
 
     /// `MaybeMath<Option<f32>>::maybe_sub`
     default AvailableSpace maybeSubO(@Opt float rhs) {
-        return this instanceof Definite d && OptF32.isSome(rhs) ? new Definite(d.value - rhs) : this;
+        return this instanceof Definite(float v) && OptF32.isSome(rhs) ? new Definite(v - rhs) : this;
     }
 
     /// `PartialEq` -> rustEq: derived enum eq — Definite f32 compares IEEE (GAP-004)
     default boolean rustEq(AvailableSpace other) {
         return switch (this) {
-            case Definite a -> other instanceof Definite b && a.value == b.value;
-            case MinContent m -> other instanceof MinContent;
-            case MaxContent m -> other instanceof MaxContent;
+            case Definite(float a) -> other instanceof Definite(float b) && a == b;
+            case MinContent() -> other instanceof MinContent;
+            case MaxContent() -> other instanceof MaxContent;
         };
     }
 

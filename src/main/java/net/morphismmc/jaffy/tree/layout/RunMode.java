@@ -11,5 +11,5 @@ public enum RunMode {
     /// Layout steps that aren't necessary for determining the container size of the current node can be skipped.
     COMPUTE_SIZE,
     /// This node should have a null layout set as it has been hidden (i.e. using `Display::None`)
-    PERFORM_HIDDEN_LAYOUT;
+    PERFORM_HIDDEN_LAYOUT
 }

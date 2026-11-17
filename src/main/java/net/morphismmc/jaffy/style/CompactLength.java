@@ -98,7 +98,7 @@ public sealed interface CompactLength {
         @Override
         public boolean rustEq(CompactLength other) {
             // `inner` derives PartialEq on the raw tagged_ptr: bitwise compare.
-            return other instanceof Primitive p && bits == p.bits;
+            return other instanceof Primitive(long oBits) && bits == oBits;
         }
     }
 
@@ -143,7 +143,7 @@ public sealed interface CompactLength {
         public boolean rustEq(CompactLength other) {
             // Rust compares tagged pointers: same address + same tag. Java:
             // identity on the handle + tag equality.
-            return other instanceof Calc c && bits == c.bits && calc == c.calc;
+            return other instanceof Calc(long oBits, Object oCalc) && bits == oBits && calc == oCalc;
         }
     }
 

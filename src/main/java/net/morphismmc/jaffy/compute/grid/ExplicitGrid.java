@@ -445,8 +445,8 @@ public final class ExplicitGrid {
         }
 
         // Mark first and last grid lines as collapsed
-        tracks.get(0).collapse();
-        tracks.get(tracks.size() - 1).collapse();
+        tracks.getFirst().collapse();
+        tracks.getLast().collapse();
     }
 
     /// Utility function for repeating logic of creating implicit tracks
