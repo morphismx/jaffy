@@ -41,7 +41,7 @@ import it.unimi.dsi.fastutil.longs.LongIterators;
 
 class TrackSizingTest {
 
-    /** Records how often computeChildLayout runs; returns a fixed 10x20 size. */
+    /// Records how often computeChildLayout runs; returns a fixed 10x20 size.
     private static final class StubTree implements LayoutPartialTree {
         int calls = 0;
 
@@ -75,7 +75,7 @@ class TrackSizingTest {
         }
     }
 
-    /** `(track, basis, tree) -> track.base_size` — the estimate reads the provisional base size. */
+    /// `(track, basis, tree) -> track.base_size` — the estimate reads the provisional base size.
     private static final TrackSizeEstimate BASE_SIZE_ESTIMATE = (track, basis, tree) -> track.baseSize;
 
     private static GridTrack gutter() {
@@ -102,10 +102,8 @@ class TrackSizingTest {
         return new Line<>(new OriginZeroLine(start), new OriginZeroLine(end));
     }
 
-    /**
-     * A span-1 item placed on vec index 1 (the first non-gutter track): OriginZero
-     * lines 0..1 -> track vec indexes 0..2 -> range excluding lines = 1..2.
-     */
+    /// A span-1 item placed on vec index 1 (the first non-gutter track): OriginZero
+    /// lines 0..1 -> track vec indexes 0..2 -> range excluding lines = 1..2.
     private static GridItem itemOnFirstTrack() {
         GridItem item = GridItem.newWithStyleAndOrder(7L, Style.DEFAULT, AlignItems.NORMAL, AlignItems.NORMAL, 0);
         item.column = ozLine(0, 1);

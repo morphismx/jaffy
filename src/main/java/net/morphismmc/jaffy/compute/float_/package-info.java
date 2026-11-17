@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.compute.float_
- */
+/// net.morphismmc.jaffy.compute.float_
 @NullMarked
 package net.morphismmc.jaffy.compute.float_;
 

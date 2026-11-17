@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.style.grid
- */
+/// net.morphismmc.jaffy.style.grid
 @NullMarked
 package net.morphismmc.jaffy.style.grid;
 

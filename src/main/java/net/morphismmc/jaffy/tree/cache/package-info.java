@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.tree.cache
- */
+/// net.morphismmc.jaffy.tree.cache
 @NullMarked
 package net.morphismmc.jaffy.tree.cache;
 

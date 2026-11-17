@@ -239,7 +239,7 @@ public class GridBench {
 
     // -- states ---------------------------------------------------------------
 
-    /** `grid/wide`: flat track_count × track_count grid, `length(12000)` space. */
+    /// `grid/wide`: flat track_count × track_count grid, `length(12000)` space.
     @State(Scope.Benchmark)
     public static class WideState {
         @Param({"jaffy", "vfyjxf"})
@@ -283,7 +283,7 @@ public class GridBench {
         }
     }
 
-    /** `grid/deep`: nested n×n grids — `(tracks x levels)` upstream matrix. */
+    /// `grid/deep`: nested n×n grids — `(tracks x levels)` upstream matrix.
     @State(Scope.Benchmark)
     public static class DeepState {
         @Param({"jaffy", "vfyjxf"})
@@ -330,7 +330,7 @@ public class GridBench {
         }
     }
 
-    /** `grid/superdeep`: 1×1 tracks, {100,1000} levels, `max_content` space. */
+    /// `grid/superdeep`: 1×1 tracks, {100,1000} levels, `max_content` space.
     @State(Scope.Benchmark)
     public static class SuperdeepState {
         @Param({"jaffy", "vfyjxf"})
@@ -374,7 +374,7 @@ public class GridBench {
         }
     }
 
-    /** `grid/alternating_spans`: item_count × flow, `Size::MAX_CONTENT` space. */
+    /// `grid/alternating_spans`: item_count × flow, `Size::MAX_CONTENT` space.
     @State(Scope.Benchmark)
     public static class SpansState {
         @Param({"jaffy", "vfyjxf"})

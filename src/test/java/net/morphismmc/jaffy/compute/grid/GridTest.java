@@ -390,7 +390,7 @@ class GridTest {
     // computeGridLayout — end to end
     // -----------------------------------------------------------------
 
-    /** Stub tree: container style + a list of identical-style children. */
+    /// Stub tree: container style + a list of identical-style children.
     private static final class StubTree implements LayoutGridContainer {
         private final Style containerStyle;
         private final Style childStyle;

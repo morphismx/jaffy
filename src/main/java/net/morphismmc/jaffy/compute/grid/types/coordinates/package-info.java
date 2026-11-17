@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.compute.grid.types.coordinates
- */
+/// net.morphismmc.jaffy.compute.grid.types.coordinates
 @NullMarked
 package net.morphismmc.jaffy.compute.grid.types.coordinates;
 

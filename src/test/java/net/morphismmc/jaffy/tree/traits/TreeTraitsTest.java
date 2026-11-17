@@ -30,7 +30,7 @@ import it.unimi.dsi.fastutil.longs.LongIterators;
 
 class TreeTraitsTest {
 
-    /** Minimal tree that records the last inputs it was called with. */
+    /// Minimal tree that records the last inputs it was called with.
     private static final class StubTree implements LayoutPartialTree {
         LayoutInput lastInputs;
         long lastNodeId = -1;

@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.tree.traits
- */
+/// net.morphismmc.jaffy.tree.traits
 @NullMarked
 package net.morphismmc.jaffy.tree.traits;
 

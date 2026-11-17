@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.style.alignment
- */
+/// net.morphismmc.jaffy.style.alignment
 @NullMarked
 package net.morphismmc.jaffy.style.alignment;
 

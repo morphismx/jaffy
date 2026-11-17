@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.compute.grid.types.grid_track
- */
+/// net.morphismmc.jaffy.compute.grid.types.grid_track
 @NullMarked
 package net.morphismmc.jaffy.compute.grid.types.grid_track;
 

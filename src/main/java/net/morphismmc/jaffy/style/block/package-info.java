@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.style.block
- */
+/// net.morphismmc.jaffy.style.block
 @NullMarked
 package net.morphismmc.jaffy.style.block;
 

@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.style.available_space
- */
+/// net.morphismmc.jaffy.style.available_space
 @NullMarked
 package net.morphismmc.jaffy.style.available_space;
 

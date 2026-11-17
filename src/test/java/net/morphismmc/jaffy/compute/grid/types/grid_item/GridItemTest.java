@@ -38,7 +38,7 @@ import it.unimi.dsi.fastutil.longs.LongIterators;
 
 class GridItemTest {
 
-    /** Records how often computeChildLayout runs; returns a fixed 10x20 size. */
+    /// Records how often computeChildLayout runs; returns a fixed 10x20 size.
     private static final class StubTree implements LayoutPartialTree {
         int calls = 0;
 

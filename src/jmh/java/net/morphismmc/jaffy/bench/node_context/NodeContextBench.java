@@ -114,7 +114,7 @@ public class NodeContextBench {
 
     // -- states ----------------------------------------------------------------
 
-    /** Prebuilt tree + leaf list for `layout` / `replace_and_layout`. */
+    /// Prebuilt tree + leaf list for `layout` / `replace_and_layout`.
     @State(Scope.Benchmark)
     public static class JaffyState {
         @Param({"1000", "10000"})

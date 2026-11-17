@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.style.dimension
- */
+/// net.morphismmc.jaffy.style.dimension
 @NullMarked
 package net.morphismmc.jaffy.style.dimension;
 
