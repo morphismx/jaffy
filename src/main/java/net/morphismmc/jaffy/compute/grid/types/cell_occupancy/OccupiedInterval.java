@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/types/cell_occupancy.rs
+// JAFFY-UPSTREAM: src/compute/grid/types/cell_occupancy.rs
 // `OccupiedInterval` (module-private -> package-private).
 //
 // `range: Range<i16>` -> mutable `start`/`end` int fields (`last.range.end =

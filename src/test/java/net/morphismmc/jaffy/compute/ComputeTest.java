@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/mod.rs
+// JAFFY-UPSTREAM: src/compute/mod.rs
 // JAFFY-NOTE: `mod tests`
 package net.morphismmc.jaffy.compute;
 

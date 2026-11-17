@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `Line<T>` (generic record)
 package net.morphismmc.jaffy.geometry;
 

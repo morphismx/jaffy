@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/cache.rs
+// JAFFY-UPSTREAM: src/tree/cache.rs
 // JAFFY-NOTE: tests for  — upstream `mod tests` ported verbatim
 // `mode_change_evictions_are_counted_for_non_empty_caches_only` is
 // `cfg(debug_assertions && std)` upstream; the counter always exists in Java.

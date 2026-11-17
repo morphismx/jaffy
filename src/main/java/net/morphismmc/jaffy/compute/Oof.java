@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/oof.rs
+// JAFFY-UPSTREAM: src/compute/oof.rs
 // JAFFY-NOTE: shared out-of-flow
 // (`position: absolute` / `position: fixed`) positioning pass.
 //

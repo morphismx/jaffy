@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `Line<Option<u32/usize>>` specialization
 // (SPECIALIZATIONS.md). Distinct type from generic Line<T> (GAP-006).
 // `Option<u32>` components -> `@Opt @Unsigned int` (`OptI32.NONE` = None, GAP-001).

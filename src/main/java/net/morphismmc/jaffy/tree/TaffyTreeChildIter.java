@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/taffy_tree.rs
+// JAFFY-UPSTREAM: src/tree/taffy_tree.rs
 // JAFFY-NOTE: `TaffyTreeChildIter`
 //
 // `impl Iterator<Item = NodeId>` over `core::slice::Iter<NodeId>` -> a

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/types/named.rs
+// JAFFY-UPSTREAM: src/compute/grid/types/named.rs
 // JAFFY-NOTE: `GridLineNamesIter`
 //
 // `&'a [S]` yields -> unmodifiable List<String> views; `slice::Windows<u32>`

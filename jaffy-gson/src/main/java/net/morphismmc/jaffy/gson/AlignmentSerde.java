@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/alignment.rs
+// JAFFY-UPSTREAM: src/style/alignment.rs
 // JAFFY-NOTE: serde impls
 //
 // AlignItems/AlignContent use custom impls serializing a single tag string per

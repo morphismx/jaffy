@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/cache.rs
+// JAFFY-UPSTREAM: src/tree/cache.rs
 // JAFFY-NOTE: `ClearState` enum
 package net.morphismmc.jaffy.tree.cache;
 

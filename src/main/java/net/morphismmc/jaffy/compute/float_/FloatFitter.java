@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/float.rs
+// JAFFY-UPSTREAM: src/compute/float.rs
 // JAFFY-NOTE: `FloatFitter` (module-private)
 //
 // `slot_height` is `f64` upstream (`as f64` widening) -> `double` (GAP-008).

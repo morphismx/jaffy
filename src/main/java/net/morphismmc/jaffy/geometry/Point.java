@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `Point<T>` (generic record)
 //
 // `set` (Rust &mut) returns a new record here (GAP-005).

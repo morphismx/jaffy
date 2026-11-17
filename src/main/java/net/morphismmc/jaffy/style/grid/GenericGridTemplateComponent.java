@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // `GenericGridTemplateComponent<S, Repetition>` enum. `S: CheapCloneStr` is
 // concretised to `String` inside `GenericRepetition` (GAP-017).
 package net.morphismmc.jaffy.style.grid;

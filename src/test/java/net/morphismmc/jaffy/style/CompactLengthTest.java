@@ -1,4 +1,4 @@
-// JAFFY: upstream=none
+// JAFFY-UPSTREAM: none
 // JAFFY-NOTE: the `mod tests` block in upstream compact_length.rs and the
 // `expand_tests` block in dimension.rs (rustc 1.96 semantics as oracle).
 package net.morphismmc.jaffy.style;

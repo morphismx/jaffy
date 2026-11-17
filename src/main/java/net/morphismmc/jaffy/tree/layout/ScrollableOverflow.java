@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-UPSTREAM: src/tree/layout.rs
 // JAFFY-NOTE: `ScrollableOverflow`
 // The reversal flags are packed into the sign bits of the stored right/bottom.
 // serde impl deferred; `debug_assert!` omitted (release behaviour, GAP-010

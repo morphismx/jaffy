@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // `GridTemplateTracks<S, Track>` (doc-hidden upstream). `S` -> `String`
 // (GAP-017). The `parse`/`FromStr` impls are deferred with the feature.
 package net.morphismmc.jaffy.style.grid;

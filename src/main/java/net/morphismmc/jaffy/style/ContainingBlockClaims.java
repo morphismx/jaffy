@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/mod.rs
+// JAFFY-UPSTREAM: src/style/mod.rs
 // JAFFY-NOTE: `ContainingBlockClaims` struct
 package net.morphismmc.jaffy.style;
 

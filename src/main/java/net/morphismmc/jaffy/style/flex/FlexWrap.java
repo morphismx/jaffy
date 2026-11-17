@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/flex.rs
+// JAFFY-UPSTREAM: src/style/flex.rs
 // JAFFY-NOTE: `FlexWrap` enum
 //
 // `#[cfg(feature = "parse")]` FromCss impls are feature-gated: deferred.

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/leaf.rs
+// JAFFY-UPSTREAM: src/compute/leaf.rs
 // JAFFY-NOTE: `compute_leaf_layout`
 //
 // `MeasureFunction: FnOnce(Size<Option<f32>>, Size<AvailableSpace>) ->

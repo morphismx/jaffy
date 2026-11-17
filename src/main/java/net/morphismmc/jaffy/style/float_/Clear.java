@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/float.rs
+// JAFFY-UPSTREAM: src/style/float.rs
 // JAFFY-NOTE: `Clear` enum
 // impl_parse_for_keyword_enum is parse-gated: deferred.
 package net.morphismmc.jaffy.style.float_;

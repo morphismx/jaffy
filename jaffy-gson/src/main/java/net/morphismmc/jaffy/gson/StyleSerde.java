@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/mod.rs
+// JAFFY-UPSTREAM: src/style/mod.rs
 // JAFFY-FROM: src/style/float.rs
 // JAFFY-FROM: src/style/flex.rs
 // JAFFY-FROM: src/style/block.rs

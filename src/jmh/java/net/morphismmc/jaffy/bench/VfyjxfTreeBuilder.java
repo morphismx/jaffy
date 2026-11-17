@@ -1,4 +1,4 @@
-// JAFFY: upstream=benches/src/taffy_helpers.rs
+// JAFFY-UPSTREAM: benches/src/taffy_helpers.rs
 
 package net.morphismmc.jaffy.bench;
 

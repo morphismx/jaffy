@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-UPSTREAM: src/tree/layout.rs
 // JAFFY-NOTE: `AxisStaticAlign` struct
 package net.morphismmc.jaffy.tree.layout;
 

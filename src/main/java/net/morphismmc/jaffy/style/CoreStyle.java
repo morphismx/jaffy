@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/mod.rs
+// JAFFY-UPSTREAM: src/style/mod.rs
 // JAFFY-NOTE: `CoreStyle` trait
 // `type CustomIdent = String` (GAP-017). Defaults that route through
 // `Style::<S>::DEFAULT` are expressed as `Style.DEFAULT` accessors.

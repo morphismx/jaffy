@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/types/grid_track.rs
+// JAFFY-UPSTREAM: src/compute/grid/types/grid_track.rs
 // JAFFY-NOTE: `GridTrack`
 //
 // `pub(in super::super)` -> public; Clone -> copy() (all fields are

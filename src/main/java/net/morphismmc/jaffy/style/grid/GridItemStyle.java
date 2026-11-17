@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // JAFFY-NOTE: `GridItemStyle` trait (`grid`)
 // `Option<AlignSelf>`/aliases are `AlignItems` + nullable (GAP-001/017).
 // `impl ... for &T` has no Java counterpart.

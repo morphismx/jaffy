@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/mod.rs
+// JAFFY-UPSTREAM: src/style/mod.rs
 // JAFFY-NOTE: `BoxGenerationMode` enum
 package net.morphismmc.jaffy.style;
 

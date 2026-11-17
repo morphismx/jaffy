@@ -1,4 +1,4 @@
-// JAFFY: upstream=none
+// JAFFY-UPSTREAM: none
 // JAFFY-NOTE: behavior checks for float.rs ports
 // PlacedFloatedBox, FloatIntrinsicWidthCalculator). Upstream has no inline unit
 // tests; floats.rs hand-written cases require the L8 TaffyTree layer.

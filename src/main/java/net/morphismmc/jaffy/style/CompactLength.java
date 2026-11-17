@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/compact_length.rs
+// JAFFY-UPSTREAM: src/style/compact_length.rs
 // JAFFY-NOTE: (GAP-013)
 //
 // Rust `struct CompactLength(CompactLengthInner)` is a 64-bit tagged pointer.

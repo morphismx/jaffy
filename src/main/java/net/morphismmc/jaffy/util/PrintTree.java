@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/util/print.rs
+// JAFFY-UPSTREAM: src/util/print.rs
 //
 // `impl io::Write` -> `Appendable` (StringBuilder/Writer/PrintStream);
 // `io::Result<()>` -> `throws IOException`; `writeln!` -> append + '\n';

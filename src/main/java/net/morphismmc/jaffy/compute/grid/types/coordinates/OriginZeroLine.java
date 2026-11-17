@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/types/coordinates.rs
+// JAFFY-UPSTREAM: src/compute/grid/types/coordinates.rs
 // `OriginZeroLine` i16 newtype + its Add/Sub/AddAssign impls.
 // `pub(crate)` in Rust (kept public for cross-package compute access).
 package net.morphismmc.jaffy.compute.grid.types.coordinates;

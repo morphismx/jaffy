@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/types/named.rs
+// JAFFY-UPSTREAM: src/compute/grid/types/named.rs
 // `NamedLineResolverAxis` (module-private in Rust -> package-private).
 //
 // `lines`/`areas` are `&'a` borrows of the parent's maps; `LinePositions =

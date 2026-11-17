@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/mod.rs
+// JAFFY-UPSTREAM: src/style/mod.rs
 // JAFFY-NOTE: tests for the upstream  port (Style + traits)
 // Upstream has no non-parse test module for this file; these assert the
 // documented DEFAULT field values and the overridden trait methods.

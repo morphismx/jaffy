@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/util/test_helpers.rs
+// JAFFY-UPSTREAM: src/compute/grid/util/test_helpers.rs
 // JAFFY-NOTE: test-only
 // helpers (`#[cfg(test)] pub(super)` upstream -> src/test/java here).
 //

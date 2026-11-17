@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // JAFFY-NOTE: `GridTemplateRepetition<S>`
 // struct + its `GenericRepetition` impl (upstream implements the trait on
 // `&GridTemplateRepetition`; the value itself implements it in Java).

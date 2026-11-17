@@ -1,4 +1,4 @@
-// JAFFY: upstream=none
+// JAFFY-UPSTREAM: none
 // JAFFY-NOTE: behavior checks for geometry.rs ports
 // f32/OptF32/bool specializations, FloatInsets) and the Ext classes.
 package net.morphismmc.jaffy.geometry;

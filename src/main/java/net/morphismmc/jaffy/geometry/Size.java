@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `Size<T>` (generic record)
 //
 // `Size<f32>` -> SizeF32, `Size<Option<f32>>` -> SizeOptF32 (SPECIALIZATIONS.md).

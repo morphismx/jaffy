@@ -1,4 +1,4 @@
-// JAFFY: upstream=none
+// JAFFY-UPSTREAM: none
 // JAFFY-NOTE: serde wire-format tests — every expectation is hand-derived from the
 // upstream impls (serde_json output rules: externally-tagged enums, snake_case
 // fields, ryu float formatting, `u64 = tag << 32 | f32_bits` for CompactLength).

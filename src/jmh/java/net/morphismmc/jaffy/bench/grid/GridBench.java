@@ -1,4 +1,4 @@
-// JAFFY: upstream=benches/benches/grid.rs
+// JAFFY-UPSTREAM: benches/benches/grid.rs
 
 package net.morphismmc.jaffy.bench.grid;
 

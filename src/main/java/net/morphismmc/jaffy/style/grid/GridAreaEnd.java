@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // JAFFY-NOTE: `GridAreaEnd`
 // upstream; `public` here as there is no Java crate visibility).
 package net.morphismmc.jaffy.style.grid;

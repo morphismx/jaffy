@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/block.rs
+// JAFFY-UPSTREAM: src/compute/block.rs
 // JAFFY-NOTE: `BlockFormattingContext`
 // (`float_layout` feature always on).
 package net.morphismmc.jaffy.compute.block;

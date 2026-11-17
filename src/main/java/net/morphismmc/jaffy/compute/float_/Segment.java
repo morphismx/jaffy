@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/float.rs
+// JAFFY-UPSTREAM: src/compute/float.rs
 // JAFFY-NOTE: `Segment` (module-private)
 //
 // `y: Range<f32>` is stored as mutable `yStart`/`yEnd` fields;

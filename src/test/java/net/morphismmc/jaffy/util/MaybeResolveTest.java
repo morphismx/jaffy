@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/util/resolve.rs
+// JAFFY-UPSTREAM: src/util/resolve.rs
 // JAFFY-NOTE: `mod tests`
 // The `|_, _| 42.42` calc callback maps to a CalcResolver constant.
 package net.morphismmc.jaffy.util;

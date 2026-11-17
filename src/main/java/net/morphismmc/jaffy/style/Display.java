@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/mod.rs
+// JAFFY-UPSTREAM: src/style/mod.rs
 // JAFFY-NOTE: `Display` enum
 // Variants behind disabled features are omitted (block_layout/flexbox/grid
 // are all in the default set, so all five variants land). The `parse` impl

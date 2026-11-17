@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/dimension.rs
+// JAFFY-UPSTREAM: src/style/dimension.rs
 // JAFFY-NOTE: `ExpandedLengthPercentage`
 //
 // Rust enum -> sealed interface with per-variant records (GAP-005/-013 style).

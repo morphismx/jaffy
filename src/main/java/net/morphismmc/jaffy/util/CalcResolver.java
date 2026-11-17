@@ -1,4 +1,4 @@
-// JAFFY: upstream=none
+// JAFFY-UPSTREAM: none
 // JAFFY-NOTE: support type (GAP-019): resolves opaque calc() handles
 
 package net.morphismmc.jaffy.util;

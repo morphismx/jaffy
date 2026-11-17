@@ -1,4 +1,4 @@
-// JAFFY: upstream=benches/benches/mixed.rs
+// JAFFY-UPSTREAM: benches/benches/mixed.rs
 
 package net.morphismmc.jaffy.bench.mixed;
 

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-UPSTREAM: src/tree/layout.rs
 // JAFFY-NOTE: tests for  — the upstream `scrollable_overflow_tests`
 // module is ported verbatim; the rest covers CollapsibleMarginSet, LayoutInput,
 // Baselines, AxisStaticPosition, OofCandidates, LayoutOutput and Layout.

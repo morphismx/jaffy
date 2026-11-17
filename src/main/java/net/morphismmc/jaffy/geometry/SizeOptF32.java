@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `Size<Option<f32>>` specialization
 // (SPECIALIZATIONS.md). Same record shape as SizeF32 but a distinct type (GAP-006).
 package net.morphismmc.jaffy.geometry;

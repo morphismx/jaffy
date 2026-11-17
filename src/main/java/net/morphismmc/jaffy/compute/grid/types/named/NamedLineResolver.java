@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/types/named.rs
+// JAFFY-UPSTREAM: src/compute/grid/types/named.rs
 // JAFFY-NOTE: `NamedLineResolver`
 // plus the module-private free functions `split_area_edge_name`,
 // `upsert_line_name_map` and `oz_line` (kept here as package-private statics).

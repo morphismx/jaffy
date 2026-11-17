@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/dimension.rs
+// JAFFY-UPSTREAM: src/style/dimension.rs
 // JAFFY-NOTE: `LengthPercentage` (GAP-013)
 //
 // Rust `pub struct LengthPercentage(pub(crate) CompactLength)` newtype ->

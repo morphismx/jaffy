@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/cache.rs
+// JAFFY-UPSTREAM: src/tree/cache.rs
 // JAFFY-NOTE: `Cache` + private helpers
 //
 // u64/u32/u16/u8/usize -> long/int (GAP-014). `AtomicU16` -> `int` — atomics are

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/taffy_tree.rs
+// JAFFY-UPSTREAM: src/tree/taffy_tree.rs
 // JAFFY-NOTE: `TaffyError` enum
 // `impl Display`, merged with the Java `Err`-throwing carrier
 // (docs/porting/JAVA_API.md): upstream's `enum` variants map to nested

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/types/coordinates.rs
+// JAFFY-UPSTREAM: src/compute/grid/types/coordinates.rs
 // file-level constants. GridLine/OriginZeroLine/GridCoordinate/
 // LineOriginZeroLineExt live beside it in this package.
 //

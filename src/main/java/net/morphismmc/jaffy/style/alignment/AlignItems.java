@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/alignment.rs
+// JAFFY-UPSTREAM: src/style/alignment.rs
 // JAFFY-NOTE: `AlignItems`
 // `JustifyItems`/`AlignSelf`/`JustifySelf`, which are the same type in Rust).
 // serde/parse impls are feature-gated: deferred.

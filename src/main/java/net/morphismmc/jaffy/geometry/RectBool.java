@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `Rect<bool>` specialization
 // (SPECIALIZATIONS.md). The `impl Rect<T>` flexbox side pickers
 // (`main_start`/`main_end`/`cross_start`/`cross_end`, `pub(crate)` upstream)

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // JAFFY-NOTE: `impl Line<NonNamedGridPlacement>`
 // (alias of `GenericGridPlacement<GridLine>`; SPECIALIZATIONS Ext pattern).
 // Also hosts the `impl NonNamedGridPlacement` single-value impl.

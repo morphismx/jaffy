@@ -1,4 +1,4 @@
-// JAFFY: upstream=none
+// JAFFY-UPSTREAM: none
 // JAFFY-NOTE: bench support: deterministic xorshift64 RNG
 
 package net.morphismmc.jaffy.bench;

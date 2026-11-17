@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/implicit_grid.rs
+// JAFFY-UPSTREAM: src/compute/grid/implicit_grid.rs
 //
 // `pub(crate)` -> public; `ItemPlacement` alias ->
 // InBothAbsAxis<Line<GenericGridPlacement<OriginZeroLine>>>; the two n-tuple

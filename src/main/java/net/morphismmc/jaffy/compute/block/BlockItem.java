@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/block.rs
+// JAFFY-UPSTREAM: src/compute/block.rs
 // JAFFY-NOTE: private `BlockItem` struct
 //
 // `Option<f32>` -> `@Opt float`; `Option<AlignSelf>`/reference Options ->

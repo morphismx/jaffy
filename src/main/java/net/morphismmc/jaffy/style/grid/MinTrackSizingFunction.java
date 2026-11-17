@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // JAFFY-NOTE: `MinTrackSizingFunction`
 // (CompactLength newtype). serde/parse impls deferred.
 package net.morphismmc.jaffy.style.grid;

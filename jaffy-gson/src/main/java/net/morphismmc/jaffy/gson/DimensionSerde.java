@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/compact_length.rs
+// JAFFY-UPSTREAM: src/style/compact_length.rs
 // JAFFY-FROM: src/style/dimension.rs
 // JAFFY-FROM: src/style/grid.rs
 // JAFFY-NOTE: serde impls

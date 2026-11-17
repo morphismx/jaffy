@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `Size<f32>` specialization
 // (SPECIALIZATIONS.md). Generic Size<T> methods duplicated per GAP-006 rules.
 package net.morphismmc.jaffy.geometry;

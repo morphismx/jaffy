@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-FROM: src/tree/layout.rs
 // JAFFY-NOTE: `AbsoluteAxis` enum
 // Also hosts `impl TryFrom<RequestedAxis> for AbsoluteAxis` (defined in

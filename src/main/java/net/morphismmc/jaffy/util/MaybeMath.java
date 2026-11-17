@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/util/math.rs
+// JAFFY-UPSTREAM: src/util/math.rs
 // JAFFY-NOTE: `MaybeMath` trait impls
 //
 // The trait itself is erased in Java; impls are distributed onto the Self

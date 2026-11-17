@@ -1,4 +1,4 @@
-// JAFFY: upstream=benches/benches/relayout.rs
+// JAFFY-UPSTREAM: benches/benches/relayout.rs
 
 package net.morphismmc.jaffy.bench.relayout;
 

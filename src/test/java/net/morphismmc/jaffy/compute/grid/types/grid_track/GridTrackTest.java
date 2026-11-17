@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/types/grid_track.rs
+// JAFFY-UPSTREAM: src/compute/grid/types/grid_track.rs
 // JAFFY-NOTE: behavior tests for upstream
 // Upstream has no inline test module for this file; these cover the public
 // surface (constructors, collapse, predicates, fit-content limit, copy).

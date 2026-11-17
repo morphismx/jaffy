@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/float.rs
+// JAFFY-UPSTREAM: src/compute/float.rs
 // `impl Index<FloatDirection> for FloatInsets` and
 // `impl IndexMut<FloatDirection> for FloatInsets`.
 //

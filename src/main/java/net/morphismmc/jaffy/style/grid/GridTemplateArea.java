@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // JAFFY-NOTE: `GridTemplateArea<CustomIdent>`
 // `CustomIdent` -> `String` (GAP-017); `u16` -> `int` (GAP-014).
 package net.morphismmc.jaffy.style.grid;

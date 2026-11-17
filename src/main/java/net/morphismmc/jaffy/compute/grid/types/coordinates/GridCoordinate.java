@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/types/coordinates.rs
+// JAFFY-UPSTREAM: src/compute/grid/types/coordinates.rs
 // `GridCoordinate` marker trait. `Copy` bound erases; Java record
 // implementers are already value types.
 package net.morphismmc.jaffy.compute.grid.types.coordinates;

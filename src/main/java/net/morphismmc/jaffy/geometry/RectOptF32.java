@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `Rect<Option<f32>>` specialization
 // (SPECIALIZATIONS.md). Distinct type from RectF32 (GAP-006).
 package net.morphismmc.jaffy.geometry;

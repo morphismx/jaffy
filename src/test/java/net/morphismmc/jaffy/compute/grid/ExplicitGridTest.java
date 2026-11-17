@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/explicit_grid.rs
+// JAFFY-UPSTREAM: src/compute/grid/explicit_grid.rs
 // JAFFY-NOTE: `mod test`
 // `length(v)` -> TrackSizingFunction.fromLength(v) in template context
 // (upstream generic helper infers the target type);

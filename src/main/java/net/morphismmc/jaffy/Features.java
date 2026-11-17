@@ -1,4 +1,4 @@
-// JAFFY: upstream=none
+// JAFFY-UPSTREAM: none
 // JAFFY-NOTE: Java-side support type (no upstream counterpart)
 // Corresponds to: Cargo feature flags of upstream/Cargo.toml — GAP-007.
 //

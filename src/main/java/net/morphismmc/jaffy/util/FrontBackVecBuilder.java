@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/util/front_back_vec_builder.rs
+// JAFFY-UPSTREAM: src/util/front_back_vec_builder.rs
 //
 // Rust item correspondence:
 //   struct FrontBackVecBuilder<T>   -> FrontBackVecBuilder<T>

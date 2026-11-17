@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // `impl<T: GridCoordinate> Line<GenericGridPlacement<T>>` (generic impl →
 // generic static; SPECIALIZATIONS Ext pattern).
 package net.morphismmc.jaffy.style.grid;

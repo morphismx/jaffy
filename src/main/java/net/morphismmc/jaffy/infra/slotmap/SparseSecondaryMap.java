@@ -1,4 +1,4 @@
-// JAFFY: upstream=crate:slotmap:src/sparse_secondary.rs
+// JAFFY-UPSTREAM: crate:slotmap:src/sparse_secondary.rs
 // JAFFY-NOTE: (the APIs taffy uses — GAP-015)
 //
 // `HashMap<u32, Slot<V>>` -> fastutil Int2ObjectOpenHashMap keyed by the u32

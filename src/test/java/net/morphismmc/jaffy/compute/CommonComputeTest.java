@@ -1,4 +1,4 @@
-// JAFFY: upstream=none
+// JAFFY-UPSTREAM: none
 // JAFFY-NOTE: these files carry no upstream `mod tests`; this locks the observable
 // semantics of the ported helper functions (fallback order, packing, NaN-free
 // fast paths, measure routing).

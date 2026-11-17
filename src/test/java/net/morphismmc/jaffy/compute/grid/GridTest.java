@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/mod.rs
+// JAFFY-UPSTREAM: src/compute/grid/mod.rs
 // JAFFY-NOTE: behavior tests for upstream
 // upstream — these cover the observable contract of DetailedGridTracksInfo /
 // DetailedGridInfo / DetailedGridItemsInfo plus end-to-end computeGridLayout).

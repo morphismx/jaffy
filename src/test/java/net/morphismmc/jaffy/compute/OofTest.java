@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/oof.rs
+// JAFFY-UPSTREAM: src/compute/oof.rs
 // JAFFY-NOTE: `mod tests` — the 7
 // `resolve_static_offset` tests, verbatim.
 package net.morphismmc.jaffy.compute;

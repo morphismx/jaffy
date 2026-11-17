@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/flex.rs
+// JAFFY-UPSTREAM: src/style/flex.rs
 // JAFFY-NOTE: `mod tests::test_flex_direction`
 package net.morphismmc.jaffy.style;
 

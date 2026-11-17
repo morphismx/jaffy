@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // JAFFY-NOTE: `InvalidStringRepetitionValue`
 // (Display message preserved as `toString`; `std::error::Error` has no Java
 // counterpart).

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/implicit_grid.rs
+// JAFFY-UPSTREAM: src/compute/grid/implicit_grid.rs
 // JAFFY-NOTE: `mod tests`
 // (test_child_min_max_line + test_initial_grid_sizing).
 // `line(i)` -> GridPlacement.fromLineIndex; `span(n)` -> GridPlacement.fromSpan;

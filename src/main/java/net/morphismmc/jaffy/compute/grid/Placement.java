@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/placement.rs
+// JAFFY-UPSTREAM: src/compute/grid/placement.rs
 //
 // `pub(super)` -> public (called from compute.grid.mod / tests);
 // `ItemPlacement` alias -> List<InBothAbsAxis<Line<GenericGridPlacement<

@@ -1,4 +1,4 @@
-// JAFFY: upstream=none
+// JAFFY-UPSTREAM: none
 // JAFFY-NOTE: behavior checks for available_space.rs ports
 // Float, FloatDirection, Clear).
 package net.morphismmc.jaffy.style;

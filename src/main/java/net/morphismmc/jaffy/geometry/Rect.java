@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `Rect<T>` (generic record)
 //
 // `Rect<f32>` -> RectF32, `Rect<Option<f32>>` -> RectOptF32.

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/taffy_tree.rs
+// JAFFY-UPSTREAM: src/tree/taffy_tree.rs
 // JAFFY-NOTE: `TaffyConfig`
 //
 // `pub(crate) struct` -> package-private mutable class.

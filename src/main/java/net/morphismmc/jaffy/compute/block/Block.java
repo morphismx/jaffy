@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/block.rs
+// JAFFY-UPSTREAM: src/compute/block.rs
 // JAFFY-NOTE: CSS Block layout
 //
 // `float_layout`/`content_size` cargo features are always on (GAP-007).

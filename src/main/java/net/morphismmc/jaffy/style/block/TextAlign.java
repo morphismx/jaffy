@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/block.rs
+// JAFFY-UPSTREAM: src/style/block.rs
 // JAFFY-NOTE: `TextAlign`
 // plain enum). The BlockContainerStyle/BlockItemStyle traits land with
 // style/mod.rs (CoreStyle/Style). serde/parse impls are feature-gated: deferred.

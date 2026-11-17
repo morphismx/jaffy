@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/placement.rs
+// JAFFY-UPSTREAM: src/compute/grid/placement.rs
 // JAFFY-NOTE: `mod tests`
 // (mod test_placement_algorithm + 2 free tests).
 // `line(i)` -> GridPlacement.fromLineIndex; `span(n)` -> GridPlacement.fromSpan;

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/dimension.rs
+// JAFFY-UPSTREAM: src/style/dimension.rs
 // JAFFY-NOTE: `Dimension` (GAP-013)
 //
 // `impl Rect<Dimension>` (from_length/from_percent) lives in RectDimensionExt.

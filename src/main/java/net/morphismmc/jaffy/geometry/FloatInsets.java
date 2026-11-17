@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `FloatInsets`
 //
 // The distances that a horizontal band of space is inset from the left and

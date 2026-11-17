@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-UPSTREAM: src/tree/layout.rs
 // JAFFY-NOTE: `OofCandidate` struct
 // `NodeId` -> `long`, `u32` order -> `int` (GAP-014/GAP-015).
 package net.morphismmc.jaffy.tree.layout;

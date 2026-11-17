@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-UPSTREAM: src/tree/layout.rs
 // JAFFY-NOTE: serde impls
 //
 // Every type here derives `Serialize` only upstream — there is no Deserialize

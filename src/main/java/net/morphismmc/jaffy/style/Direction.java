@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/mod.rs
+// JAFFY-UPSTREAM: src/style/mod.rs
 // JAFFY-NOTE: `Direction`
 // needed by AlignItems.resolveSelfRelative). serde/parse impls deferred.
 package net.morphismmc.jaffy.style;

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/types/named.rs
+// JAFFY-UPSTREAM: src/compute/grid/types/named.rs
 // JAFFY-NOTE: `mod tests`
 // `DefaultCheapStr` -> `String`; `NonNamedGridPlacement` ->
 // `GenericGridPlacement<GridLine>`; `panic!` in tests -> `fail()`.

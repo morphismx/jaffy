@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/util/resolve.rs
+// JAFFY-UPSTREAM: src/util/resolve.rs
 // JAFFY-NOTE: `MaybeResolve`/`ResolveOrZero`
 // trait impls.
 //

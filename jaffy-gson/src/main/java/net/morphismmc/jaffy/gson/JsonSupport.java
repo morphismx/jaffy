@@ -1,4 +1,4 @@
-// JAFFY: upstream=none
+// JAFFY-UPSTREAM: none
 // JAFFY-NOTE: serde support — raw f32 emission via just's Ryu
 // format), enum unit-variant name mapping, u64 helpers. Gson 2.8.0 has no
 // JsonWriter.jsonValue, so raw numbers go through a Number subclass (Gson

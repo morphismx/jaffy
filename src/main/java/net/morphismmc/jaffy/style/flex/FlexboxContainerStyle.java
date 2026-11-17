@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/flex.rs
+// JAFFY-UPSTREAM: src/style/flex.rs
 // JAFFY-NOTE: `FlexboxContainerStyle` trait
 // (`flexbox`; `flexLineCount` is `flexbox_balance`, in the default set).
 // `impl ... for &T` has no Java counterpart.

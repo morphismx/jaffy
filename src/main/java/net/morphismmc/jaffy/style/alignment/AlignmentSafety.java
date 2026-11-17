@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/alignment.rs
+// JAFFY-UPSTREAM: src/style/alignment.rs
 // JAFFY-NOTE: `AlignmentSafety`
 package net.morphismmc.jaffy.style.alignment;
 

@@ -1,4 +1,4 @@
-// JAFFY: upstream=none
+// JAFFY-UPSTREAM: none
 // JAFFY-NOTE: unit tests for SlotMap/SparseSecondaryMap (GAP-015). Expected key
 // values are the rustc-1.96 + slotmap-1.1.1 measured sequence from GAPS.md.
 package net.morphismmc.jaffy.infra.slotmap;

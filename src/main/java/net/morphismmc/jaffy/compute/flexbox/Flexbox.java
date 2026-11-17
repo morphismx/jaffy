@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/flexbox.rs
+// JAFFY-UPSTREAM: src/compute/flexbox.rs
 // JAFFY-NOTE: the flexbox layout
 // algorithm (spec: <https://www.w3.org/TR/css-flexbox-1/>).
 //

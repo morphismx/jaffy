@@ -1,4 +1,4 @@
-// JAFFY: upstream=crate:slotmap:src/basic.rs
+// JAFFY-UPSTREAM: crate:slotmap:src/basic.rs
 // JAFFY-NOTE: (the APIs taffy uses — GAP-015)
 //
 // Keys are `long` (NodeId, GAP-015): high 32 bits = version (always odd),

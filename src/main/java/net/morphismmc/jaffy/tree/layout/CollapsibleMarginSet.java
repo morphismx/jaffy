@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-UPSTREAM: src/tree/layout.rs
 // JAFFY-NOTE: `CollapsibleMarginSet`
 // `f32_max`/`f32_min` -> `F32.max`/`f32Min` (GAP-002). serde impl deferred.
 package net.morphismmc.jaffy.tree.layout;

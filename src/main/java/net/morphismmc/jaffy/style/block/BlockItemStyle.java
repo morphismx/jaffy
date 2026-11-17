@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/block.rs
+// JAFFY-UPSTREAM: src/style/block.rs
 // JAFFY-NOTE: `BlockItemStyle` trait
 // (`block_layout`). The `float`/`clear` methods are `float_layout`-gated
 // upstream; `float_layout` is a default feature (Features.FLOAT_LAYOUT) so

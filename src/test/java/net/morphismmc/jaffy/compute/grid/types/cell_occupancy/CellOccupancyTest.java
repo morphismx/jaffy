@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/types/cell_occupancy.rs
+// JAFFY-UPSTREAM: src/compute/grid/types/cell_occupancy.rs
 // JAFFY-NOTE: `mod tests`
 // `Range<i16>` -> start/end ints; `Option` -> @Nullable; `SmallVec::spilled()`
 // has no Java equivalent (ArrayList has no inline capacity) — the semantic

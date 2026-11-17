@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/mod.rs
+// JAFFY-UPSTREAM: src/compute/grid/mod.rs
 // JAFFY-NOTE: `DetailedGridItemsInfo`
 //
 // `#[derive(Debug, Clone, PartialEq)]` -> record (equals/hashCode/toString)

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // JAFFY-FROM: src/compute/grid/types/coordinates.rs
 // JAFFY-NOTE: serde impls
 // src/compute/grid/types/coordinates.rs (GridLine).

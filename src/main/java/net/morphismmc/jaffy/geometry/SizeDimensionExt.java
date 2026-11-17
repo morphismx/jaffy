@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `impl Size<Dimension>` block
 // Per SPECIALIZATIONS.md: object type params keep generics; instance-specific
 // impl blocks become `<Generic><Arg>Ext` static classes.

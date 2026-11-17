@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `Line<f32>` specialization
 // (SPECIALIZATIONS.md). Generic Line<T> methods duplicated per GAP-006 rules.
 package net.morphismmc.jaffy.geometry;

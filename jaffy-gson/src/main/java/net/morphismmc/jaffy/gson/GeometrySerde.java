@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: serde impls
 //
 // `impl<T: Serialize> Serialize/Deserialize for Point/Size/Rect/Line<T>` and

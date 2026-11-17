@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/types/grid_item.rs
+// JAFFY-UPSTREAM: src/compute/grid/types/grid_item.rs
 // JAFFY-NOTE: `GridItem`
 // (`KnownDimensionsCacheEntry` is in its sibling file).
 //

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // JAFFY-NOTE: `GenericGridPlacement<LineType>`
 // and its type aliases OriginZeroGridPlacement/NonNamedGridPlacement
 // (Java has no aliases — instantiate the generic directly).

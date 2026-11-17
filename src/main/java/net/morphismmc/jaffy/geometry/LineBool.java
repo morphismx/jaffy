@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/geometry.rs
+// JAFFY-UPSTREAM: src/geometry.rs
 // JAFFY-NOTE: `Line<bool>` specialization
 // (SPECIALIZATIONS.md). `impl Line<bool>` contributes only TRUE/FALSE.
 package net.morphismmc.jaffy.geometry;

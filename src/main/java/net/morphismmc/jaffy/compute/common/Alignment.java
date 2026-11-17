@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/common/alignment.rs
+// JAFFY-UPSTREAM: src/compute/common/alignment.rs
 // JAFFY-NOTE: generic CSS
 // alignment code shared by the Flexbox and CSS Grid algorithms.
 //

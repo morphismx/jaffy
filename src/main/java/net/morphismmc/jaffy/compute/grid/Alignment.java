@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/alignment.rs
+// JAFFY-UPSTREAM: src/compute/grid/alignment.rs
 //
 // Three `pub(super)` functions + helpers map to static methods on this
 // class; (f32, Line<f32>) / (Rect,f32,f32,Option) tuples -> records

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-UPSTREAM: src/tree/layout.rs
 // JAFFY-NOTE: `AxisStaticPosition` struct
 // The `debug_assert!` on unresolved self-start/self-end maps to
 // `IllegalStateException` (GAP-010).

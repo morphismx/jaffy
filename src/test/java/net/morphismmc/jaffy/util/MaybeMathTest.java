@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/util/math.rs
+// JAFFY-UPSTREAM: src/util/math.rs
 // JAFFY-NOTE: `mod tests` — the three scalar
 // modules map 1:1, plus coverage for the Size-level blanket impls and
 // AvailableSpace impls that upstream leaves untested.

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-UPSTREAM: src/tree/layout.rs
 // JAFFY-NOTE: `RequestedAxis` enum
 //
 // `From<AbsoluteAxis>` -> static `from`; `TryFrom<RequestedAxis> for

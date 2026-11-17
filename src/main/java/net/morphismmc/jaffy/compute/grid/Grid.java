@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/mod.rs
+// JAFFY-UPSTREAM: src/compute/grid/mod.rs
 // JAFFY-NOTE: the module root file, so
 // its top-level items live directly in the compute.grid package (module-root
 // convention; only types/mod.rs-style multi-class FILES spawn a subpackage).

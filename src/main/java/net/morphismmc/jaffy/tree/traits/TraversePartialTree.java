@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/traits.rs
+// JAFFY-UPSTREAM: src/tree/traits.rs
 // JAFFY-NOTE: `TraversePartialTree` trait
 //
 // GAT `ChildIter<'a>: Iterator<Item = NodeId>` -> fastutil `LongIterator`

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/grid.rs
+// JAFFY-UPSTREAM: src/style/grid.rs
 // JAFFY-NOTE: `MaxTrackSizingFunction`
 // (CompactLength newtype, same Primitive/Calc representation as Dimension).
 // serde/parse impls deferred.

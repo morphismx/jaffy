@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/alignment.rs
+// JAFFY-UPSTREAM: src/style/alignment.rs
 // JAFFY-NOTE: `AlignContentKeyword`
 package net.morphismmc.jaffy.style.alignment;
 

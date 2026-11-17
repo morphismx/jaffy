@@ -1,4 +1,4 @@
-// JAFFY: upstream=benches/benches/node_context.rs
+// JAFFY-UPSTREAM: benches/benches/node_context.rs
 
 package net.morphismmc.jaffy.bench.node_context;
 

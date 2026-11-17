@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/traits.rs
+// JAFFY-UPSTREAM: src/tree/traits.rs
 // JAFFY-NOTE: `LayoutFlexboxContainer`
 // trait (`flexbox` feature).
 //

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/flexbox.rs
+// JAFFY-UPSTREAM: src/compute/flexbox.rs
 // JAFFY-NOTE: the line-balancing phase
 
 package net.morphismmc.jaffy.compute.flexbox;

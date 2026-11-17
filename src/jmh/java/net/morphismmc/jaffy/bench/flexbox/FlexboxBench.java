@@ -1,4 +1,4 @@
-// JAFFY: upstream=benches/benches/flexbox.rs
+// JAFFY-UPSTREAM: benches/benches/flexbox.rs
 
 package net.morphismmc.jaffy.bench.flexbox;
 

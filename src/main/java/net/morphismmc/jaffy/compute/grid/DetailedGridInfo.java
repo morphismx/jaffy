@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/compute/grid/mod.rs
+// JAFFY-UPSTREAM: src/compute/grid/mod.rs
 // `DetailedGridInfo<S: CheapCloneStr>` (specialised to String, GAP-017).
 //
 // `impl fmt::Write` -> StringBuilder (infallible); `Option<(Point, Size)>`

@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/tree/taffy_tree.rs
+// JAFFY-UPSTREAM: src/tree/taffy_tree.rs
 // JAFFY-NOTE: `TaffyTree<NodeContext>`
 // and its TraversePartialTree/TraverseTree/CacheTree/PrintTree impls.
 //

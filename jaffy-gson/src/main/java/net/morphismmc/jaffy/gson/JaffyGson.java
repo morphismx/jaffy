@@ -1,4 +1,4 @@
-// JAFFY: upstream=none
+// JAFFY-UPSTREAM: none
 // JAFFY-NOTE: entry point of the `serde` feature port — a Gson configured to
 // produce serde_json-identical JSON for every serde-decorated upstream type.
 //

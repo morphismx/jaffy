@@ -1,4 +1,4 @@
-// JAFFY: upstream=src/style/dimension.rs
+// JAFFY-UPSTREAM: src/style/dimension.rs
 // JAFFY-NOTE: `LengthPercentageAuto` (GAP-013)
 package net.morphismmc.jaffy.style.dimension;
 
