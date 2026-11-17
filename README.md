@@ -1,8 +1,12 @@
-# jaffy
+<p align="center">
+  <img src="assets/logo.svg" alt="jaffy" width="480">
+</p>
 
-A byte-level Java port of [taffy](https://github.com/DioxusLabs/taffy) —
-the Rust UI layout library — targeting **taffy 0.15.0 + 50 commits**
-(upstream baseline `1abd8eea`, `git describe`: `v0.15.0-50-g1abd8eea`).
+<p align="center">
+  A byte-level Java port of <a href="https://github.com/DioxusLabs/taffy">taffy</a> —
+  the Rust UI layout library — targeting <b>taffy 0.15.0 + 50 commits</b>
+  (upstream baseline <code>1abd8eea</code>, <code>git describe</code>: <code>v0.15.0-50-g1abd8eea</code>).
+</p>
 
 jaffy computes layout trees for **flexbox**, **grid**, and **block**
 containers, with incremental re-layout through upstream's exact layout-
