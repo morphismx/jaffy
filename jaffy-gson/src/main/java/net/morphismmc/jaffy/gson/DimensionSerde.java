@@ -1,4 +1,7 @@
-// JAFFY: serde impls of upstream/src/style/compact_length.rs +
+// JAFFY: upstream=src/style/compact_length.rs
+// JAFFY-FROM: src/style/dimension.rs
+// JAFFY-FROM: src/style/grid.rs
+// JAFFY-NOTE: serde impls
 // src/style/dimension.rs + the Min/MaxTrackSizingFunction Deserialize impls of
 // src/style/grid.rs.
 //

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/mod.rs — `DetailedGridItemsInfo`.
+// JAFFY: upstream=src/compute/grid/mod.rs
+// JAFFY-NOTE: `DetailedGridItemsInfo`
 //
 // `#[derive(Debug, Clone, PartialEq)]` -> record (equals/hashCode/toString)
 // + copy(). u16 -> int (GAP-014).

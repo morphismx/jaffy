@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/alignment.rs — `AlignItems` (and aliases
+// JAFFY: upstream=src/style/alignment.rs
+// JAFFY-NOTE: `AlignItems`
 // `JustifyItems`/`AlignSelf`/`JustifySelf`, which are the same type in Rust).
 // serde/parse impls are feature-gated: deferred.
 package net.morphismmc.jaffy.style.alignment;

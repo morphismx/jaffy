@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/types/named.rs — `GridLineNames`.
+// JAFFY: upstream=src/compute/grid/types/named.rs
+// JAFFY-NOTE: `GridLineNames`
 //
 // `S: CheapCloneStr` -> `String` (DefaultCheapStr = String, GAP-017); `u32`/
 // `usize` -> int (GAP-014). `Vec<S>` -> List<String>; `Vec<u32>` ->

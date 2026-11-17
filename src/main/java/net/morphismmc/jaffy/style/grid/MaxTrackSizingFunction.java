@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `MaxTrackSizingFunction`
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `MaxTrackSizingFunction`
 // (CompactLength newtype, same Primitive/Calc representation as Dimension).
 // serde/parse impls deferred.
 package net.morphismmc.jaffy.style.grid;

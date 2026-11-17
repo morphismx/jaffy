@@ -1,3 +1,6 @@
+// JAFFY: upstream=src/compute/flexbox.rs
+// JAFFY-NOTE: `FlexItem`
+
 package net.morphismmc.jaffy.compute.flexbox;
 
 import net.morphismmc.jaffy.geometry.Point;

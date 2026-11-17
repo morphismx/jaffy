@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/dimension.rs — `LengthPercentageAuto` (GAP-013).
+// JAFFY: upstream=src/style/dimension.rs
+// JAFFY-NOTE: `LengthPercentageAuto` (GAP-013)
 package net.morphismmc.jaffy.style.dimension;
 
 import net.morphismmc.jaffy.style.CompactBits;

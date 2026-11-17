@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/grid/types/grid_track_counts.rs —
+// JAFFY: upstream=src/compute/grid/types/grid_track_counts.rs
 // `TrackCounts` (pub(crate) in Rust) + coordinate conversion impls.
 // `Range<i16>` -> nested `TrackRange` record (JDK has no int-range type).
 package net.morphismmc.jaffy.compute.grid.types;

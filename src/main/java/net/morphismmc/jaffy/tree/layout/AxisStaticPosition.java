@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `AxisStaticPosition` struct.
+// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-NOTE: `AxisStaticPosition` struct
 // The `debug_assert!` on unresolved self-start/self-end maps to
 // `IllegalStateException` (GAP-010).
 package net.morphismmc.jaffy.tree.layout;

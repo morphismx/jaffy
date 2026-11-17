@@ -1,4 +1,5 @@
-// JAFFY: behavior checks for float.rs ports (FloatContext, ContentSlot, BfcSlot,
+// JAFFY: upstream=none
+// JAFFY-NOTE: behavior checks for float.rs ports
 // PlacedFloatedBox, FloatIntrinsicWidthCalculator). Upstream has no inline unit
 // tests; floats.rs hand-written cases require the L8 TaffyTree layer.
 package net.morphismmc.jaffy.compute.float_;

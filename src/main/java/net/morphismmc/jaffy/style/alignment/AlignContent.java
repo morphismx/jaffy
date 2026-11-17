@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/alignment.rs — `AlignContent` (and alias
+// JAFFY: upstream=src/style/alignment.rs
+// JAFFY-NOTE: `AlignContent`
 // `JustifyContent`, the same type in Rust). serde/parse impls deferred.
 package net.morphismmc.jaffy.style.alignment;
 

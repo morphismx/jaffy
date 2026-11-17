@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/common/scrollable_overflow.rs —
+// JAFFY: upstream=src/compute/common/scrollable_overflow.rs
 // generic CSS scrollable overflow code shared by all CSS algorithms
 // (`content_size` feature).
 //

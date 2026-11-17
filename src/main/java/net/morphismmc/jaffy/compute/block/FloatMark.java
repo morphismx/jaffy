@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/block.rs — `FloatMark` (`float_layout`
+// JAFFY: upstream=src/compute/block.rs
+// JAFFY-NOTE: `FloatMark`
 // feature is always on).
 package net.morphismmc.jaffy.compute.block;
 

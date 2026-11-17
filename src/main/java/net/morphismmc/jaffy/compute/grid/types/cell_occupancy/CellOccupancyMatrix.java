@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/grid/types/cell_occupancy.rs —
+// JAFFY: upstream=src/compute/grid/types/cell_occupancy.rs
 // `CellOccupancyMatrix`.
 //
 // `pub(crate)` -> public; `Vec<TrackIntervals>` -> ArrayList;

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/mod.rs — `Contain` u8 bitflag struct
+// JAFFY: upstream=src/style/mod.rs
+// JAFFY-NOTE: `Contain` u8 bitflag struct
 // (u8 -> int per GAP-014; BitOr/BitOrAssign -> `or`).
 // The `parse` impl is deferred with the feature.
 package net.morphismmc.jaffy.style;

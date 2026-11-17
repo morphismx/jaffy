@@ -1,4 +1,5 @@
-// JAFFY: serde impls of upstream/src/geometry.rs.
+// JAFFY: upstream=src/geometry.rs
+// JAFFY-NOTE: serde impls
 //
 // `impl<T: Serialize> Serialize/Deserialize for Point/Size/Rect/Line<T>` and
 // `MinMax<Min, Max>` map to TypeAdapterFactory adapters that resolve the

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/mod.rs — `OofItemStyle` trait.
+// JAFFY: upstream=src/style/mod.rs
+// JAFFY-NOTE: `OofItemStyle` trait
 // `AlignSelf` is an alias of `AlignItems` upstream; `Option<AlignSelf>` is a
 // `@Nullable AlignItems` (GAP-001). `impl OofItemStyle for &T` has no Java
 // counterpart.

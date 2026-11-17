@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/dimension.rs — `ExpandedLengthPercentage`.
+// JAFFY: upstream=src/style/dimension.rs
+// JAFFY-NOTE: `ExpandedLengthPercentage`
 //
 // Rust enum -> sealed interface with per-variant records (GAP-005/-013 style).
 package net.morphismmc.jaffy.style.dimension;

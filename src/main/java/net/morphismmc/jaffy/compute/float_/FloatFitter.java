@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/float.rs — `FloatFitter` (module-private).
+// JAFFY: upstream=src/compute/float.rs
+// JAFFY-NOTE: `FloatFitter` (module-private)
 //
 // `slot_height` is `f64` upstream (`as f64` widening) -> `double` (GAP-008).
 package net.morphismmc.jaffy.compute.float_;

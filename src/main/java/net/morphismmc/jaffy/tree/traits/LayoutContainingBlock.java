@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `LayoutContainingBlock` trait.
+// JAFFY: upstream=src/tree/traits.rs
+// JAFFY-NOTE: `LayoutContainingBlock` trait
 //
 // GAT `OofItemStyle<'a>` -> `Style` (GAP-017); `&[NodeId]` -> `long[]`;
 // `&DetailedLayoutInfo` -> `DetailedLayoutInfo` (immutable, shared reference).

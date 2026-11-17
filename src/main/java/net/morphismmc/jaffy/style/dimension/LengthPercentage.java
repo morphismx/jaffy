@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/dimension.rs — `LengthPercentage` (GAP-013).
+// JAFFY: upstream=src/style/dimension.rs
+// JAFFY-NOTE: `LengthPercentage` (GAP-013)
 //
 // Rust `pub struct LengthPercentage(pub(crate) CompactLength)` newtype ->
 // sealed interface with Primitive(bits)/Calc(bits, calc) records, same bit

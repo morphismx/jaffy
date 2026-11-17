@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/types/named.rs `mod tests`.
+// JAFFY: upstream=src/compute/grid/types/named.rs
+// JAFFY-NOTE: `mod tests`
 // `DefaultCheapStr` -> `String`; `NonNamedGridPlacement` ->
 // `GenericGridPlacement<GridLine>`; `panic!` in tests -> `fail()`.
 package net.morphismmc.jaffy.compute.grid.types.named;

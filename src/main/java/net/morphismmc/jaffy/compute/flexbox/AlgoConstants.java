@@ -1,3 +1,6 @@
+// JAFFY: upstream=src/compute/flexbox.rs
+// JAFFY-NOTE: the `Constants`-style algorithm constants struct
+
 package net.morphismmc.jaffy.compute.flexbox;
 
 import net.morphismmc.jaffy.geometry.PointBool;

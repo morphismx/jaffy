@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/mod.rs — `Style<S>` struct and its
+// JAFFY: upstream=src/style/mod.rs
+// JAFFY-NOTE: `Style<S>` struct and its
 // CoreStyle/OofItemStyle/Block{Container,Item}Style/Flexbox{Container,Item}
 // Style/Grid{Container,Item}Style impls.
 //

@@ -1,4 +1,5 @@
-// JAFFY: serde impls of upstream/src/tree/layout.rs.
+// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-NOTE: serde impls
 //
 // Every type here derives `Serialize` only upstream — there is no Deserialize
 // impl, so the read side fails (a JsonParseException is the runtime equivalent

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/alignment.rs — `AlignmentSafety`.
+// JAFFY: upstream=src/style/alignment.rs
+// JAFFY-NOTE: `AlignmentSafety`
 package net.morphismmc.jaffy.style.alignment;
 
 /// The overflow-position modifier per [CSS Box Alignment §4.3][css-align-overflow].

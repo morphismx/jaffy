@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/types/grid_item.rs — `GridItem`
+// JAFFY: upstream=src/compute/grid/types/grid_item.rs
+// JAFFY-NOTE: `GridItem`
 // (`KnownDimensionsCacheEntry` is in its sibling file).
 //
 // `pub(in super::super)` -> public (callers in compute.grid.* siblings);

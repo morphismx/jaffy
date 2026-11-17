@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `GenericRepetition` trait.
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `GenericRepetition` trait
 // Upstream uses generic associated iterator types (`RepetitionTrackList`,
 // `TemplateLineNames`); in Java these are represented as `List`s, which
 // preserve the exact-size contract. The `TemplateLineNames` trait itself is

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `PrintTree` trait.
+// JAFFY: upstream=src/tree/traits.rs
+// JAFFY-NOTE: `PrintTree` trait
 //
 // `&'static str` -> `String`.
 package net.morphismmc.jaffy.tree.traits;

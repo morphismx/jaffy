@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `FloatInsets`.
+// JAFFY: upstream=src/geometry.rs
+// JAFFY-NOTE: `FloatInsets`
 //
 // The distances that a horizontal band of space is inset from the left and
 // right edges of a container. Used for the space taken up by floats, and for

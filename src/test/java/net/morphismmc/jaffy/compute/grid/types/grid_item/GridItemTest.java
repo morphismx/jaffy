@@ -1,4 +1,5 @@
-// JAFFY: grid_item.rs has no upstream test module. These tests cover the
+// JAFFY: upstream=none
+// JAFFY-NOTE: grid_item.rs has no upstream test module. These tests cover the
 // observable contracts of the ported methods: field population, axis dispatch,
 // the Option-chain semantics of the contribution methods (incl. laziness and
 // caching), and the track-range indexing convention.

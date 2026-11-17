@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/dimension.rs — `Dimension` (GAP-013).
+// JAFFY: upstream=src/style/dimension.rs
+// JAFFY-NOTE: `Dimension` (GAP-013)
 //
 // `impl Rect<Dimension>` (from_length/from_percent) lives in RectDimensionExt.
 // serde/parse impls are feature-gated: deferred.

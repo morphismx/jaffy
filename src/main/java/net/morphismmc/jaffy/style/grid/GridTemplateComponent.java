@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `GridTemplateComponent<S>` enum
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `GridTemplateComponent<S>` enum
 // and its impls. Upstream's owned enum is isomorphic to
 // `GenericGridTemplateComponent<S, GridTemplateRepetition<S>>`; in Java the
 // value type is `GenericGridTemplateComponent<GridTemplateRepetition>`

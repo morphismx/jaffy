@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/util/math.rs `mod tests` — the three scalar
+// JAFFY: upstream=src/util/math.rs
+// JAFFY-NOTE: `mod tests` — the three scalar
 // modules map 1:1, plus coverage for the Size-level blanket impls and
 // AvailableSpace impls that upstream leaves untested.
 package net.morphismmc.jaffy.util;

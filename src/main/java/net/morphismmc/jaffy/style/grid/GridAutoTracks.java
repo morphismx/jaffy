@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `GridAutoTracks(pub Vec<TrackSizingFunction>)`
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `GridAutoTracks(pub Vec<TrackSizingFunction>)`
 // (doc-hidden upstream). The `parse`/`FromStr` impls are deferred with the feature.
 package net.morphismmc.jaffy.style.grid;
 

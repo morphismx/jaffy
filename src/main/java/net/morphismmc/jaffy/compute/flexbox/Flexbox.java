@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/flexbox.rs — the flexbox layout
+// JAFFY: upstream=src/compute/flexbox.rs
+// JAFFY-NOTE: the flexbox layout
 // algorithm (spec: <https://www.w3.org/TR/css-flexbox-1/>).
 //
 // Upstream `#[cfg(feature = "flexbox_balance")]` items (`is_balance`,

@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/style_helpers.rs.
+// JAFFY: upstream=src/style_helpers.rs
 //
 // Rust traits (TaffyZero/TaffyAuto/TaffyMinContent/TaffyMaxContent/
 // TaffyFitContent/FromLength/FromPercent/FromFr/TaffyGridLine/TaffyGridSpan)

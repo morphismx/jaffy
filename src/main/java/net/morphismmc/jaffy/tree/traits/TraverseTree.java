@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `TraverseTree` marker trait.
+// JAFFY: upstream=src/tree/traits.rs
+// JAFFY-NOTE: `TraverseTree` marker trait
 package net.morphismmc.jaffy.tree.traits;
 
 /// A marker trait which extends {@link TraversePartialTree}.

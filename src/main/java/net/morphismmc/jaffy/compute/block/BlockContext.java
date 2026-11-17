@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/block.rs — `BlockContext<'_>`
+// JAFFY: upstream=src/compute/block.rs
+// JAFFY-NOTE: `BlockContext<'_>`
 // (`float_layout` feature always on).
 //
 // Rust `&'bfc mut BlockFormattingContext` -> a direct reference; root and

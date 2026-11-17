@@ -1,4 +1,6 @@
-// JAFFY: serde impls of upstream/src/style/grid.rs +
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-FROM: src/compute/grid/types/coordinates.rs
+// JAFFY-NOTE: serde impls
 // src/compute/grid/types/coordinates.rs (GridLine).
 //
 // Enum wire shapes are serde's default external tagging: unit variants as

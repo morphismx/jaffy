@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/types/grid_track.rs — `GridTrack`.
+// JAFFY: upstream=src/compute/grid/types/grid_track.rs
+// JAFFY-NOTE: `GridTrack`
 //
 // `pub(in super::super)` -> public; Clone -> copy() (all fields are
 // immutable/value types so a field-wise copy suffices) (GAP-005).

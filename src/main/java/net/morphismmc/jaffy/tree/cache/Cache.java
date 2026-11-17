@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/cache.rs — `Cache` + private helpers.
+// JAFFY: upstream=src/tree/cache.rs
+// JAFFY-NOTE: `Cache` + private helpers
 //
 // u64/u32/u16/u8/usize -> long/int (GAP-014). `AtomicU16` -> `int` — atomics are
 // unnecessary: `cache_get` is `&self` upstream only because Rust forbids

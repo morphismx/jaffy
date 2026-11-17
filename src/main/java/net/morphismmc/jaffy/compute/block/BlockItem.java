@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/block.rs — private `BlockItem` struct.
+// JAFFY: upstream=src/compute/block.rs
+// JAFFY-NOTE: private `BlockItem` struct
 //
 // `Option<f32>` -> `@Opt float`; `Option<AlignSelf>`/reference Options ->
 // `@Nullable`; `NodeId`/`u32`/`u64` -> `long`/`int` (GAP-001/006/014/017).

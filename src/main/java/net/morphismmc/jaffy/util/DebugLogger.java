@@ -1,4 +1,4 @@
-// JAFFY: upstream/src/util/debug.rs -> net.morphismmc.jaffy.util.DebugLogger
+// JAFFY: upstream=src/util/debug.rs
 // Ported at L0 per WORKFLOW.md §2 cycle note (only the Features wiring remains L9).
 //
 // Rust item correspondence:

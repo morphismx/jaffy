@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/taffy_tree.rs — `TaffyError` enum +
+// JAFFY: upstream=src/tree/taffy_tree.rs
+// JAFFY-NOTE: `TaffyError` enum
 // `impl Display`, merged with the Java `Err`-throwing carrier
 // (docs/porting/JAVA_API.md): upstream's `enum` variants map to nested
 // `final` subclasses of this `sealed` exception — `TaffyError::

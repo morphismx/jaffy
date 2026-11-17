@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `AxisStaticAlign` struct.
+// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-NOTE: `AxisStaticAlign` struct
 package net.morphismmc.jaffy.tree.layout;
 
 import net.morphismmc.jaffy.style.alignment.AlignmentSafety;

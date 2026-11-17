@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/style/grid.rs —
+// JAFFY: upstream=src/style/grid.rs
 // `type TrackSizingFunction = MinMax<MinTrackSizingFunction, MaxTrackSizingFunction>`
 // and its impl block. A Java class cannot alias a generic instantiation, so
 // the associated items live as statics here and values stay

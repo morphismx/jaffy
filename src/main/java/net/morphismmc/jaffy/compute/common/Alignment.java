@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/common/alignment.rs — generic CSS
+// JAFFY: upstream=src/compute/common/alignment.rs
+// JAFFY-NOTE: generic CSS
 // alignment code shared by the Flexbox and CSS Grid algorithms.
 //
 // `pub(crate)` fns -> public static methods on a class named for the module

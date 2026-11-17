@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/mod.rs — `ContainingBlockClaims` struct.
+// JAFFY: upstream=src/style/mod.rs
+// JAFFY-NOTE: `ContainingBlockClaims` struct
 package net.morphismmc.jaffy.style;
 
 /// Which out-of-flow positions a node establishes a containing block for.

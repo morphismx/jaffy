@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/taffy_tree.rs — `TaffyView` and its trait
+// JAFFY: upstream=src/tree/taffy_tree.rs
+// JAFFY-NOTE: `TaffyView` and its trait
 // impls (TraversePartialTree, TraverseTree, LayoutPartialTree,
 // LayoutContainingBlock, CacheTree, LayoutBlockContainer,
 // LayoutFlexboxContainer, LayoutGridContainer, RoundTree).

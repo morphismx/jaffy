@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/dimension.rs — `ExpandedDimension`.
+// JAFFY: upstream=src/style/dimension.rs
+// JAFFY-NOTE: `ExpandedDimension`
 package net.morphismmc.jaffy.style.dimension;
 
 public sealed interface ExpandedDimension {

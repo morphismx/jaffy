@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/mod.rs — the layout dispatcher.
+// JAFFY: upstream=src/compute/mod.rs
+// JAFFY-NOTE: the layout dispatcher
 //
 // `mod detailed_info` is a re-export-only module: nothing to port (JAFFY
 // callers import the grid classes directly). `impl LayoutContainingBlock +

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `GenericGridPlacement<LineType>`
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `GenericGridPlacement<LineType>`
 // and its type aliases OriginZeroGridPlacement/NonNamedGridPlacement
 // (Java has no aliases — instantiate the generic directly).
 package net.morphismmc.jaffy.style.grid;

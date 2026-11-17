@@ -1,4 +1,5 @@
-// JAFFY: no upstream inline tests in alignment.rs — these are behavior
+// JAFFY: upstream=none
+// JAFFY-NOTE: no upstream inline tests in alignment.rs — these are behavior
 // tests on the observable contracts of align_tracks / align_item_within_area
 // / relative_offset (added per porting workflow for untested items).
 package net.morphismmc.jaffy.compute.grid;

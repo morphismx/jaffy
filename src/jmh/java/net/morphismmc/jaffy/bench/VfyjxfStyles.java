@@ -1,3 +1,6 @@
+// JAFFY: upstream=benches/src/lib.rs
+// JAFFY-NOTE: `GenStyle` impl for vfyjxf
+
 package net.morphismmc.jaffy.bench;
 
 import java.util.ArrayList;

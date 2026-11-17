@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `Point<Option<f32>>` specialization
+// JAFFY: upstream=src/geometry.rs
+// JAFFY-NOTE: `Point<Option<f32>>` specialization
 // (SPECIALIZATIONS.md). Distinct type from PointF32 (GAP-006).
 package net.morphismmc.jaffy.geometry;
 

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `ScrollableOverflow`.
+// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-NOTE: `ScrollableOverflow`
 // The reversal flags are packed into the sign bits of the stored right/bottom.
 // serde impl deferred; `debug_assert!` omitted (release behaviour, GAP-010
 // convention). `PartialEq` compares `to_bits` — `equals` uses

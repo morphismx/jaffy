@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/dimension.rs — `ExpandedLengthPercentageAuto`.
+// JAFFY: upstream=src/style/dimension.rs
+// JAFFY-NOTE: `ExpandedLengthPercentageAuto`
 package net.morphismmc.jaffy.style.dimension;
 
 public sealed interface ExpandedLengthPercentageAuto {

@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/grid/types/grid_item.rs —
+// JAFFY: upstream=src/compute/grid/types/grid_item.rs
 // `KnownDimensionsCacheEntry` (`pub(in super::super)` with private fields ->
 // package-private record; `Size<Option<f32>>` -> SizeOptF32, GAP-001).
 package net.morphismmc.jaffy.compute.grid.types.grid_item;

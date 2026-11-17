@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/util/test_helpers.rs — test-only
+// JAFFY: upstream=src/compute/grid/util/test_helpers.rs
+// JAFFY-NOTE: test-only
 // helpers (`#[cfg(test)] pub(super)` upstream -> src/test/java here).
 //
 // The three traits (`CreateParentTestNode`, `CreateChildTestNode`,

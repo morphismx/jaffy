@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `impl Line<GridPlacement<S>>`
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `impl Line<GridPlacement<S>>`
 // blocks (SPECIALIZATIONS Ext pattern; CustomIdent=String per GAP-017).
 package net.morphismmc.jaffy.style.grid;
 

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `GridTemplateAreas<CustomIdent>`.
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `GridTemplateAreas<CustomIdent>`
 // `CustomIdent: CheapCloneStr` -> `String` (GAP-017); `GridTrackVec` = `Vec`
 // -> `List`; `u16` -> `int` (GAP-014). Implements `Iterable<GridTemplateArea>`
 // so it can satisfy `GridContainerStyle#gridTemplateAreas` (the upstream

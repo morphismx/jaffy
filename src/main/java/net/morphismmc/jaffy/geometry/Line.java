@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `Line<T>` (generic record).
+// JAFFY: upstream=src/geometry.rs
+// JAFFY-NOTE: `Line<T>` (generic record)
 package net.morphismmc.jaffy.geometry;
 
 import java.util.function.BiFunction;

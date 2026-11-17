@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `CacheTree` trait.
+// JAFFY: upstream=src/tree/traits.rs
+// JAFFY-NOTE: `CacheTree` trait
 //
 // `&LayoutInput` -> `LayoutInput` (immutable record); `Option<LayoutOutput>`
 // -> `@Nullable`.

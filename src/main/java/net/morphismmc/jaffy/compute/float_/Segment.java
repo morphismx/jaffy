@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/float.rs — `Segment` (module-private).
+// JAFFY: upstream=src/compute/float.rs
+// JAFFY-NOTE: `Segment` (module-private)
 //
 // `y: Range<f32>` is stored as mutable `yStart`/`yEnd` fields;
 // `has_float: [bool; 2]` is a `boolean[2]` (cloned on `copy()`).

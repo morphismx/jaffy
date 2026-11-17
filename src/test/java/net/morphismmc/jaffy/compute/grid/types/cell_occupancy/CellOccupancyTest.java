@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/types/cell_occupancy.rs `mod tests`.
+// JAFFY: upstream=src/compute/grid/types/cell_occupancy.rs
+// JAFFY-NOTE: `mod tests`
 // `Range<i16>` -> start/end ints; `Option` -> @Nullable; `SmallVec::spilled()`
 // has no Java equivalent (ArrayList has no inline capacity) — the semantic
 // content of `!spilled()` is "at most 2 intervals remain after merging".

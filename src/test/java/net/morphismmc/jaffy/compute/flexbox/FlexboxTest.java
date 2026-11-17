@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/flexbox.rs `mod balance`'s
+// JAFFY: upstream=src/compute/flexbox.rs
+// JAFFY-NOTE: `mod balance`'s
 // `mod tests` — `zero_sized_item_rule` and `matches_naive_dp`, including
 // the `naive_line_item_counts` O(n²) oracle and its helpers.
 package net.morphismmc.jaffy.compute.flexbox;

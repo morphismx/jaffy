@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/float.rs — `BfcSlot`.
+// JAFFY: upstream=src/compute/float.rs
+// JAFFY-NOTE: `BfcSlot`
 package net.morphismmc.jaffy.compute.float_;
 
 import net.morphismmc.just.math.Opt;

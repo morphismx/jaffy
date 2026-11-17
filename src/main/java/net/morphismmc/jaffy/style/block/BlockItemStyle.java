@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/block.rs — `BlockItemStyle` trait
+// JAFFY: upstream=src/style/block.rs
+// JAFFY-NOTE: `BlockItemStyle` trait
 // (`block_layout`). The `float`/`clear` methods are `float_layout`-gated
 // upstream; `float_layout` is a default feature (Features.FLOAT_LAYOUT) so
 // they are always present. `float` is a Java keyword -> `floatValue`

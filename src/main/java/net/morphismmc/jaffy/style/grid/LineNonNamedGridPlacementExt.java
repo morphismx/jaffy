@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `impl Line<NonNamedGridPlacement>`
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `impl Line<NonNamedGridPlacement>`
 // (alias of `GenericGridPlacement<GridLine>`; SPECIALIZATIONS Ext pattern).
 // Also hosts the `impl NonNamedGridPlacement` single-value impl.
 package net.morphismmc.jaffy.style.grid;

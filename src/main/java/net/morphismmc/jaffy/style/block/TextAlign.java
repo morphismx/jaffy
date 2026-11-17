@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/block.rs — `TextAlign` (GAP-004/005 note:
+// JAFFY: upstream=src/style/block.rs
+// JAFFY-NOTE: `TextAlign`
 // plain enum). The BlockContainerStyle/BlockItemStyle traits land with
 // style/mod.rs (CoreStyle/Style). serde/parse impls are feature-gated: deferred.
 package net.morphismmc.jaffy.style.block;

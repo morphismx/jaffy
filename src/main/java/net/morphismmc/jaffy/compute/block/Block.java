@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/block.rs — CSS Block layout.
+// JAFFY: upstream=src/compute/block.rs
+// JAFFY-NOTE: CSS Block layout
 //
 // `float_layout`/`content_size` cargo features are always on (GAP-007).
 // `Option<f32>` -> `@Opt float` (GAP-006); reference Options -> `@Nullable`;

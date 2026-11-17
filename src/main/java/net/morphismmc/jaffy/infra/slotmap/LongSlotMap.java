@@ -1,4 +1,5 @@
-// JAFFY: primitive-long specialization of {@link SlotMap} for
+// JAFFY: upstream=none
+// JAFFY-NOTE: primitive-long specialization of {@link SlotMap} for
 // `SlotMap<Option<NodeId>>` (the `parents` map in TaffyTree). The value
 // `0L` is the `Option<NodeId>::None` sentinel — a NodeId's `as_ffi` always
 // has a nonzero version half, so 0 is never a valid stored NodeId

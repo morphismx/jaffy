@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/float.rs — `FloatContext` +
+// JAFFY: upstream=src/compute/float.rs
+// JAFFY-NOTE: `FloatContext`
 // `FIT_TOLERANCE` + `float_fits_horizontally` (module items).
 //
 // Type mappings:

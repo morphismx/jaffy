@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/taffy_tree.rs — `NodeData`.
+// JAFFY: upstream=src/tree/taffy_tree.rs
+// JAFFY-NOTE: `NodeData`
 //
 // private struct -> package-private mutable class; `Copy`/`Clone`-style
 // field rewrites reassign the immutable records (Layout/DetailedLayoutInfo);

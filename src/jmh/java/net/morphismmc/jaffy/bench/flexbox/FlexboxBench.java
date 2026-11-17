@@ -1,3 +1,5 @@
+// JAFFY: upstream=benches/benches/flexbox.rs
+
 package net.morphismmc.jaffy.bench.flexbox;
 
 import java.util.concurrent.TimeUnit;

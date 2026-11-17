@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/alignment.rs `mod tests` (behavioral
+// JAFFY: upstream=src/style/alignment.rs
+// JAFFY-NOTE: `mod tests`
 // assertions; the `size_of` layout-budget test is Rust-specific — skipped).
 package net.morphismmc.jaffy.style;
 

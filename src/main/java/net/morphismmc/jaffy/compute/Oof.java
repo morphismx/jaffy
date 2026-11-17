@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/oof.rs — shared out-of-flow
+// JAFFY: upstream=src/compute/oof.rs
+// JAFFY-NOTE: shared out-of-flow
 // (`position: absolute` / `position: fixed`) positioning pass.
 //
 // Multiple `pub` items stay nested so the file keeps a single top-level class

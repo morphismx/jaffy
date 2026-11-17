@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/grid/types/cell_occupancy.rs —
+// JAFFY: upstream=src/compute/grid/types/cell_occupancy.rs
 // `CellOccupancyState`.
 //
 // `pub(crate)` -> public (callers cross package boundaries); `#[default]

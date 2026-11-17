@@ -1,3 +1,5 @@
+// JAFFY: upstream=benches/benches/relayout.rs
+
 package net.morphismmc.jaffy.bench.relayout;
 
 import java.util.ArrayList;

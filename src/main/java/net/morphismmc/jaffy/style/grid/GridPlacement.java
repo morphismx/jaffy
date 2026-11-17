@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `GridPlacement<S>`.
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `GridPlacement<S>`
 // CustomIdent is fixed to String per GAP-017 (DefaultCheapStr).
 // serde/parse impls (incl. saturating_i16/u16) are feature-gated: deferred.
 package net.morphismmc.jaffy.style.grid;

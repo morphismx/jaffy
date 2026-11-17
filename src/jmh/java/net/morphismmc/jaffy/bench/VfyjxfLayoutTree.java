@@ -1,3 +1,6 @@
+// JAFFY: upstream=none
+// JAFFY-NOTE: bench adapter for the dev.vfyjxf:taffy comparison library
+
 package net.morphismmc.jaffy.bench;
 
 import java.util.ArrayList;

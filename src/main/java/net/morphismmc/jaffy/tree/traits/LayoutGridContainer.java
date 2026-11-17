@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `LayoutGridContainer` trait
+// JAFFY: upstream=src/tree/traits.rs
+// JAFFY-NOTE: `LayoutGridContainer` trait
 // (`grid` feature).
 //
 // GATs `GridContainerStyle<'a>`/`GridItemStyle<'a>` -> `Style` (GAP-017);

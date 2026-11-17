@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `LayoutOutput` struct.
+// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-NOTE: `LayoutOutput` struct
 // `oof_positioning_area: Option<OofPositioningArea>` -> nullable field (GAP-001).
 // serde impl deferred.
 package net.morphismmc.jaffy.tree.layout;

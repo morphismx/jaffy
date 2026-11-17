@@ -1,4 +1,5 @@
-// JAFFY: shared raw-bit operations for the CompactLength tagged-pointer layout
+// JAFFY: upstream=none
+// JAFFY-NOTE: shared raw-bit operations for the CompactLength tagged-pointer layout
 // (part of the compact_length.rs port — implementation detail of the sealed
 // cluster, not a separate Rust file). Public because Java
 // package-private cannot span the file-named subpackages

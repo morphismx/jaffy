@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/taffy_tree.rs — `mod tests`.
+// JAFFY: upstream=src/tree/taffy_tree.rs
+// JAFFY-NOTE: `mod tests`
 //
 // `TaffyTree<()>` -> `TaffyTree<Void>`; `TaffyTree<Size<f32>>` ->
 // `TaffyTree<SizeF32>`; `TaffyResult` -> direct value (Err -> TaffyException); `Size::MAX_CONTENT`

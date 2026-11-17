@@ -1,4 +1,10 @@
-// JAFFY: serde impls of upstream/src/style/mod.rs (Style + misc style enums +
+// JAFFY: upstream=src/style/mod.rs
+// JAFFY-FROM: src/style/float.rs
+// JAFFY-FROM: src/style/flex.rs
+// JAFFY-FROM: src/style/block.rs
+// JAFFY-FROM: src/style/available_space.rs
+// JAFFY-FROM: src/style/grid.rs
+// JAFFY-NOTE: serde impls
 // Contain), src/style/float.rs (Float/FloatDirection/Clear),
 // src/style/flex.rs (FlexDirection/FlexWrap), src/style/block.rs (TextAlign),
 // src/style/available_space.rs (AvailableSpace, serialize-only),

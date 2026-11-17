@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `AxisStaticEdge` enum.
+// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-NOTE: `AxisStaticEdge` enum
 package net.morphismmc.jaffy.tree.layout;
 
 /// The physical alignment of an out-of-flow box's margin box within its static-position

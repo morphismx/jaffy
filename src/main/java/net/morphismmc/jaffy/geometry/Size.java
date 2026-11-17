@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `Size<T>` (generic record).
+// JAFFY: upstream=src/geometry.rs
+// JAFFY-NOTE: `Size<T>` (generic record)
 //
 // `Size<f32>` -> SizeF32, `Size<Option<f32>>` -> SizeOptF32 (SPECIALIZATIONS.md).
 // `impl<T: Add>` `+`/`-` impls are not expressible generically; on SizeF32 they

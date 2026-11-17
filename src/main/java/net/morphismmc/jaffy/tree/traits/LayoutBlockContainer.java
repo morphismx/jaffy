@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `LayoutBlockContainer` trait
+// JAFFY: upstream=src/tree/traits.rs
+// JAFFY-NOTE: `LayoutBlockContainer` trait
 // (`block_layout` feature).
 //
 // GATs `BlockContainerStyle<'a>`/`BlockItemStyle<'a>` -> `Style` (GAP-017).

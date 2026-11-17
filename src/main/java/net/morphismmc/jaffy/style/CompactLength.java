@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/compact_length.rs (GAP-013).
+// JAFFY: upstream=src/style/compact_length.rs
+// JAFFY-NOTE: (GAP-013)
 //
 // Rust `struct CompactLength(CompactLengthInner)` is a 64-bit tagged pointer.
 // Per GAP-013 this becomes a sealed interface: `Primitive` carries the full

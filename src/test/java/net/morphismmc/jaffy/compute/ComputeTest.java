@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/mod.rs — `mod tests`.
+// JAFFY: upstream=src/compute/mod.rs
+// JAFFY-NOTE: `mod tests`
 package net.morphismmc.jaffy.compute;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

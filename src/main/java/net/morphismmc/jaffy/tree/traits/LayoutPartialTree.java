@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `LayoutPartialTree` trait
+// JAFFY: upstream=src/tree/traits.rs
+// JAFFY-NOTE: `LayoutPartialTree` trait
 // plus the `pub(crate)` `LayoutPartialTreeExt` extension trait.
 //
 // GAP-017 concretizations:

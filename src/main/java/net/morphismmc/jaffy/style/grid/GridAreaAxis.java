@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `GridAreaAxis` (crate-visible
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `GridAreaAxis`
 // upstream; `public` here as there is no Java crate visibility).
 package net.morphismmc.jaffy.style.grid;
 

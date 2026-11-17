@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `Rect<T>` (generic record).
+// JAFFY: upstream=src/geometry.rs
+// JAFFY-NOTE: `Rect<T>` (generic record)
 //
 // `Rect<f32>` -> RectF32, `Rect<Option<f32>>` -> RectOptF32.
 // `impl<T: Add>` Add impl -> `zipMap` with an explicit operator.

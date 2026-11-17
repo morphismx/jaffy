@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/taffy_tree.rs — `TaffyTree<NodeContext>`
+// JAFFY: upstream=src/tree/taffy_tree.rs
+// JAFFY-NOTE: `TaffyTree<NodeContext>`
 // and its TraversePartialTree/TraverseTree/CacheTree/PrintTree impls.
 //
 // `NodeId`/`DefaultKey` -> `long` (GAP-015); `SlotMap<DefaultKey, _>` ->

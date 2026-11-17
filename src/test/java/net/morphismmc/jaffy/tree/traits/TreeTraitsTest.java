@@ -1,4 +1,5 @@
-// JAFFY: traits.rs has no upstream test module. This exercises the
+// JAFFY: upstream=none
+// JAFFY-NOTE: traits.rs has no upstream test module. This exercises the
 // `LayoutPartialTreeExt` -> default-method ports: the LayoutInput each
 // convenience method assembles is the observable contract (run_mode, axis,
 // known_dimensions_are_definite).

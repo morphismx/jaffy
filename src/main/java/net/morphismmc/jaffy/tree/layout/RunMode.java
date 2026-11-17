@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `RunMode` enum.
+// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-NOTE: `RunMode` enum
 // serde impl deferred.
 package net.morphismmc.jaffy.tree.layout;
 

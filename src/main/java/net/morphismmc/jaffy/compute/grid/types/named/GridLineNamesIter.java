@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/types/named.rs — `GridLineNamesIter`.
+// JAFFY: upstream=src/compute/grid/types/named.rs
+// JAFFY-NOTE: `GridLineNamesIter`
 //
 // `&'a [S]` yields -> unmodifiable List<String> views; `slice::Windows<u32>`
 // -> IntList + index; `Option` in `next()` -> Iterator contract

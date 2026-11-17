@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/float.rs — `Float` enum.
+// JAFFY: upstream=src/style/float.rs
+// JAFFY-NOTE: `Float` enum
 //
 package net.morphismmc.jaffy.style.float_;
 

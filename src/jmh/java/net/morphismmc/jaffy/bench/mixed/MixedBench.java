@@ -1,3 +1,5 @@
+// JAFFY: upstream=benches/benches/mixed.rs
+
 package net.morphismmc.jaffy.bench.mixed;
 
 import java.util.ArrayList;

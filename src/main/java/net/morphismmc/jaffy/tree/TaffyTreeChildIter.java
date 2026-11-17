@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/taffy_tree.rs — `TaffyTreeChildIter`.
+// JAFFY: upstream=src/tree/taffy_tree.rs
+// JAFFY-NOTE: `TaffyTreeChildIter`
 //
 // `impl Iterator<Item = NodeId>` over `core::slice::Iter<NodeId>` -> a
 // `LongIterator` wrapping a fastutil `LongIterator` (primitive, no boxing).

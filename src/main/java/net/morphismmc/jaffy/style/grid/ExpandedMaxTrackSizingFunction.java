@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/style/grid.rs —
+// JAFFY: upstream=src/style/grid.rs
 // `ExpandedMaxTrackSizingFunction`. `*const ()` handles are `Object` (GAP-019).
 package net.morphismmc.jaffy.style.grid;
 

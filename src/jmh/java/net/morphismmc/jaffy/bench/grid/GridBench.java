@@ -1,3 +1,5 @@
+// JAFFY: upstream=benches/benches/grid.rs
+
 package net.morphismmc.jaffy.bench.grid;
 
 import java.util.ArrayList;

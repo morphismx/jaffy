@@ -1,4 +1,5 @@
-// JAFFY: port of slotmap 1.1.1 src/sparse_secondary.rs (the APIs taffy uses — GAP-015).
+// JAFFY: upstream=crate:slotmap:src/sparse_secondary.rs
+// JAFFY-NOTE: (the APIs taffy uses — GAP-015)
 //
 // `HashMap<u32, Slot<V>>` -> fastutil Int2ObjectOpenHashMap keyed by the u32
 // slot index (GAP-014/-015). taffy never iterates it, so hash order is

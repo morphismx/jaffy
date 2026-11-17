@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `NamedGridLine<CustomIdent>`.
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `NamedGridLine<CustomIdent>`
 // `CustomIdent` -> `String` (GAP-017); `u16` -> `int` (GAP-014).
 package net.morphismmc.jaffy.style.grid;
 

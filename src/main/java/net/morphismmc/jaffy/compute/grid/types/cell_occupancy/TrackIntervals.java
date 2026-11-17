@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/grid/types/cell_occupancy.rs —
+// JAFFY: upstream=src/compute/grid/types/cell_occupancy.rs
 // `TrackIntervals` (module-private -> package-private).
 //
 // `SmallVec<[OccupiedInterval; 2]>` -> ArrayList (the inline capacity is an

@@ -1,4 +1,5 @@
-// JAFFY: upstream/src/util/front_back_vec_builder.rs #[cfg(test)] mod tests
+// JAFFY: upstream=src/util/front_back_vec_builder.rs
+// JAFFY-NOTE: #[cfg(test)] mod tests
 // -> nested class Tests (snake_case -> camelCase)
 package net.morphismmc.jaffy.util;
 

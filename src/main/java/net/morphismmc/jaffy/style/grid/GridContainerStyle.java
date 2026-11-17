@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `GridContainerStyle` trait (`grid`).
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `GridContainerStyle` trait (`grid`)
 // The GATs are concretised (GAP-017): `CustomIdent = String`,
 // `Repetition = GridTemplateRepetition`, the iterator GATs are `List`s, and
 // `Option<…List>` is a nullable `List` (GAP-001). `impl ... for &T` has no

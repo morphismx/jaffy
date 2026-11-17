@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `Rect<f32>` specialization
+// JAFFY: upstream=src/geometry.rs
+// JAFFY-NOTE: `Rect<f32>` specialization
 // (SPECIALIZATIONS.md). Generic Rect<T> methods duplicated per GAP-006 rules.
 package net.morphismmc.jaffy.geometry;
 

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/track_sizing.rs — the track sizing
+// JAFFY: upstream=src/compute/grid/track_sizing.rs
+// JAFFY-NOTE: the track sizing
 // algorithm (<https://www.w3.org/TR/css-grid-1/#layout-algorithm>). One Rust
 // file with only private items + pub(super) functions -> single Java class.
 //

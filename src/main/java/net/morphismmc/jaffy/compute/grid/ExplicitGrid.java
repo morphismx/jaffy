@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/grid/explicit_grid.rs.
+// JAFFY: upstream=src/compute/grid/explicit_grid.rs
 //
 // The file's two free functions + `pub(crate) enum AutoRepeatStrategy` map
 // to static methods + a nested enum (single Java top-level per manifest

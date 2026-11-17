@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/available_space.rs — `AvailableSpace` (GAP-012).
+// JAFFY: upstream=src/style/available_space.rs
+// JAFFY-NOTE: `AvailableSpace` (GAP-012)
 //
 // `impl Size<AvailableSpace>` (into_options/maybe_set) lives in
 // SizeAvailableSpaceExt.

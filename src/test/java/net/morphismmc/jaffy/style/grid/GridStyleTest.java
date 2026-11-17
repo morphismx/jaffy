@@ -1,4 +1,5 @@
-// JAFFY: tests for the upstream src/style/grid.rs port.
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: tests for the upstream  port
 // Upstream `expand_tests` cases are ported 1:1; `#[cfg(feature = "parse")]`
 // tests are deferred with the feature.
 package net.morphismmc.jaffy.style.grid;

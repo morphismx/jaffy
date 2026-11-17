@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `Layout` struct.
+// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-NOTE: `Layout` struct
 // `order: u32` -> `int` (GAP-014). serde impl deferred.
 package net.morphismmc.jaffy.tree.layout;
 

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/flex.rs `mod tests::test_flex_direction`.
+// JAFFY: upstream=src/style/flex.rs
+// JAFFY-NOTE: `mod tests::test_flex_direction`
 package net.morphismmc.jaffy.style;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

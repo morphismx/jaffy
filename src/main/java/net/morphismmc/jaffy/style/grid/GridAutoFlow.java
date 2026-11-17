@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `GridAutoFlow` enum.
+// JAFFY: upstream=src/style/grid.rs
+// JAFFY-NOTE: `GridAutoFlow` enum
 // The `parse` impl is deferred with the feature.
 package net.morphismmc.jaffy.style.grid;
 

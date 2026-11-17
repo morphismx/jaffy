@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `LayoutFlexboxContainer`
+// JAFFY: upstream=src/tree/traits.rs
+// JAFFY-NOTE: `LayoutFlexboxContainer`
 // trait (`flexbox` feature).
 //
 // GATs `FlexboxContainerStyle<'a>`/`FlexboxItemStyle<'a>` -> `Style` (GAP-017:

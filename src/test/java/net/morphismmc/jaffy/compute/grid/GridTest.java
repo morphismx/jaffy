@@ -1,4 +1,5 @@
-// JAFFY: behavior tests for upstream src/compute/grid/mod.rs (no inline tests
+// JAFFY: upstream=src/compute/grid/mod.rs
+// JAFFY-NOTE: behavior tests for upstream
 // upstream — these cover the observable contract of DetailedGridTracksInfo /
 // DetailedGridInfo / DetailedGridItemsInfo plus end-to-end computeGridLayout).
 package net.morphismmc.jaffy.compute.grid;

@@ -1,4 +1,5 @@
-// JAFFY: serde impls of upstream/src/style/alignment.rs.
+// JAFFY: upstream=src/style/alignment.rs
+// JAFFY-NOTE: serde impls
 //
 // AlignItems/AlignContent use custom impls serializing a single tag string per
 // public spelling (e.g. "FlexStart", "SafeCenter", "UnsafeEnd"); the keyword

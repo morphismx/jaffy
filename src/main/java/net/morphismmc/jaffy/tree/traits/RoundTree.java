@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `RoundTree` trait.
+// JAFFY: upstream=src/tree/traits.rs
+// JAFFY-NOTE: `RoundTree` trait
 //
 // `usize` -> `int` (GAP-014); `Layout` is an immutable record — Rust's
 // by-value return is a plain return here.

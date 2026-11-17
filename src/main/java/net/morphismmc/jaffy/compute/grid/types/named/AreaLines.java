@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/types/named.rs — `AreaLines`.
+// JAFFY: upstream=src/compute/grid/types/named.rs
+// JAFFY-NOTE: `AreaLines`
 //
 // `Copy + Clone` -> record (GAP-005); `line_mut() -> &mut u32` cannot exist on
 // a record, so the two use sites are expressed as `lineRaw` + `withLine`

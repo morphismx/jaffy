@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/mod.rs — `Overflow` enum.
+// JAFFY: upstream=src/style/mod.rs
+// JAFFY-NOTE: `Overflow` enum
 // The `parse` impl is deferred with the feature.
 package net.morphismmc.jaffy.style;
 

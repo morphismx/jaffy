@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/flex.rs — `FlexboxItemStyle` trait
+// JAFFY: upstream=src/style/flex.rs
+// JAFFY-NOTE: `FlexboxItemStyle` trait
 // (`flexbox`). `impl ... for &T` has no Java counterpart.
 package net.morphismmc.jaffy.style.flex;
 

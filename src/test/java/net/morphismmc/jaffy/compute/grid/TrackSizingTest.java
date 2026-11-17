@@ -1,4 +1,5 @@
-// JAFFY: track_sizing.rs has no upstream test module. These tests cover the
+// JAFFY: upstream=none
+// JAFFY-NOTE: track_sizing.rs has no upstream test module. These tests cover the
 // observable contracts of the ported functions: the gutter alignment
 // adjustment weights, track-index resolution, cross-track flag detection, and
 // the main algorithm phases (initialisation, intrinsic resolution, flex

@@ -1,3 +1,6 @@
+// JAFFY: upstream=src/compute/flexbox.rs
+// JAFFY-NOTE: `FlexLine`
+
 package net.morphismmc.jaffy.compute.flexbox;
 
 final class FlexLine {

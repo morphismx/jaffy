@@ -1,4 +1,6 @@
-// JAFFY: port of upstream src/geometry.rs — `AbsoluteAxis` enum.
+// JAFFY: upstream=src/geometry.rs
+// JAFFY-FROM: src/tree/layout.rs
+// JAFFY-NOTE: `AbsoluteAxis` enum
 // Also hosts `impl TryFrom<RequestedAxis> for AbsoluteAxis` (defined in
 // upstream src/tree/layout.rs) — it is the impl target type.
 package net.morphismmc.jaffy.geometry;

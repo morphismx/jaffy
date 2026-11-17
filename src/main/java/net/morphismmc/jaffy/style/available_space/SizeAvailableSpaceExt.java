@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/style/available_space.rs —
+// JAFFY: upstream=src/style/available_space.rs
 // `impl Size<AvailableSpace>` block (deferred until the geometry batch).
 package net.morphismmc.jaffy.style.available_space;
 

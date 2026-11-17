@@ -1,4 +1,5 @@
-// JAFFY: behavior tests for upstream src/compute/grid/types/grid_track.rs.
+// JAFFY: upstream=src/compute/grid/types/grid_track.rs
+// JAFFY-NOTE: behavior tests for upstream
 // Upstream has no inline test module for this file; these cover the public
 // surface (constructors, collapse, predicates, fit-content limit, copy).
 package net.morphismmc.jaffy.compute.grid.types.grid_track;

@@ -1,3 +1,5 @@
+// JAFFY: upstream=benches/src/lib.rs
+
 package net.morphismmc.jaffy.bench;
 
 /// Port of upstream `benches/src/lib.rs` — `trait GenStyle<Style>`.

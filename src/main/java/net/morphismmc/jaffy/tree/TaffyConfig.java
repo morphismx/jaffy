@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/taffy_tree.rs — `TaffyConfig`.
+// JAFFY: upstream=src/tree/taffy_tree.rs
+// JAFFY-NOTE: `TaffyConfig`
 //
 // `pub(crate) struct` -> package-private mutable class.
 package net.morphismmc.jaffy.tree;

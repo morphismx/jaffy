@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `SizingMode` enum.
+// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-NOTE: `SizingMode` enum
 // serde impl deferred.
 package net.morphismmc.jaffy.tree.layout;
 

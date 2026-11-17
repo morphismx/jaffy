@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/common/sizing_keyword.rs — shared
+// JAFFY: upstream=src/compute/common/sizing_keyword.rs
+// JAFFY-NOTE: shared
 // resolution logic for sizing keywords on the `width`/`height` style
 // properties.
 //

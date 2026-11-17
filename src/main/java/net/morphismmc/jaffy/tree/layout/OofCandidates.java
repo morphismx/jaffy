@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `OofCandidates`.
+// JAFFY: upstream=src/tree/layout.rs
+// JAFFY-NOTE: `OofCandidates`
 // Lazily-allocated `Option<Box<Vec<OofCandidate>>>` -> nullable `List` field:
 // the empty list performs no allocation. Mutable container (upstream `&mut self`
 // methods). `IntoIterator for &OofCandidates` -> `Iterable<OofCandidate>`.

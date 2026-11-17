@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/mod.rs — `CoreStyle` trait.
+// JAFFY: upstream=src/style/mod.rs
+// JAFFY-NOTE: `CoreStyle` trait
 // `type CustomIdent = String` (GAP-017). Defaults that route through
 // `Style::<S>::DEFAULT` are expressed as `Style.DEFAULT` accessors.
 // `impl CoreStyle for &T` has no Java counterpart (references are not types).

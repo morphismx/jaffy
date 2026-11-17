@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/leaf.rs — `compute_leaf_layout`.
+// JAFFY: upstream=src/compute/leaf.rs
+// JAFFY-NOTE: `compute_leaf_layout`
 //
 // `MeasureFunction: FnOnce(Size<Option<f32>>, Size<AvailableSpace>) ->
 // Size<f32>` -> `MeasureFn` (GAP-019: FnMut-style captured state is the
