@@ -74,9 +74,6 @@
 /// dispatching to the correct layout algorithm for a given node yourself.
 /// See the {@link net.morphismmc.jaffy.tree.traits} package for more details
 /// on this API.
-///
-/// JSpecify null-marked package: unannotated type usages are non-null
-/// (GAP-001).
 @NullMarked
 package net.morphismmc.jaffy;
 
