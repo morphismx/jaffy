@@ -7,7 +7,6 @@ package net.morphismmc.jaffy.tree.traits;
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.tree.layout.DetailedLayoutInfo;
 
-
 /// Extends {@link LayoutPartialTree} with the operations needed by the
 /// out-of-flow positioning pass (`compute_oof_layout`), which lays out the
 /// absolute/fixed boxes for which a node acts as the containing block.

@@ -7,6 +7,7 @@ package net.morphismmc.jaffy.compute.grid;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.ImplicitGrid.MinMaxSpan;
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
@@ -18,6 +19,7 @@ import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.style.grid.GenericGridPlacement;
 import net.morphismmc.jaffy.style.grid.GridPlacement;
 import net.morphismmc.jaffy.style.grid.LineGridPlacementExt;
+
 import org.junit.jupiter.api.Test;
 
 class ImplicitGridTest {
@@ -34,9 +36,8 @@ class ImplicitGridTest {
 
     @Test
     void childMinMaxLineAuto() {
-        MinMaxSpan result = ImplicitGrid.childMinLineMaxLineSpan(LineGridPlacementExt
-                .intoOriginZeroIgnoringNamed(
-                        new Line<>(GridPlacement.fromLineIndex(5), GridPlacement.fromSpan(6)), 6));
+        MinMaxSpan result = ImplicitGrid.childMinLineMaxLineSpan(LineGridPlacementExt.intoOriginZeroIgnoringNamed(
+                new Line<>(GridPlacement.fromLineIndex(5), GridPlacement.fromSpan(6)), 6));
         assertEquals(new OriginZeroLine(4), result.min());
         assertEquals(new OriginZeroLine(10), result.max());
         assertEquals(1, result.span());
@@ -44,9 +45,8 @@ class ImplicitGridTest {
 
     @Test
     void childMinMaxLineNegativeTrack() {
-        MinMaxSpan result = ImplicitGrid.childMinLineMaxLineSpan(LineGridPlacementExt
-                .intoOriginZeroIgnoringNamed(
-                        new Line<>(GridPlacement.fromLineIndex(-5), GridPlacement.fromSpan(3)), 6));
+        MinMaxSpan result = ImplicitGrid.childMinLineMaxLineSpan(LineGridPlacementExt.intoOriginZeroIgnoringNamed(
+                new Line<>(GridPlacement.fromLineIndex(-5), GridPlacement.fromSpan(3)), 6));
         assertEquals(new OriginZeroLine(2), result.min());
         assertEquals(new OriginZeroLine(5), result.max());
         assertEquals(1, result.span());
@@ -58,8 +58,10 @@ class ImplicitGridTest {
         int explicitRowCount = 8;
         List<Style> childStyles = List.of(
                 TestHelpers.intoGridChild(
-                        GridPlacement.fromLineIndex(1), GridPlacement.fromSpan(2),
-                        GridPlacement.fromLineIndex(2), GridPlacement.AUTO),
+                        GridPlacement.fromLineIndex(1),
+                        GridPlacement.fromSpan(2),
+                        GridPlacement.fromLineIndex(2),
+                        GridPlacement.AUTO),
                 TestHelpers.intoGridChild(
                         GridPlacement.fromLineIndex(-4), GridPlacement.AUTO,
                         GridPlacement.fromLineIndex(-2), GridPlacement.AUTO));
@@ -78,8 +80,10 @@ class ImplicitGridTest {
         int explicitRowCount = 4;
         List<Style> childStyles = List.of(
                 TestHelpers.intoGridChild(
-                        GridPlacement.fromLineIndex(-6), GridPlacement.fromSpan(2),
-                        GridPlacement.fromLineIndex(-8), GridPlacement.AUTO),
+                        GridPlacement.fromLineIndex(-6),
+                        GridPlacement.fromSpan(2),
+                        GridPlacement.fromLineIndex(-8),
+                        GridPlacement.AUTO),
                 TestHelpers.intoGridChild(
                         GridPlacement.fromLineIndex(4), GridPlacement.AUTO,
                         GridPlacement.fromLineIndex(3), GridPlacement.AUTO));

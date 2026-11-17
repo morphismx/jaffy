@@ -6,22 +6,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-import net.morphismmc.just.math.OptF32;
-
-import org.junit.jupiter.api.Test;
 import net.morphismmc.jaffy.style.dimension.Dimension;
 import net.morphismmc.jaffy.style.dimension.ExpandedDimension;
 import net.morphismmc.jaffy.style.dimension.ExpandedLengthPercentage;
 import net.morphismmc.jaffy.style.dimension.ExpandedLengthPercentageAuto;
 import net.morphismmc.jaffy.style.dimension.LengthPercentage;
 import net.morphismmc.jaffy.style.dimension.LengthPercentageAuto;
+import net.morphismmc.just.math.OptF32;
+
+import org.junit.jupiter.api.Test;
 
 class CompactLengthTest {
 
@@ -169,7 +168,9 @@ class CompactLengthTest {
 
     @Test
     void lengthPercentageRoundTrips() {
-        LengthPercentage[] cases = {LengthPercentage.length(12.0f), LengthPercentage.percent(0.5f), LengthPercentage.ZERO};
+        LengthPercentage[] cases = {
+            LengthPercentage.length(12.0f), LengthPercentage.percent(0.5f), LengthPercentage.ZERO
+        };
         for (LengthPercentage value : cases) {
             assertTrue(LengthPercentage.from(value.expand()).rustEq(value));
             assertTrue(ExpandedLengthPercentage.from(value).rustEq(value.expand()));
@@ -180,8 +181,9 @@ class CompactLengthTest {
 
     @Test
     void lengthPercentageAutoRoundTrips() {
-        LengthPercentageAuto[] cases =
-                {LengthPercentageAuto.length(12.0f), LengthPercentageAuto.percent(0.5f), LengthPercentageAuto.auto()};
+        LengthPercentageAuto[] cases = {
+            LengthPercentageAuto.length(12.0f), LengthPercentageAuto.percent(0.5f), LengthPercentageAuto.auto()
+        };
         for (LengthPercentageAuto value : cases) {
             assertTrue(LengthPercentageAuto.from(value.expand()).rustEq(value));
         }
@@ -194,13 +196,11 @@ class CompactLengthTest {
         assertEquals(50.0f, LengthPercentageAuto.percent(0.5f).resolveToOption(100.0f, (c, ctx) -> 0.0f));
         assertTrue(OptF32.isNone(LengthPercentageAuto.auto().resolveToOption(100.0f, (c, ctx) -> 0.0f)));
         Object handle = new Object();
-        assertEquals(
-                42.0f,
-                LengthPercentageAuto.calc(handle).resolveToOption(100.0f, (c, ctx) -> {
-                    assertSame(handle, c);
-                    assertEquals(100.0f, ctx);
-                    return 42.0f;
-                }));
+        assertEquals(42.0f, LengthPercentageAuto.calc(handle).resolveToOption(100.0f, (c, ctx) -> {
+            assertSame(handle, c);
+            assertEquals(100.0f, ctx);
+            return 42.0f;
+        }));
     }
 
     @Test
@@ -233,8 +233,7 @@ class CompactLengthTest {
         assertTrue(Dimension.calc(handle).expand().rustEq(new ExpandedDimension.Calc(handle)));
         assertTrue(Dimension.fitContentCalc(handle).expand().rustEq(new ExpandedDimension.FitContentCalc(handle)));
         assertTrue(
-                Dimension.from(new ExpandedDimension.FitContentCalc(handle))
-                        .rustEq(Dimension.fitContentCalc(handle)));
+                Dimension.from(new ExpandedDimension.FitContentCalc(handle)).rustEq(Dimension.fitContentCalc(handle)));
         assertTrue(LengthPercentageAuto.calc(handle).expand().rustEq(new ExpandedLengthPercentageAuto.Calc(handle)));
     }
 

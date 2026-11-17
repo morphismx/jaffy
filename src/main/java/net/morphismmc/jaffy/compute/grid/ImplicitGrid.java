@@ -9,6 +9,7 @@
 package net.morphismmc.jaffy.compute.grid;
 
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.Coordinates;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
@@ -16,7 +17,6 @@ import net.morphismmc.jaffy.geometry.InBothAbsAxis;
 import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.jaffy.style.grid.GenericGridPlacement;
 import net.morphismmc.jaffy.style.grid.LineGenericGridPlacementExt;
-
 
 /// This module is not required for spec compliance, but is used as a performance optimisation
 /// to reduce the number of allocations required when creating a grid.
@@ -28,10 +28,12 @@ public final class ImplicitGrid {
     record MinMaxSpan(OriginZeroLine min, OriginZeroLine max, int span) {}
 
     /// Estimate the number of rows and columns in the grid
-    /// This is used as a performance optimisation to pre-size vectors and reduce allocations. It also forms a necessary step
+    /// This is used as a performance optimisation to pre-size vectors and reduce allocations. It also forms a necessary
+    /// step
     /// in the auto-placement
     ///   - The estimates for the explicit and negative implicit track counts are exact.
-    ///   - However, the estimates for the positive explicit track count is a lower bound as auto-placement can affect this
+    ///   - However, the estimates for the positive explicit track count is a lower bound as auto-placement can affect
+    /// this
     ///     in ways which are impossible to predict until the auto-placement algorithm is run.
     ///
     /// Note that this function internally mixes use of grid track numbers and grid line numbers
@@ -39,7 +41,8 @@ public final class ImplicitGrid {
     /// `ItemPlacement = InBothAbsAxis<Line<OriginZeroGridPlacement>>`.
     /// Returns `(columns, rows)` as `InBothAbsAxis<TrackCounts>` (horizontal=columns, vertical=rows).
     public static InBothAbsAxis<TrackCounts> computeGridSizeEstimate(
-            int explicitColCount, int explicitRowCount,
+            int explicitColCount,
+            int explicitRowCount,
             List<InBothAbsAxis<Line<GenericGridPlacement<OriginZeroLine>>>> placements) {
         // Iterate over children, producing an estimate of the min and max grid lines (in origin-zero coordinates where)
         // along with the span of each item
@@ -82,8 +85,12 @@ public final class ImplicitGrid {
 
     /// `(OriginZeroLine, OriginZeroLine, u16, OriginZeroLine, OriginZeroLine, u16)`
     private record ChildPositions(
-            OriginZeroLine colMin, OriginZeroLine colMax, int colMaxSpan,
-            OriginZeroLine rowMin, OriginZeroLine rowMax, int rowMaxSpan) {}
+            OriginZeroLine colMin,
+            OriginZeroLine colMax,
+            int colMaxSpan,
+            OriginZeroLine rowMin,
+            OriginZeroLine rowMax,
+            int rowMaxSpan) {}
 
     /// Iterate over the children's `grid-row`/`grid-column` styles (named lines resolved), producing an estimate of the
     /// min and max grid *lines* along with the span of each item
@@ -133,7 +140,9 @@ public final class ImplicitGrid {
         if (start instanceof GenericGridPlacement.Line<OriginZeroLine> s
                 && end instanceof GenericGridPlacement.Line<OriginZeroLine> e) {
             // Both tracks specified — see rules A and B above
-            min = s.line().equals(e.line()) ? s.line() : (s.line().value() < e.line().value() ? s.line() : e.line());
+            min = s.line().equals(e.line())
+                    ? s.line()
+                    : (s.line().value() < e.line().value() ? s.line() : e.line());
         } else if (start instanceof GenericGridPlacement.Line<OriginZeroLine> s) {
             // Start track specified (end is Auto or Span)
             min = s.line();

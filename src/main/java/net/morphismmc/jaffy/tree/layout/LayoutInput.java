@@ -6,9 +6,8 @@ import net.morphismmc.jaffy.geometry.LineBool;
 import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.geometry.SizeBool;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
-import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.style.StyleHelpers;
-import net.morphismmc.jaffy.style.available_space.SizeAvailableSpaceExt;
+import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 
 /// A struct containing the inputs constraints/hints for laying out a node, which are passed in by the parent
 ///

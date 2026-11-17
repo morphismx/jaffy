@@ -6,7 +6,6 @@ package net.morphismmc.jaffy.tree;
 
 import it.unimi.dsi.fastutil.longs.LongIterator;
 
-
 /// Iterator that wraps a slice of nodes, lazily converting them to u64
 public final class TaffyTreeChildIter implements LongIterator {
 

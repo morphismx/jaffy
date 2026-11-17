@@ -3,9 +3,9 @@
 package net.morphismmc.jaffy.geometry;
 
 import net.morphismmc.jaffy.style.flex.FlexDirection;
-import net.morphismmc.just.math.F32;
 import net.morphismmc.just.function.FloatBinaryOperator;
 import net.morphismmc.just.function.FloatUnaryOperator;
+import net.morphismmc.just.math.F32;
 
 public record SizeF32(float width, float height) {
 
@@ -142,8 +142,7 @@ public record SizeF32(float width, float height) {
     /// `maybe_clamp` — component-wise
     public SizeF32 maybeClampO(SizeOptF32 min, SizeOptF32 max) {
         return new SizeF32(
-                F32.maybeClampO(width, min.width(), max.width()),
-                F32.maybeClampO(height, min.height(), max.height()));
+                F32.maybeClampO(width, min.width(), max.width()), F32.maybeClampO(height, min.height(), max.height()));
     }
 
     /// `maybe_add` — component-wise

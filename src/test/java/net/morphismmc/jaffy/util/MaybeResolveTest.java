@@ -18,7 +18,6 @@ import net.morphismmc.just.math.OptF32;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import net.morphismmc.jaffy.geometry.SizeDimensionExt;
 
 class MaybeResolveTest {
 
@@ -161,7 +160,8 @@ class MaybeResolveTest {
         void resolveOrZeroLength() {
             Rect<Dimension> r = RectDimensionExt.fromLength(5.0f, 5.0f, 5.0f, 5.0f);
             RectF32 five = new RectF32(5.0f, 5.0f, 5.0f, 5.0f);
-            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(r, SizeOptF32.NONE, CALC).rustEq(five));
+            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(r, SizeOptF32.NONE, CALC)
+                    .rustEq(five));
             assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(r, new SizeOptF32(5.0f, 5.0f), CALC)
                     .rustEq(five));
             assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(r, new SizeOptF32(-5.0f, -5.0f), CALC)
@@ -196,19 +196,26 @@ class MaybeResolveTest {
         void resolveOrZeroAuto() {
             assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(auto(), OptF32.NONE, CALC)
                     .rustEq(RectF32.ZERO));
-            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(auto(), 5.0f, CALC).rustEq(RectF32.ZERO));
-            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(auto(), -5.0f, CALC).rustEq(RectF32.ZERO));
-            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(auto(), 0.0f, CALC).rustEq(RectF32.ZERO));
+            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(auto(), 5.0f, CALC)
+                    .rustEq(RectF32.ZERO));
+            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(auto(), -5.0f, CALC)
+                    .rustEq(RectF32.ZERO));
+            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(auto(), 0.0f, CALC)
+                    .rustEq(RectF32.ZERO));
         }
 
         @Test
         void resolveOrZeroLength() {
             Rect<Dimension> r = RectDimensionExt.fromLength(5.0f, 5.0f, 5.0f, 5.0f);
             RectF32 five = new RectF32(5.0f, 5.0f, 5.0f, 5.0f);
-            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(r, OptF32.NONE, CALC).rustEq(five));
-            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(r, 5.0f, CALC).rustEq(five));
-            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(r, -5.0f, CALC).rustEq(five));
-            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(r, 0.0f, CALC).rustEq(five));
+            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(r, OptF32.NONE, CALC)
+                    .rustEq(five));
+            assertTrue(
+                    MaybeResolve.RectDimensionExt.resolveOrZeroO(r, 5.0f, CALC).rustEq(five));
+            assertTrue(
+                    MaybeResolve.RectDimensionExt.resolveOrZeroO(r, -5.0f, CALC).rustEq(five));
+            assertTrue(
+                    MaybeResolve.RectDimensionExt.resolveOrZeroO(r, 0.0f, CALC).rustEq(five));
         }
 
         @Test
@@ -220,8 +227,8 @@ class MaybeResolveTest {
                     .rustEq(new RectF32(25.0f, 25.0f, 25.0f, 25.0f)));
             assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(r, -5.0f, CALC)
                     .rustEq(new RectF32(-25.0f, -25.0f, -25.0f, -25.0f)));
-            assertTrue(MaybeResolve.RectDimensionExt.resolveOrZeroO(r, 0.0f, CALC)
-                    .rustEq(RectF32.ZERO));
+            assertTrue(
+                    MaybeResolve.RectDimensionExt.resolveOrZeroO(r, 0.0f, CALC).rustEq(RectF32.ZERO));
         }
     }
 

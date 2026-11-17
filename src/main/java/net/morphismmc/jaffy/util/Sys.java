@@ -23,6 +23,7 @@ package net.morphismmc.jaffy.util;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.morphismmc.just.math.F32;
 
 public final class Sys {

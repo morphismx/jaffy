@@ -1,12 +1,13 @@
 // JAFFY: port of upstream src/style/dimension.rs — `LengthPercentageAuto` (GAP-013).
 package net.morphismmc.jaffy.style.dimension;
 
+import net.morphismmc.jaffy.style.CompactBits;
+import net.morphismmc.jaffy.style.CompactLength;
 import net.morphismmc.jaffy.util.CalcResolver;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
+
 import org.jspecify.annotations.Nullable;
-import net.morphismmc.jaffy.style.CompactBits;
-import net.morphismmc.jaffy.style.CompactLength;
 
 public sealed interface LengthPercentageAuto {
 
@@ -97,7 +98,8 @@ public sealed interface LengthPercentageAuto {
 
     float value();
 
-    @Nullable Object calcValue();
+    @Nullable
+    Object calcValue();
 
     default boolean isPlainCalc() {
         return CompactBits.isPlainCalc(calcTag());
@@ -162,7 +164,8 @@ public sealed interface LengthPercentageAuto {
         if (isPlainCalc()) { // #[cfg(feature = "calc")]
             return calcResolver.resolve(calcValue(), context);
         }
-        throw new IllegalStateException("LengthPercentageAuto values cannot be constructed with other tags"); // JAFFY(GAP-010)
+        throw new IllegalStateException(
+                "LengthPercentageAuto values cannot be constructed with other tags"); // JAFFY(GAP-010)
     }
 
     /// Returns true if value is Auto

@@ -5,6 +5,7 @@
 package net.morphismmc.jaffy.style.grid;
 
 import java.util.List;
+
 import net.morphismmc.jaffy.geometry.MinMax;
 
 /// A typed representation of a `repeat(..)` in `grid-template-*` value

@@ -7,7 +7,8 @@ package net.morphismmc.jaffy.style;
 /// This controls both how the origin is determined for the `position` field,
 /// and whether or not the item will be controlled by flexbox's layout algorithm.
 ///
-/// WARNING: this enum follows the behavior of [CSS's `position` property](https://developer.mozilla.org/en-US/docs/Web/CSS/position),
+/// WARNING: this enum follows the behavior of [CSS's `position`
+/// property](https://developer.mozilla.org/en-US/docs/Web/CSS/position),
 /// which can be unintuitive.
 ///
 /// `STATIC` is the default value, matching the default behavior in CSS.

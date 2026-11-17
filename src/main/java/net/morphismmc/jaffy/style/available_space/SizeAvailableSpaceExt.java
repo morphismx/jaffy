@@ -24,16 +24,12 @@ public final class SizeAvailableSpaceExt {
     /// Subtract other from definite values, but do nothing for non-definite
     /// values (`Size<AvailableSpace>::maybe_sub(Size<f32>)`)
     public static Size<AvailableSpace> maybeSub(Size<AvailableSpace> self, SizeF32 other) {
-        return new Size<>(
-                self.width().maybeSubF(other.width()),
-                self.height().maybeSubF(other.height()));
+        return new Size<>(self.width().maybeSubF(other.width()), self.height().maybeSubF(other.height()));
     }
 
     /// Compute the max of two values, passing through `Maybe` values
     /// (`Size<AvailableSpace>::maybe_max(Size<f32>)`)
     public static Size<AvailableSpace> maybeMax(Size<AvailableSpace> self, SizeF32 other) {
-        return new Size<>(
-                self.width().maybeMaxF(other.width()),
-                self.height().maybeMaxF(other.height()));
+        return new Size<>(self.width().maybeMaxF(other.width()), self.height().maybeMaxF(other.height()));
     }
 }

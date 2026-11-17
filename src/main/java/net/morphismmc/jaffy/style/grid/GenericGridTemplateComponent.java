@@ -20,8 +20,9 @@ public sealed interface GenericGridTemplateComponent<R extends GenericRepetition
     default boolean isAutoRepetition() {
         return switch (this) {
             case Single<R> s -> false;
-            case Repeat<R> r -> r.repetition().count() instanceof RepetitionCount.AutoFit
-                    || r.repetition().count() instanceof RepetitionCount.AutoFill;
+            case Repeat<R> r ->
+                r.repetition().count() instanceof RepetitionCount.AutoFit
+                        || r.repetition().count() instanceof RepetitionCount.AutoFill;
         };
     }
 }

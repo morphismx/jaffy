@@ -10,14 +10,11 @@ package net.morphismmc.jaffy.compute.flexbox;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unimi.dsi.fastutil.longs.LongIterator;
-import org.jspecify.annotations.Nullable;
-
 import net.morphismmc.jaffy.compute.common.ScrollableOverflow.ScrollableOverflowContainer;
 import net.morphismmc.jaffy.compute.common.SizingKeyword;
-
+import net.morphismmc.jaffy.geometry.LineBool;
+import net.morphismmc.jaffy.geometry.LineF32;
 import net.morphismmc.jaffy.geometry.Point;
-import net.morphismmc.jaffy.geometry.PointBool;
 import net.morphismmc.jaffy.geometry.PointF32;
 import net.morphismmc.jaffy.geometry.RectBool;
 import net.morphismmc.jaffy.geometry.RectF32;
@@ -43,29 +40,29 @@ import net.morphismmc.jaffy.style.available_space.SizeAvailableSpaceExt;
 import net.morphismmc.jaffy.style.dimension.Dimension;
 import net.morphismmc.jaffy.style.flex.FlexDirection;
 import net.morphismmc.jaffy.style.flex.FlexWrap;
-import net.morphismmc.jaffy.geometry.LineBool;
-import net.morphismmc.jaffy.geometry.LineF32;
+import net.morphismmc.jaffy.tree.layout.AxisStaticAlign;
+import net.morphismmc.jaffy.tree.layout.AxisStaticEdge;
+import net.morphismmc.jaffy.tree.layout.AxisStaticPosition;
+import net.morphismmc.jaffy.tree.layout.Baselines;
 import net.morphismmc.jaffy.tree.layout.Layout;
 import net.morphismmc.jaffy.tree.layout.LayoutInput;
 import net.morphismmc.jaffy.tree.layout.LayoutOutput;
-import net.morphismmc.jaffy.tree.layout.AxisStaticAlign;
-import net.morphismmc.jaffy.tree.layout.Baselines;
-import net.morphismmc.jaffy.tree.layout.AxisStaticEdge;
-import net.morphismmc.jaffy.tree.layout.AxisStaticPosition;
 import net.morphismmc.jaffy.tree.layout.OofCandidate;
-import net.morphismmc.jaffy.tree.layout.OofPositioningArea;
 import net.morphismmc.jaffy.tree.layout.OofCandidates;
+import net.morphismmc.jaffy.tree.layout.OofPositioningArea;
 import net.morphismmc.jaffy.tree.layout.RequestedAxis;
 import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
 import net.morphismmc.jaffy.tree.traits.LayoutFlexboxContainer;
-import net.morphismmc.just.math.F32;
 import net.morphismmc.jaffy.util.MaybeResolve;
-import net.morphismmc.just.math.Opt;
-import net.morphismmc.just.math.OptI32;
-import net.morphismmc.just.math.OptF32;
-import net.morphismmc.just.math.Unsigned;
 import net.morphismmc.jaffy.util.Sys;
+import net.morphismmc.just.math.F32;
+import net.morphismmc.just.math.Opt;
+import net.morphismmc.just.math.OptF32;
+import net.morphismmc.just.math.OptI32;
+import net.morphismmc.just.math.Unsigned;
+
+import it.unimi.dsi.fastutil.longs.LongIterator;
 
 /// Computes the
 /// [flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/) layout
@@ -95,18 +92,17 @@ public final class Flexbox {
         boolean isWrap = flexWrap.isMultiLine();
         boolean isWrapReverse = flexWrap.isReverse();
         boolean isBalance = flexWrap.isBalance();
-        @Opt @Unsigned int lineCount = isWrap ? Integer.max(style.flexLineCount(), 1) : OptI32.NONE;
+        @Opt
+        @Unsigned
+        int lineCount = isWrap ? Integer.max(style.flexLineCount(), 1) : OptI32.NONE;
 
         float aspectRatio = style.aspectRatio();
         RectF32 padding =
-                MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(
-                        style.padding(), parentSize.width(), tree::calc);
+                MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(style.padding(), parentSize.width(), tree::calc);
         RectF32 border =
-                MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(
-                        style.border(), parentSize.width(), tree::calc);
+                MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(style.border(), parentSize.width(), tree::calc);
         SizeF32 paddingBorderSum = padding.sumAxes().plus(border.sumAxes());
-        SizeF32 boxSizingAdjustment =
-                style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSum : SizeF32.ZERO;
+        SizeF32 boxSizingAdjustment = style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSum : SizeF32.ZERO;
 
         // `normal` behaves as `stretch` for flex items. This is resolved once
         // here so that items with an `align_self` of `None`, which defer to
@@ -116,14 +112,12 @@ public final class Flexbox {
         // `stretch` behaves as `flex-start`, so a `normal` justify-content is
         // resolved straight to `flex-start`.
         // <https://www.w3.org/TR/css-align-3/#distribution-flex>
-        AlignContent alignContent =
-                style.alignContent().keyword() == AlignContentKeyword.NORMAL
-                        ? AlignContent.STRETCH
-                        : style.alignContent();
-        AlignContent justifyContent =
-                style.justifyContent().keyword() == AlignContentKeyword.NORMAL
-                        ? AlignContent.FLEX_START
-                        : style.justifyContent();
+        AlignContent alignContent = style.alignContent().keyword() == AlignContentKeyword.NORMAL
+                ? AlignContent.STRETCH
+                : style.alignContent();
+        AlignContent justifyContent = style.justifyContent().keyword() == AlignContentKeyword.NORMAL
+                ? AlignContent.FLEX_START
+                : style.justifyContent();
         Direction layoutDirection = style.direction();
 
         // Scrollbar gutters are reserved when the `overflow` property is set
@@ -132,46 +126,36 @@ public final class Flexbox {
         // be reserved for a scrollbar
         float scrollbarWidth = style.scrollbarWidth();
         Point<Overflow> transposedOverflow = style.overflow().transpose();
-        PointF32 scrollbarGutter =
-                new PointF32(
-                        transposedOverflow.x() == Overflow.SCROLL ? scrollbarWidth : 0.0f,
-                        transposedOverflow.y() == Overflow.SCROLL ? scrollbarWidth : 0.0f);
+        PointF32 scrollbarGutter = new PointF32(
+                transposedOverflow.x() == Overflow.SCROLL ? scrollbarWidth : 0.0f,
+                transposedOverflow.y() == Overflow.SCROLL ? scrollbarWidth : 0.0f);
         boolean isScrollContainer =
                 style.overflow().x().isScrollContainer() || style.overflow().y().isScrollContainer();
         boolean rtl = layoutDirection.isRtl();
-        RectF32 contentBoxInset =
-                new RectF32(
-                        padding.left() + border.left() + (rtl ? scrollbarGutter.x() : 0.0f),
-                        padding.right() + border.right() + (rtl ? 0.0f : scrollbarGutter.x()),
-                        padding.top() + border.top(),
-                        padding.bottom() + border.bottom() + scrollbarGutter.y());
+        RectF32 contentBoxInset = new RectF32(
+                padding.left() + border.left() + (rtl ? scrollbarGutter.x() : 0.0f),
+                padding.right() + border.right() + (rtl ? 0.0f : scrollbarGutter.x()),
+                padding.top() + border.top(),
+                padding.bottom() + border.bottom() + scrollbarGutter.y());
 
-        RectF32 paddingBoxInset =
-                border.plus(
-                        new RectF32(
-                                rtl ? scrollbarGutter.x() : 0.0f,
-                                rtl ? 0.0f : scrollbarGutter.x(),
-                                0.0f,
-                                scrollbarGutter.y()));
-        RectF32 resolvedPadding =
-                new RectF32(
-                        contentBoxInset.left() - border.left() - (rtl ? scrollbarGutter.x() : 0.0f),
-                        contentBoxInset.right() - border.right() - (rtl ? 0.0f : scrollbarGutter.x()),
-                        contentBoxInset.top() - border.top(),
-                        contentBoxInset.bottom() - border.bottom() - scrollbarGutter.y());
+        RectF32 paddingBoxInset = border.plus(new RectF32(
+                rtl ? scrollbarGutter.x() : 0.0f, rtl ? 0.0f : scrollbarGutter.x(), 0.0f, scrollbarGutter.y()));
+        RectF32 resolvedPadding = new RectF32(
+                contentBoxInset.left() - border.left() - (rtl ? scrollbarGutter.x() : 0.0f),
+                contentBoxInset.right() - border.right() - (rtl ? 0.0f : scrollbarGutter.x()),
+                contentBoxInset.top() - border.top(),
+                contentBoxInset.bottom() - border.bottom() - scrollbarGutter.y());
 
         SizeOptF32 nodeOuterSize = knownDimensions;
         SizeOptF32 nodeInnerSize = nodeOuterSize.maybeSubF(contentBoxInset.sumAxes());
         boolean knownMainSizeIsDefinite = knownDimensionsAreDefinite.main(dir);
-        boolean hasDefiniteMainSize =
-                knownMainSizeIsDefinite && OptF32.isSome(knownDimensions.main(dir));
+        boolean hasDefiniteMainSize = knownMainSizeIsDefinite && OptF32.isSome(knownDimensions.main(dir));
         boolean hasDefiniteCrossSize =
                 knownDimensionsAreDefinite.cross(dir) && OptF32.isSome(knownDimensions.cross(dir));
         boolean crossAxisAvailableSpaceIsDefinite =
                 hasDefiniteCrossSize || availableSpace.cross(dir) instanceof AvailableSpace.Definite;
-        SizeF32 gap =
-                MaybeResolve.SizeLengthPercentageExt.resolveOrZeroO(
-                        style.gap(), nodeInnerSize.or(new SizeOptF32(0.0f, 0.0f)), tree::calc);
+        SizeF32 gap = MaybeResolve.SizeLengthPercentageExt.resolveOrZeroO(
+                style.gap(), nodeInnerSize.or(new SizeOptF32(0.0f, 0.0f)), tree::calc);
 
         AlgoConstants constants = new AlgoConstants();
         constants.dir = dir;
@@ -182,16 +166,14 @@ public final class Flexbox {
         constants.isWrapReverse = isWrapReverse;
         constants.isBalance = isBalance;
         constants.lineCount = lineCount;
-        constants.minSize =
-                MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
-                                style.minSize(), parentSize, tree::calc)
-                        .maybeApplyAspectRatio(aspectRatio)
-                        .maybeAddF(boxSizingAdjustment);
-        constants.maxSize =
-                MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
-                                style.maxSize(), parentSize, tree::calc)
-                        .maybeApplyAspectRatio(aspectRatio)
-                        .maybeAddF(boxSizingAdjustment);
+        constants.minSize = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
+                        style.minSize(), parentSize, tree::calc)
+                .maybeApplyAspectRatio(aspectRatio)
+                .maybeAddF(boxSizingAdjustment);
+        constants.maxSize = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
+                        style.maxSize(), parentSize, tree::calc)
+                .maybeApplyAspectRatio(aspectRatio)
+                .maybeAddF(boxSizingAdjustment);
         constants.border = border;
         constants.gap = gap;
         constants.contentBoxInset = contentBoxInset;
@@ -224,22 +206,12 @@ public final class Flexbox {
         float mainEnd = inset.mainEnd(direction);
         float crossStart = inset.crossStart(direction);
         float crossEnd = inset.crossEnd(direction);
-        float main =
-                isRtlRow
-                        ? (OptF32.isSome(mainEnd)
-                                ? mainEnd
-                                : (OptF32.isSome(mainStart) ? -mainStart : 0.0f))
-                        : (OptF32.isSome(mainStart)
-                                ? mainStart
-                                : (OptF32.isSome(mainEnd) ? -mainEnd : 0.0f));
-        float cross =
-                isRtlColumn
-                        ? (OptF32.isSome(crossEnd)
-                                ? -crossEnd
-                                : OptF32.unwrapOr(crossStart, 0.0f))
-                        : (OptF32.isSome(crossStart)
-                                ? crossStart
-                                : (OptF32.isSome(crossEnd) ? -crossEnd : 0.0f));
+        float main = isRtlRow
+                ? (OptF32.isSome(mainEnd) ? mainEnd : (OptF32.isSome(mainStart) ? -mainStart : 0.0f))
+                : (OptF32.isSome(mainStart) ? mainStart : (OptF32.isSome(mainEnd) ? -mainEnd : 0.0f));
+        float cross = isRtlColumn
+                ? (OptF32.isSome(crossEnd) ? -crossEnd : OptF32.unwrapOr(crossStart, 0.0f))
+                : (OptF32.isSome(crossStart) ? crossStart : (OptF32.isSome(crossEnd) ? -crossEnd : 0.0f));
         return SizeF32.ZERO.withMain(direction, main).withCross(direction, cross);
     }
 
@@ -253,31 +225,21 @@ public final class Flexbox {
     /// `determine_available_space`. Note: min/max/preferred size styles have
     /// already been applied to `knownDimensions` in the `compute` function.
     private static Size<AvailableSpace> determineAvailableSpace(
-            SizeOptF32 knownDimensions,
-            Size<AvailableSpace> outerAvailableSpace,
-            AlgoConstants constants) {
-        AvailableSpace width =
-                OptF32.isSome(knownDimensions.width())
-                        ? new AvailableSpace.Definite(
-                                Sys.f32Max(
-                                        knownDimensions.width()
-                                                - constants.contentBoxInset.horizontalAxisSum(),
-                                        0.0f))
-                        : outerAvailableSpace
-                                .width()
-                                .maybeSubF(constants.contentBoxInset.horizontalAxisSum())
-                                .maybeMaxF(0.0f);
-        AvailableSpace height =
-                OptF32.isSome(knownDimensions.height())
-                        ? new AvailableSpace.Definite(
-                                Sys.f32Max(
-                                        knownDimensions.height()
-                                                - constants.contentBoxInset.verticalAxisSum(),
-                                        0.0f))
-                        : outerAvailableSpace
-                                .height()
-                                .maybeSubF(constants.contentBoxInset.verticalAxisSum())
-                                .maybeMaxF(0.0f);
+            SizeOptF32 knownDimensions, Size<AvailableSpace> outerAvailableSpace, AlgoConstants constants) {
+        AvailableSpace width = OptF32.isSome(knownDimensions.width())
+                ? new AvailableSpace.Definite(
+                        Sys.f32Max(knownDimensions.width() - constants.contentBoxInset.horizontalAxisSum(), 0.0f))
+                : outerAvailableSpace
+                        .width()
+                        .maybeSubF(constants.contentBoxInset.horizontalAxisSum())
+                        .maybeMaxF(0.0f);
+        AvailableSpace height = OptF32.isSome(knownDimensions.height())
+                ? new AvailableSpace.Definite(
+                        Sys.f32Max(knownDimensions.height() - constants.contentBoxInset.verticalAxisSum(), 0.0f))
+                : outerAvailableSpace
+                        .height()
+                        .maybeSubF(constants.contentBoxInset.verticalAxisSum())
+                        .maybeMaxF(0.0f);
         return new Size<>(width, height);
     }
 
@@ -294,21 +256,16 @@ public final class Flexbox {
         FlexDirection dir = constants.dir;
         boolean mainIsDefinite = constants.hasDefiniteMainSize || item.flexBasisIsDefinite;
 
-        boolean hasCrossAutoMargins =
-                item.marginIsAuto.crossStart(dir) || item.marginIsAuto.crossEnd(dir);
+        boolean hasCrossAutoMargins = item.marginIsAuto.crossStart(dir) || item.marginIsAuto.crossEnd(dir);
         Dimension crossSize = item.sizeStyle.cross(dir);
-        boolean isStretched =
-                !hasCrossAutoMargins
-                        && (crossSize.isStretch()
-                                || (item.alignSelf.equals(AlignItems.STRETCH) && crossSize.isAuto()));
-        boolean crossIsDefinite =
-                isStretched
-                        || OptF32.isSome(item.size.cross(dir))
-                        || (!dir.isRow() && constants.crossAxisAvailableSpaceIsDefinite);
+        boolean isStretched = !hasCrossAutoMargins
+                && (crossSize.isStretch() || (item.alignSelf.equals(AlignItems.STRETCH) && crossSize.isAuto()));
+        boolean crossIsDefinite = isStretched
+                || OptF32.isSome(item.size.cross(dir))
+                || (!dir.isRow() && constants.crossAxisAvailableSpaceIsDefinite);
 
         return new SizeBool(
-                dir.isRow() ? mainIsDefinite : crossIsDefinite,
-                dir.isRow() ? crossIsDefinite : mainIsDefinite);
+                dir.isRow() ? mainIsDefinite : crossIsDefinite, dir.isRow() ? crossIsDefinite : mainIsDefinite);
     }
 
     /// `handle_align_content_stretch`
@@ -318,19 +275,16 @@ public final class Flexbox {
             float crossAxisPaddingBorder = constants.contentBoxInset.crossAxisSum(constants.dir);
             float crossMinSize = constants.minSize.cross(constants.dir);
             float crossMaxSize = constants.maxSize.cross(constants.dir);
-            float containerMinInnerCross =
-                    OptF32.unwrapOr(
-                            OptF32.maybeMaxF(
-                                    OptF32.maybeSubF(
-                                            OptF32.maybeClampO(
-                                                    OptF32.or(
-                                                            nodeSize.cross(constants.dir),
-                                                            crossMinSize),
-                                                    crossMinSize,
-                                                    crossMaxSize),
-                                            crossAxisPaddingBorder),
-                                    0.0f),
-                            0.0f);
+            float containerMinInnerCross = OptF32.unwrapOr(
+                    OptF32.maybeMaxF(
+                            OptF32.maybeSubF(
+                                    OptF32.maybeClampO(
+                                            OptF32.or(nodeSize.cross(constants.dir), crossMinSize),
+                                            crossMinSize,
+                                            crossMaxSize),
+                                    crossAxisPaddingBorder),
+                            0.0f),
+                    0.0f);
 
             float totalCrossAxisGap = sumAxisGaps(constants.gap.cross(constants.dir), flexLines.size());
             float linesTotalCross = totalCrossAxisGap;
@@ -362,20 +316,18 @@ public final class Flexbox {
         float crossScrollbarGutter = constants.scrollbarGutter.cross(constants.dir);
         float minCrossSize = constants.minSize.cross(constants.dir);
         float maxCrossSize = constants.maxSize.cross(constants.dir);
-        float outerContainerSize =
-                Sys.f32Max(
-                        OptF32.maybeClampO(
-                                OptF32.unwrapOr(
-                                        nodeSize.cross(constants.dir),
-                                        totalLineCrossSize + totalCrossAxisGap + paddingBorderSum),
-                                minCrossSize,
-                                maxCrossSize),
-                        paddingBorderSum - crossScrollbarGutter);
+        float outerContainerSize = Sys.f32Max(
+                OptF32.maybeClampO(
+                        OptF32.unwrapOr(
+                                nodeSize.cross(constants.dir),
+                                totalLineCrossSize + totalCrossAxisGap + paddingBorderSum),
+                        minCrossSize,
+                        maxCrossSize),
+                paddingBorderSum - crossScrollbarGutter);
         float innerContainerSize = Sys.f32Max(outerContainerSize - paddingBorderSum, 0.0f);
 
         constants.containerSize = constants.containerSize.withCross(constants.dir, outerContainerSize);
-        constants.innerContainerSize =
-                constants.innerContainerSize.withCross(constants.dir, innerContainerSize);
+        constants.innerContainerSize = constants.innerContainerSize.withCross(constants.dir, innerContainerSize);
 
         return totalLineCrossSize;
     }
@@ -387,36 +339,22 @@ public final class Flexbox {
         int numLines = flexLines.size();
         float gap = constants.gap.cross(constants.dir);
         float totalCrossAxisGap = sumAxisGaps(gap, numLines);
-        float freeSpace =
-                constants.innerContainerSize.cross(constants.dir) - totalCrossSize - totalCrossAxisGap;
+        float freeSpace = constants.innerContainerSize.cross(constants.dir) - totalCrossSize - totalCrossAxisGap;
 
-        AlignContentKeyword alignContentMode =
-                net.morphismmc.jaffy.compute.common.Alignment.applyAlignmentFallback(
-                        freeSpace, numLines, constants.alignContent);
+        AlignContentKeyword alignContentMode = net.morphismmc.jaffy.compute.common.Alignment.applyAlignmentFallback(
+                freeSpace, numLines, constants.alignContent);
 
         if (constants.isWrapReverse) {
             for (int i = flexLines.size() - 1; i >= 0; i--) {
                 FlexLine line = flexLines.get(i);
-                line.offsetCross =
-                        net.morphismmc.jaffy.compute.common.Alignment.computeAlignmentOffset(
-                                freeSpace,
-                                numLines,
-                                gap,
-                                alignContentMode,
-                                constants.isWrapReverse,
-                                i == 0);
+                line.offsetCross = net.morphismmc.jaffy.compute.common.Alignment.computeAlignmentOffset(
+                        freeSpace, numLines, gap, alignContentMode, constants.isWrapReverse, i == 0);
             }
         } else {
             for (int i = 0; i < flexLines.size(); i++) {
                 FlexLine line = flexLines.get(i);
-                line.offsetCross =
-                        net.morphismmc.jaffy.compute.common.Alignment.computeAlignmentOffset(
-                                freeSpace,
-                                numLines,
-                                gap,
-                                alignContentMode,
-                                constants.isWrapReverse,
-                                i == 0);
+                line.offsetCross = net.morphismmc.jaffy.compute.common.Alignment.computeAlignmentOffset(
+                        freeSpace, numLines, gap, alignContentMode, constants.isWrapReverse, i == 0);
             }
         }
     }
@@ -438,28 +376,23 @@ public final class Flexbox {
         Direction layoutDirection = constants.layoutDirection;
         SizeBool knownDimensionDefiniteness = itemKnownDimensionDefiniteness(constants, item);
         SizeF32 marginSum = item.margin.sumAxes();
-        LayoutOutput layoutOutput =
-                tree.computeChildLayout(
-                        item.node,
-                        new LayoutInput(
-                                RunMode.PERFORM_LAYOUT,
-                                SizingMode.CONTENT_SIZE,
-                                RequestedAxis.BOTH,
-                                new SizeOptF32(item.targetSize.width(), item.targetSize.height()),
-                                knownDimensionDefiniteness,
-                                nodeInnerSize,
-                                // The available space passed to the child
-                                // excludes the child's margins
-                                new Size<>(
-                                        new AvailableSpace.Definite(
-                                                Sys.f32Max(
-                                                        containerSize.width() - marginSum.width(),
-                                                        0.0f)),
-                                        new AvailableSpace.Definite(
-                                                Sys.f32Max(
-                                                        containerSize.height() - marginSum.height(),
-                                                        0.0f))),
-                                LineBool.FALSE));
+        LayoutOutput layoutOutput = tree.computeChildLayout(
+                item.node,
+                new LayoutInput(
+                        RunMode.PERFORM_LAYOUT,
+                        SizingMode.CONTENT_SIZE,
+                        RequestedAxis.BOTH,
+                        new SizeOptF32(item.targetSize.width(), item.targetSize.height()),
+                        knownDimensionDefiniteness,
+                        nodeInnerSize,
+                        // The available space passed to the child
+                        // excludes the child's margins
+                        new Size<>(
+                                new AvailableSpace.Definite(
+                                        Sys.f32Max(containerSize.width() - marginSum.width(), 0.0f)),
+                                new AvailableSpace.Definite(
+                                        Sys.f32Max(containerSize.height() - marginSum.height(), 0.0f))),
+                        LineBool.FALSE));
 
         SizeF32 size = layoutOutput.size();
         net.morphismmc.jaffy.tree.layout.ScrollableOverflow scrollableOverflowRect =
@@ -471,51 +404,38 @@ public final class Flexbox {
         float crossRelativeInset = item.relativeInset.cross(direction);
         float effectiveLineOffsetCross = isRtlColumn ? 0.0f : lineOffsetCross;
 
-        float offsetMain =
-                isRtlRow
-                        ? totalOffsetMain[0]
-                                - item.offsetMain
-                                - item.margin.mainEnd(direction)
-                                - mainRelativeInset
-                                - size.width()
-                        : totalOffsetMain[0]
-                                + item.offsetMain
-                                + item.margin.mainStart(direction)
-                                + mainRelativeInset;
+        float offsetMain = isRtlRow
+                ? totalOffsetMain[0]
+                        - item.offsetMain
+                        - item.margin.mainEnd(direction)
+                        - mainRelativeInset
+                        - size.width()
+                : totalOffsetMain[0] + item.offsetMain + item.margin.mainStart(direction) + mainRelativeInset;
 
-        float offsetCross =
-                totalOffsetCross
-                        + item.offsetCross
-                        + effectiveLineOffsetCross
-                        + item.margin.crossStart(direction)
-                        + crossRelativeInset;
+        float offsetCross = totalOffsetCross
+                + item.offsetCross
+                + effectiveLineOffsetCross
+                + item.margin.crossStart(direction)
+                + crossRelativeInset;
 
-        float innerBaseline =
-                OptF32.unwrapOr(
-                        net.morphismmc.jaffy.compute.common.Alignment.childFirstBaseline(
-                                layoutOutput.baselines().first(), size.height(), item.overflow.y()),
-                        size.height());
+        float innerBaseline = OptF32.unwrapOr(
+                net.morphismmc.jaffy.compute.common.Alignment.childFirstBaseline(
+                        layoutOutput.baselines().first(), size.height(), item.overflow.y()),
+                size.height());
         if (direction.isRow()) {
             float baselineOffsetCross =
-                    totalOffsetCross
-                            + item.offsetCross
-                            + effectiveLineOffsetCross
-                            + item.margin.crossStart(direction);
+                    totalOffsetCross + item.offsetCross + effectiveLineOffsetCross + item.margin.crossStart(direction);
             item.baseline = baselineOffsetCross + innerBaseline;
         } else {
-            float baselineOffsetMain =
-                    totalOffsetMain[0] + item.offsetMain + item.margin.mainStart(direction);
+            float baselineOffsetMain = totalOffsetMain[0] + item.offsetMain + item.margin.mainStart(direction);
             item.baseline = baselineOffsetMain + innerBaseline;
         }
 
         PointF32 location =
-                direction.isRow()
-                        ? new PointF32(offsetMain, offsetCross)
-                        : new PointF32(offsetCross, offsetMain);
-        SizeF32 scrollbarSize =
-                new SizeF32(
-                        item.overflow.y() == Overflow.SCROLL ? item.scrollbarWidth : 0.0f,
-                        item.overflow.x() == Overflow.SCROLL ? item.scrollbarWidth : 0.0f);
+                direction.isRow() ? new PointF32(offsetMain, offsetCross) : new PointF32(offsetCross, offsetMain);
+        SizeF32 scrollbarSize = new SizeF32(
+                item.overflow.y() == Overflow.SCROLL ? item.scrollbarWidth : 0.0f,
+                item.overflow.x() == Overflow.SCROLL ? item.scrollbarWidth : 0.0f);
 
         tree.setUnroundedLayout(
                 item.node,
@@ -537,20 +457,15 @@ public final class Flexbox {
         }
 
         if (isRtlRow) {
-            totalOffsetMain[0] -=
-                    item.offsetMain + item.margin.mainAxisSum(direction) + size.main(direction);
+            totalOffsetMain[0] -= item.offsetMain + item.margin.mainAxisSum(direction) + size.main(direction);
         } else {
-            totalOffsetMain[0] +=
-                    item.offsetMain + item.margin.mainAxisSum(direction) + size.main(direction);
+            totalOffsetMain[0] += item.offsetMain + item.margin.mainAxisSum(direction) + size.main(direction);
         }
 
-        PointF32 contributionLocation =
-                new PointF32(
-                        location.x() - constants.paddingBoxInset.left(),
-                        location.y() - constants.paddingBoxInset.top());
+        PointF32 contributionLocation = new PointF32(
+                location.x() - constants.paddingBoxInset.left(), location.y() - constants.paddingBoxInset.top());
         RectF32 contribution =
-                net.morphismmc.jaffy.compute.common.ScrollableOverflow
-                        .computeScrollableOverflowContribution(
+                net.morphismmc.jaffy.compute.common.ScrollableOverflow.computeScrollableOverflowContribution(
                         contributionLocation,
                         size,
                         scrollableOverflowRect.rect(),
@@ -648,29 +563,22 @@ public final class Flexbox {
                     // its height for the top/bottom sides
                     SizeF32 boxSizingAdjustment = child.boxSizingAdjustment(childStyle);
 
-                    SizeOptF32 maxSizeIgnoringAspectRatio =
-                            MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
-                                            childStyle.maxSize(), constants.nodeInnerSize, tree::calc)
-                                    .maybeAddF(boxSizingAdjustment);
+                    SizeOptF32 maxSizeIgnoringAspectRatio = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
+                                    childStyle.maxSize(), constants.nodeInnerSize, tree::calc)
+                            .maybeAddF(boxSizingAdjustment);
 
-                    usedCross =
-                            F32.maybeClampO(
-                                    Sys.f32Max(
-                                            lineCrossSize
-                                                    - child.margin.crossAxisSum(constants.dir),
-                                            0.0f),
-                                    child.minSize.cross(constants.dir),
-                                    maxSizeIgnoringAspectRatio.cross(constants.dir));
+                    usedCross = F32.maybeClampO(
+                            Sys.f32Max(lineCrossSize - child.margin.crossAxisSum(constants.dir), 0.0f),
+                            child.minSize.cross(constants.dir),
+                            maxSizeIgnoringAspectRatio.cross(constants.dir));
                 } else {
                     usedCross = child.hypotheticalInnerSize.cross(constants.dir);
                 }
                 child.targetSize = child.targetSize.withCross(constants.dir, usedCross);
 
-                child.outerTargetSize =
-                        child.outerTargetSize.withCross(
-                                constants.dir,
-                                child.targetSize.cross(constants.dir)
-                                        + child.margin.crossAxisSum(constants.dir));
+                child.outerTargetSize = child.outerTargetSize.withCross(
+                        constants.dir,
+                        child.targetSize.cross(constants.dir) + child.margin.crossAxisSum(constants.dir));
             }
         }
     }
@@ -682,8 +590,7 @@ public final class Flexbox {
     /// least one main-axis margin on this line is `auto`, distribute the free
     /// space equally among these margins; otherwise set all `auto` margins to
     /// zero. Then align the items along the cross-axis per `align-self`.
-    private static void resolveCrossAxisAutoMargins(
-            List<FlexLine> flexLines, AlgoConstants constants) {
+    private static void resolveCrossAxisAutoMargins(List<FlexLine> flexLines, AlgoConstants constants) {
         for (FlexLine line : flexLines) {
             float lineCrossSize = line.crossSize;
             float maxBaseline = 0.0f;
@@ -693,10 +600,8 @@ public final class Flexbox {
             float maxBaselineToBottomDistance = 0.0f;
             for (FlexItem child : line.items) {
                 if (child.participatesInBaselineAlignment(constants.dir)) {
-                    maxBaselineToBottomDistance =
-                            Sys.f32Max(
-                                    maxBaselineToBottomDistance,
-                                    child.outerTargetSize.cross(constants.dir) - child.baseline);
+                    maxBaselineToBottomDistance = Sys.f32Max(
+                            maxBaselineToBottomDistance, child.outerTargetSize.cross(constants.dir) - child.baseline);
                 }
             }
 
@@ -706,55 +611,24 @@ public final class Flexbox {
                 boolean autoEnd = child.marginIsAuto.crossEnd(constants.dir);
                 if (autoStart && autoEnd) {
                     if (constants.isRow) {
-                        child.margin =
-                                new RectF32(
-                                        child.margin.left(),
-                                        child.margin.right(),
-                                        freeSpace / 2.0f,
-                                        freeSpace / 2.0f);
+                        child.margin = new RectF32(
+                                child.margin.left(), child.margin.right(), freeSpace / 2.0f, freeSpace / 2.0f);
                     } else {
-                        child.margin =
-                                new RectF32(
-                                        freeSpace / 2.0f,
-                                        freeSpace / 2.0f,
-                                        child.margin.top(),
-                                        child.margin.bottom());
+                        child.margin = new RectF32(
+                                freeSpace / 2.0f, freeSpace / 2.0f, child.margin.top(), child.margin.bottom());
                     }
                 } else if (autoStart) {
-                    child.margin =
-                            constants.isRow
-                                    ? new RectF32(
-                                            child.margin.left(),
-                                            child.margin.right(),
-                                            freeSpace,
-                                            child.margin.bottom())
-                                    : new RectF32(
-                                            freeSpace,
-                                            child.margin.right(),
-                                            child.margin.top(),
-                                            child.margin.bottom());
+                    child.margin = constants.isRow
+                            ? new RectF32(child.margin.left(), child.margin.right(), freeSpace, child.margin.bottom())
+                            : new RectF32(freeSpace, child.margin.right(), child.margin.top(), child.margin.bottom());
                 } else if (autoEnd) {
-                    child.margin =
-                            constants.isRow
-                                    ? new RectF32(
-                                            child.margin.left(),
-                                            child.margin.right(),
-                                            child.margin.top(),
-                                            freeSpace)
-                                    : new RectF32(
-                                            child.margin.left(),
-                                            freeSpace,
-                                            child.margin.top(),
-                                            child.margin.bottom());
+                    child.margin = constants.isRow
+                            ? new RectF32(child.margin.left(), child.margin.right(), child.margin.top(), freeSpace)
+                            : new RectF32(child.margin.left(), freeSpace, child.margin.top(), child.margin.bottom());
                 } else {
                     // 14. Align all flex items along the cross-axis.
-                    child.offsetCross =
-                            alignFlexItemsAlongCrossAxis(
-                                    child,
-                                    freeSpace,
-                                    maxBaseline,
-                                    maxBaselineToBottomDistance,
-                                    constants);
+                    child.offsetCross = alignFlexItemsAlongCrossAxis(
+                            child, freeSpace, maxBaseline, maxBaselineToBottomDistance, constants);
                 }
             }
         }
@@ -778,9 +652,7 @@ public final class Flexbox {
         // drop the safety field so the match below operates on a bare keyword
         // and stays exhaustive.
         AlignItemsKeyword alignKeyword =
-                child.alignSelf.isSafe() && freeSpace < 0.0f
-                        ? AlignItemsKeyword.START
-                        : child.alignSelf.keyword();
+                child.alignSelf.isSafe() && freeSpace < 0.0f ? AlignItemsKeyword.START : child.alignSelf.keyword();
 
         switch (alignKeyword) {
             case START:
@@ -800,8 +672,7 @@ public final class Flexbox {
                         // flipped, so the baseline-aligned group of items is
                         // aligned to the cross-start edge, which is the bottom
                         // of the line.
-                        float lineCrossSize =
-                                freeSpace + child.outerTargetSize.cross(constants.dir);
+                        float lineCrossSize = freeSpace + child.outerTargetSize.cross(constants.dir);
                         return lineCrossSize - maxBaselineToBottomDistance - child.baseline;
                     } else {
                         return maxBaseline - child.baseline;
@@ -810,11 +681,8 @@ public final class Flexbox {
                     // Until we support vertical writing modes, baseline
                     // alignment only makes sense if the constants.direction is
                     // row, so we treat it as flex-start alignment in columns.
-                    boolean baselineColumnShouldReverse =
-                            crossAxisShouldReverse && !constants.isWrap;
-                    return constants.isWrapReverse ^ baselineColumnShouldReverse
-                            ? freeSpace
-                            : 0.0f;
+                    boolean baselineColumnShouldReverse = crossAxisShouldReverse && !constants.isWrap;
+                    return constants.isWrapReverse ^ baselineColumnShouldReverse ? freeSpace : 0.0f;
                 }
             case STRETCH:
                 return constants.isWrapReverse ^ crossAxisShouldReverse ? freeSpace : 0.0f;
@@ -833,23 +701,18 @@ public final class Flexbox {
     /// Otherwise, for each flex line: the used cross-size is the largest of
     /// (a) the largest baseline-group distance sum and (b) the largest outer
     /// hypothetical cross size among non-baseline items, and zero.
-    private static void calculateCrossSize(
-            List<FlexLine> flexLines, SizeOptF32 nodeSize, AlgoConstants constants) {
+    private static void calculateCrossSize(List<FlexLine> flexLines, SizeOptF32 nodeSize, AlgoConstants constants) {
         if (!constants.isWrap && OptF32.isSome(nodeSize.cross(constants.dir))) {
             float crossAxisPaddingBorder = constants.contentBoxInset.crossAxisSum(constants.dir);
             float crossMinSize = constants.minSize.cross(constants.dir);
             float crossMaxSize = constants.maxSize.cross(constants.dir);
-            flexLines.get(0).crossSize =
-                    OptF32.unwrapOr(
-                            OptF32.maybeMaxF(
-                                    OptF32.maybeSubF(
-                                            OptF32.maybeClampO(
-                                                    nodeSize.cross(constants.dir),
-                                                    crossMinSize,
-                                                    crossMaxSize),
-                                            crossAxisPaddingBorder),
-                                    0.0f),
-                            0.0f);
+            flexLines.get(0).crossSize = OptF32.unwrapOr(
+                    OptF32.maybeMaxF(
+                            OptF32.maybeSubF(
+                                    OptF32.maybeClampO(nodeSize.cross(constants.dir), crossMinSize, crossMaxSize),
+                                    crossAxisPaddingBorder),
+                            0.0f),
+                    0.0f);
         } else {
             for (FlexLine line : flexLines) {
                 float maxBaseline = 0.0f;
@@ -858,12 +721,9 @@ public final class Flexbox {
                 }
                 float crossSize = 0.0f;
                 for (FlexItem child : line.items) {
-                    float contribution =
-                            child.participatesInBaselineAlignment(constants.dir)
-                                    ? maxBaseline
-                                            - child.baseline
-                                            + child.hypotheticalOuterSize.cross(constants.dir)
-                                    : child.hypotheticalOuterSize.cross(constants.dir);
+                    float contribution = child.participatesInBaselineAlignment(constants.dir)
+                            ? maxBaseline - child.baseline + child.hypotheticalOuterSize.cross(constants.dir)
+                            : child.hypotheticalOuterSize.cross(constants.dir);
                     crossSize = Sys.f32Max(crossSize, contribution);
                 }
                 line.crossSize = crossSize;
@@ -876,10 +736,8 @@ public final class Flexbox {
             // automatically.
             if (!constants.isWrap) {
                 float crossAxisPaddingBorder = constants.contentBoxInset.crossAxisSum(constants.dir);
-                float crossMinSize =
-                        OptF32.maybeSubF(constants.minSize.cross(constants.dir), crossAxisPaddingBorder);
-                float crossMaxSize =
-                        OptF32.maybeSubF(constants.maxSize.cross(constants.dir), crossAxisPaddingBorder);
+                float crossMinSize = OptF32.maybeSubF(constants.minSize.cross(constants.dir), crossAxisPaddingBorder);
+                float crossMaxSize = OptF32.maybeSubF(constants.maxSize.cross(constants.dir), crossAxisPaddingBorder);
                 FlexLine first = flexLines.get(0);
                 first.crossSize = F32.maybeClampO(first.crossSize, crossMinSize, crossMaxSize);
             }
@@ -899,10 +757,9 @@ public final class Flexbox {
         // size, but only if that size is definite. A known main size which is
         // derived from the container's own content is treated as indefinite
         // here.
-        SizeOptF32 percentResolutionSize =
-                constants.knownMainSizeIsDefinite
-                        ? constants.nodeInnerSize
-                        : constants.nodeInnerSize.withMain(constants.dir, OptF32.NONE);
+        SizeOptF32 percentResolutionSize = constants.knownMainSizeIsDefinite
+                ? constants.nodeInnerSize
+                : constants.nodeInnerSize.withMain(constants.dir, OptF32.NONE);
 
         // Allocate once, for the child count (some children may not generate
         // an item); upstream reserves lazily on first push, which is
@@ -917,88 +774,60 @@ public final class Flexbox {
             // `order` uses the pre-filter index (upstream `enumerate`)
             int order = index;
             index++;
-            if (childStyle.position().isOutOfFlow()
-                    || childStyle.boxGenerationMode() == BoxGenerationMode.NONE) {
+            if (childStyle.position().isOutOfFlow() || childStyle.boxGenerationMode() == BoxGenerationMode.NONE) {
                 continue;
             }
 
             float aspectRatio = childStyle.aspectRatio();
-            RectF32 padding =
-                    MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(
-                            childStyle.padding(), constants.nodeInnerSize.width(), tree::calc);
-            RectF32 border =
-                    MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(
-                            childStyle.border(), constants.nodeInnerSize.width(), tree::calc);
-            SizeF32 boxSizingAdjustment =
-                    childStyle.boxSizing() == BoxSizing.CONTENT_BOX
-                            ? padding.plus(border).sumAxes()
-                            : SizeF32.ZERO;
+            RectF32 padding = MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(
+                    childStyle.padding(), constants.nodeInnerSize.width(), tree::calc);
+            RectF32 border = MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(
+                    childStyle.border(), constants.nodeInnerSize.width(), tree::calc);
+            SizeF32 boxSizingAdjustment = childStyle.boxSizing() == BoxSizing.CONTENT_BOX
+                    ? padding.plus(border).sumAxes()
+                    : SizeF32.ZERO;
 
             FlexItem item = new FlexItem();
             item.node = child;
             item.order = order;
-            item.size =
-                    MaybeResolve.SizeDimensionExt.maybeResolveO(
-                                    childStyle.size(), percentResolutionSize, tree::calc)
-                            .maybeApplyAspectRatio(aspectRatio)
-                            .maybeAddF(boxSizingAdjustment);
+            item.size = MaybeResolve.SizeDimensionExt.maybeResolveO(
+                            childStyle.size(), percentResolutionSize, tree::calc)
+                    .maybeApplyAspectRatio(aspectRatio)
+                    .maybeAddF(boxSizingAdjustment);
             item.sizeStyle = childStyle.size();
-            item.minSize =
-                    MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
-                                    childStyle.minSize(), percentResolutionSize, tree::calc)
-                            .maybeAddF(boxSizingAdjustment);
-            item.maxSize =
-                    MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
-                                    childStyle.maxSize(), percentResolutionSize, tree::calc)
-                            .maybeAddF(boxSizingAdjustment);
+            item.minSize = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
+                            childStyle.minSize(), percentResolutionSize, tree::calc)
+                    .maybeAddF(boxSizingAdjustment);
+            item.maxSize = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
+                            childStyle.maxSize(), percentResolutionSize, tree::calc)
+                    .maybeAddF(boxSizingAdjustment);
             item.aspectRatio = aspectRatio;
 
             if (childStyle.position() == Position.RELATIVE) {
-                RectOptF32 inset =
-                        new RectOptF32(
-                                childStyle
-                                        .inset()
-                                        .left()
-                                        .maybeResolveO(constants.nodeInnerSize.width(), tree::calc),
-                                childStyle
-                                        .inset()
-                                        .right()
-                                        .maybeResolveO(constants.nodeInnerSize.width(), tree::calc),
-                                childStyle
-                                        .inset()
-                                        .top()
-                                        .maybeResolveO(constants.nodeInnerSize.height(), tree::calc),
-                                childStyle
-                                        .inset()
-                                        .bottom()
-                                        .maybeResolveO(constants.nodeInnerSize.height(), tree::calc));
+                RectOptF32 inset = new RectOptF32(
+                        childStyle.inset().left().maybeResolveO(constants.nodeInnerSize.width(), tree::calc),
+                        childStyle.inset().right().maybeResolveO(constants.nodeInnerSize.width(), tree::calc),
+                        childStyle.inset().top().maybeResolveO(constants.nodeInnerSize.height(), tree::calc),
+                        childStyle.inset().bottom().maybeResolveO(constants.nodeInnerSize.height(), tree::calc));
                 item.relativeInset = resolveRelativeInset(inset, constants);
             } else {
                 item.relativeInset = SizeF32.ZERO;
             }
-            item.margin =
-                    MaybeResolve.RectLengthPercentageAutoExt.resolveOrZeroO(
-                            childStyle.margin(), constants.nodeInnerSize.width(), tree::calc);
+            item.margin = MaybeResolve.RectLengthPercentageAutoExt.resolveOrZeroO(
+                    childStyle.margin(), constants.nodeInnerSize.width(), tree::calc);
             // `margin.map(LengthPercentageAuto::is_auto)` — `Rect<bool>` ->
             // `RectBool` primitive specialization (no Function dispatch or
             // Boolean boxing)
-            item.marginIsAuto =
-                    new RectBool(
-                            childStyle.margin().left().isAuto(),
-                            childStyle.margin().right().isAuto(),
-                            childStyle.margin().top().isAuto(),
-                            childStyle.margin().bottom().isAuto());
+            item.marginIsAuto = new RectBool(
+                    childStyle.margin().left().isAuto(),
+                    childStyle.margin().right().isAuto(),
+                    childStyle.margin().top().isAuto(),
+                    childStyle.margin().bottom().isAuto());
             item.padding = padding;
             item.border = border;
-            item.alignSelf =
-                    resolveNormalAlignment(
-                                    childStyle.alignSelf() != null
-                                            ? childStyle.alignSelf()
-                                            : constants.alignItems)
-                            .resolveSelfRelative(
-                                    childStyle.direction(),
-                                    constants.layoutDirection,
-                                    constants.isColumn);
+            item.alignSelf = resolveNormalAlignment(
+                            childStyle.alignSelf() != null ? childStyle.alignSelf() : constants.alignItems)
+                    .resolveSelfRelative(childStyle.direction(), constants.layoutDirection, constants.isColumn);
             item.overflow = childStyle.overflow();
             item.contain = childStyle.contain();
             item.scrollbarWidth = childStyle.scrollbarWidth();
@@ -1056,47 +885,36 @@ public final class Flexbox {
 
             // Parent size for child sizing
             float crossAxisParentSize = constants.nodeInnerSize.cross(dir);
-            SizeOptF32 childParentSize =
-                    new SizeOptF32(
-                            dir.isRow() ? OptF32.NONE : crossAxisParentSize,
-                            dir.isRow() ? crossAxisParentSize : OptF32.NONE);
+            SizeOptF32 childParentSize = new SizeOptF32(
+                    dir.isRow() ? OptF32.NONE : crossAxisParentSize, dir.isRow() ? crossAxisParentSize : OptF32.NONE);
 
             // Available space for child sizing (excluding the child's
             // margins). Min/max sizes transferred through the aspect ratio
             // are taken into account here
             // https://github.com/w3c/csswg-drafts/issues/10997
-            SizeOptF32 transferredMinSize =
-                    child.minSize.maybeApplyAspectRatio(child.aspectRatio);
-            SizeOptF32 transferredMaxSize =
-                    child.maxSize.maybeApplyAspectRatio(child.aspectRatio);
+            SizeOptF32 transferredMinSize = child.minSize.maybeApplyAspectRatio(child.aspectRatio);
+            SizeOptF32 transferredMaxSize = child.maxSize.maybeApplyAspectRatio(child.aspectRatio);
             float childMinCross = transferredMinSize.cross(dir);
             float childMaxCross = transferredMaxSize.cross(dir);
 
             // Clamp available space by min- and max- size
             AvailableSpace crossAxisAvailableSpace;
             if (availableSpace.cross(dir) instanceof AvailableSpace.Definite definite) {
-                crossAxisAvailableSpace =
-                        new AvailableSpace.Definite(
-                                F32.maybeClampO(
-                                        Sys.f32Max(
-                                                constants.dividedCrossSpace(
-                                                                OptF32.unwrapOr(
-                                                                        crossAxisParentSize,
-                                                                        definite.value()))
-                                                        - child.margin.crossAxisSum(dir),
-                                                0.0f),
-                                        childMinCross,
-                                        childMaxCross));
+                crossAxisAvailableSpace = new AvailableSpace.Definite(F32.maybeClampO(
+                        Sys.f32Max(
+                                constants.dividedCrossSpace(OptF32.unwrapOr(crossAxisParentSize, definite.value()))
+                                        - child.margin.crossAxisSum(dir),
+                                0.0f),
+                        childMinCross,
+                        childMaxCross));
             } else if (availableSpace.cross(dir) instanceof AvailableSpace.MinContent) {
-                crossAxisAvailableSpace =
-                        OptF32.isSome(childMinCross)
-                                ? new AvailableSpace.Definite(childMinCross)
-                                : AvailableSpace.MIN_CONTENT;
+                crossAxisAvailableSpace = OptF32.isSome(childMinCross)
+                        ? new AvailableSpace.Definite(childMinCross)
+                        : AvailableSpace.MIN_CONTENT;
             } else {
-                crossAxisAvailableSpace =
-                        OptF32.isSome(childMaxCross)
-                                ? new AvailableSpace.Definite(childMaxCross)
-                                : AvailableSpace.MAX_CONTENT;
+                crossAxisAvailableSpace = OptF32.isSome(childMaxCross)
+                        ? new AvailableSpace.Definite(childMaxCross)
+                        : AvailableSpace.MAX_CONTENT;
             }
 
             // Known dimensions for child sizing
@@ -1105,27 +923,22 @@ public final class Flexbox {
             // Clamp the definite cross size by the cross min/max sizes so
             // that sizes transferred through an intrinsic aspect ratio (e.g.
             // for replaced elements) are based on the used cross size.
-            childKnownDimensions =
-                    childKnownDimensions.withCross(
-                            dir,
-                            OptF32.maybeClampO(
-                                    childKnownDimensions.cross(dir),
-                                    transferredMinSize.cross(dir),
-                                    transferredMaxSize.cross(dir)));
+            childKnownDimensions = childKnownDimensions.withCross(
+                    dir,
+                    OptF32.maybeClampO(
+                            childKnownDimensions.cross(dir),
+                            transferredMinSize.cross(dir),
+                            transferredMaxSize.cross(dir)));
             if (child.alignSelf.equals(AlignItems.STRETCH)
                     && !child.marginIsAuto.crossStart(constants.dir)
                     && !child.marginIsAuto.crossEnd(constants.dir)
                     && OptF32.isNone(childKnownDimensions.cross(dir))) {
-                childKnownDimensions =
-                        childKnownDimensions.withCross(
-                                dir, crossAxisAvailableSpace.intoOption());
+                childKnownDimensions = childKnownDimensions.withCross(dir, crossAxisAvailableSpace.intoOption());
                 // The cross size of a stretched item is definite if the
                 // container has a definite cross size
                 // (https://www.w3.org/TR/css-flexbox-1/#definite-sizes)
                 childCrossSizeIsDefinite =
-                        !constants.isWrap
-                                && constants.hasDefiniteCrossSize
-                                && OptF32.isSome(crossAxisParentSize);
+                        !constants.isWrap && constants.hasDefiniteCrossSize && OptF32.isSome(crossAxisParentSize);
             }
 
             float boxSizingAdjustment = child.boxSizingAdjustment(childStyle).main(dir);
@@ -1134,24 +947,17 @@ public final class Flexbox {
             // main size which is derived from the container's own content is
             // treated as indefinite here.
             float percentResolutionMainSize =
-                    constants.knownMainSizeIsDefinite
-                            ? constants.nodeInnerSize.main(dir)
-                            : OptF32.NONE;
+                    constants.knownMainSizeIsDefinite ? constants.nodeInnerSize.main(dir) : OptF32.NONE;
             Dimension flexBasisStyle = childStyle.flexBasis();
-            float resolvedFlexBasis =
-                    OptF32.maybeAddF(
-                            flexBasisStyle.maybeResolveO(percentResolutionMainSize, tree::calc),
-                            boxSizingAdjustment);
+            float resolvedFlexBasis = OptF32.maybeAddF(
+                    flexBasisStyle.maybeResolveO(percentResolutionMainSize, tree::calc), boxSizingAdjustment);
 
             float flexBasis;
             basis:
             {
                 float mainSize = child.size.main(dir);
-                float mainStretchSize =
-                        OptF32.maybeMaxF(
-                                OptF32.maybeSubF(
-                                        percentResolutionMainSize, child.margin.mainAxisSum(dir)),
-                                0.0f);
+                float mainStretchSize = OptF32.maybeMaxF(
+                        OptF32.maybeSubF(percentResolutionMainSize, child.margin.mainAxisSum(dir)), 0.0f);
 
                 // A flex basis that is a sizing keyword (min-content,
                 // max-content, fit-content, fit-content(...), stretch) is
@@ -1168,25 +974,19 @@ public final class Flexbox {
                     // constraint below
                     keywordMainAvailableSpace = null;
                 } else if (flexBasisStyle.isSizingKeyword()) {
-                    SizingKeyword.SizingKeywordResolution resolution =
-                            SizingKeyword.resolveSizingKeyword(
-                                    flexBasisStyle,
-                                    mainStretchSize,
-                                    percentResolutionMainSize,
-                                    tree::calc);
+                    SizingKeyword.SizingKeywordResolution resolution = SizingKeyword.resolveSizingKeyword(
+                            flexBasisStyle, mainStretchSize, percentResolutionMainSize, tree::calc);
                     if (resolution instanceof SizingKeyword.SizingKeywordResolution.Exact exact) {
                         child.flexBasisIsDefinite = true;
                         flexBasis = exact.value();
                         break basis;
-                    } else if (resolution
-                            instanceof SizingKeyword.SizingKeywordResolution.Measure measure) {
+                    } else if (resolution instanceof SizingKeyword.SizingKeywordResolution.Measure measure) {
                         keywordMainAvailableSpace = measure.availableSpace();
                     }
                 } else {
-                    float basis =
-                            OptF32.isSome(resolvedFlexBasis)
-                                    ? resolvedFlexBasis
-                                    : (flexBasisStyle.isAuto() ? mainSize : OptF32.NONE);
+                    float basis = OptF32.isSome(resolvedFlexBasis)
+                            ? resolvedFlexBasis
+                            : (flexBasisStyle.isAuto() ? mainSize : OptF32.NONE);
                     if (OptF32.isSome(basis)) {
                         child.flexBasisIsDefinite = true;
                         flexBasis = basis;
@@ -1197,19 +997,13 @@ public final class Flexbox {
                     // an exact size or determines the available space
                     // constraint the item is measured under
                     if (flexBasisStyle.isAuto()) {
-                        SizingKeyword.SizingKeywordResolution resolution =
-                                SizingKeyword.resolveSizingKeyword(
-                                        child.sizeStyle.main(dir),
-                                        mainStretchSize,
-                                        percentResolutionMainSize,
-                                        tree::calc);
-                        if (resolution
-                                instanceof SizingKeyword.SizingKeywordResolution.Exact exact) {
+                        SizingKeyword.SizingKeywordResolution resolution = SizingKeyword.resolveSizingKeyword(
+                                child.sizeStyle.main(dir), mainStretchSize, percentResolutionMainSize, tree::calc);
+                        if (resolution instanceof SizingKeyword.SizingKeywordResolution.Exact exact) {
                             child.flexBasisIsDefinite = true;
                             flexBasis = exact.value();
                             break basis;
-                        } else if (resolution
-                                instanceof SizingKeyword.SizingKeywordResolution.Measure measure) {
+                        } else if (resolution instanceof SizingKeyword.SizingKeywordResolution.Measure measure) {
                             keywordMainAvailableSpace = measure.availableSpace();
                         }
                     }
@@ -1224,10 +1018,7 @@ public final class Flexbox {
                         && OptF32.isSome(childKnownDimensions.cross(dir))) {
                     child.flexBasisIsDefinite = true;
                     float cross = childKnownDimensions.cross(dir);
-                    flexBasis =
-                            dir.isRow()
-                                    ? cross * child.aspectRatio
-                                    : cross / child.aspectRatio;
+                    flexBasis = dir.isRow() ? cross * child.aspectRatio : cross / child.aspectRatio;
                     break basis;
                 }
 
@@ -1240,29 +1031,26 @@ public final class Flexbox {
                 //    calculation use fit-content as the flex item's cross
                 //    size. The flex base size is the item's resulting main
                 //    size.
-                Size<AvailableSpace> childAvailableSpace =
-                        StyleHelpers.SizeAvailableSpaceExt.maxContent()
-                                .withMain(
-                                        dir,
-                                        keywordMainAvailableSpace != null
-                                                ? keywordMainAvailableSpace
-                                                // Map AvailableSpace::Definite to
-                                                // AvailableSpace::MaxContent
-                                                : availableSpace.main(dir)
-                                                                instanceof AvailableSpace.MinContent
-                                                        ? AvailableSpace.MIN_CONTENT
-                                                        : AvailableSpace.MAX_CONTENT)
-                                .withCross(dir, crossAxisAvailableSpace);
+                Size<AvailableSpace> childAvailableSpace = StyleHelpers.SizeAvailableSpaceExt.maxContent()
+                        .withMain(
+                                dir,
+                                keywordMainAvailableSpace != null
+                                        ? keywordMainAvailableSpace
+                                        // Map AvailableSpace::Definite to
+                                        // AvailableSpace::MaxContent
+                                        : availableSpace.main(dir) instanceof AvailableSpace.MinContent
+                                                ? AvailableSpace.MIN_CONTENT
+                                                : AvailableSpace.MAX_CONTENT)
+                        .withCross(dir, crossAxisAvailableSpace);
 
-                flexBasis =
-                        tree.measureChildSize(
-                                child.node,
-                                childKnownDimensions,
-                                childParentSize,
-                                childAvailableSpace,
-                                SizingMode.CONTENT_SIZE,
-                                dir.mainAxis(),
-                                LineBool.FALSE);
+                flexBasis = tree.measureChildSize(
+                        child.node,
+                        childKnownDimensions,
+                        childParentSize,
+                        childAvailableSpace,
+                        SizingMode.CONTENT_SIZE,
+                        dir.mainAxis(),
+                        LineBool.FALSE);
             }
             child.flexBasis = flexBasis;
 
@@ -1276,8 +1064,7 @@ public final class Flexbox {
             // TODO: resolve spec violation
             // Spec: https://www.w3.org/TR/css-flexbox-1/#intrinsic-item-contributions
             // Spec: https://www.w3.org/TR/css-flexbox-1/#change-2016-max-contribution
-            float paddingBorderSum =
-                    child.padding.mainAxisSum(constants.dir) + child.border.mainAxisSum(constants.dir);
+            float paddingBorderSum = child.padding.mainAxisSum(constants.dir) + child.border.mainAxisSum(constants.dir);
             child.flexBasis = Sys.f32Max(child.flexBasis, paddingBorderSum);
 
             // The hypothetical main size is the item's flex base size clamped
@@ -1285,10 +1072,9 @@ public final class Flexbox {
             // content box size at zero).
             child.innerFlexBasis = child.flexBasis - paddingBorderSum;
 
-            SizeOptF32 paddingBorderAxesSums =
-                    new SizeOptF32(
-                            child.padding.plus(child.border).sumAxes().width(),
-                            child.padding.plus(child.border).sumAxes().height());
+            SizeOptF32 paddingBorderAxesSums = new SizeOptF32(
+                    child.padding.plus(child.border).sumAxes().width(),
+                    child.padding.plus(child.border).sumAxes().height());
 
             // Note that it is important that the `parent_size` parameter in
             // the main axis is not set for this function call as it is used
@@ -1299,13 +1085,11 @@ public final class Flexbox {
             // wrapping content can wrap correctly.
             //
             // See https://drafts.csswg.org/css-sizing-3/#min-percentage-contribution
-            float styleMinMainSize =
-                    child.minSize
-                            .or(
-                                    new SizeOptF32(
-                                            child.overflow.x().maybeIntoAutomaticMinSize(),
-                                            child.overflow.y().maybeIntoAutomaticMinSize()))
-                            .main(dir);
+            float styleMinMainSize = child.minSize
+                    .or(new SizeOptF32(
+                            child.overflow.x().maybeIntoAutomaticMinSize(),
+                            child.overflow.y().maybeIntoAutomaticMinSize()))
+                    .main(dir);
 
             if (OptF32.isSome(styleMinMainSize)) {
                 child.resolvedMinimumMainSize = styleMinMainSize;
@@ -1313,28 +1097,23 @@ public final class Flexbox {
                 float minContentMainSize;
                 {
                     Size<AvailableSpace> childAvailableSpace =
-                            StyleHelpers.SizeAvailableSpaceExt.minContent()
-                                    .withCross(dir, crossAxisAvailableSpace);
-                    minContentMainSize =
-                            tree.measureChildSize(
-                                    child.node,
-                                    childKnownDimensions,
-                                    childParentSize,
-                                    childAvailableSpace,
-                                    SizingMode.CONTENT_SIZE,
-                                    dir.mainAxis(),
-                                    LineBool.FALSE);
+                            StyleHelpers.SizeAvailableSpaceExt.minContent().withCross(dir, crossAxisAvailableSpace);
+                    minContentMainSize = tree.measureChildSize(
+                            child.node,
+                            childKnownDimensions,
+                            childParentSize,
+                            childAvailableSpace,
+                            SizingMode.CONTENT_SIZE,
+                            dir.mainAxis(),
+                            LineBool.FALSE);
                 }
 
                 // 4.5. Automatic Minimum Size of Flex Items
                 // https://www.w3.org/TR/css-flexbox-1/#min-size-auto
-                float clampedMinContentSize =
-                        F32.maybeMaxO(
-                                F32.maybeMinO(
-                                        F32.maybeMinO(
-                                                minContentMainSize, child.size.main(dir)),
-                                        transferredMaxSize.main(dir)),
-                                paddingBorderAxesSums.main(dir));
+                float clampedMinContentSize = F32.maybeMaxO(
+                        F32.maybeMinO(
+                                F32.maybeMinO(minContentMainSize, child.size.main(dir)), transferredMaxSize.main(dir)),
+                        paddingBorderAxesSums.main(dir));
                 child.resolvedMinimumMainSize = clampedMinContentSize;
             }
 
@@ -1342,24 +1121,15 @@ public final class Flexbox {
             // hypothetical main size, but do not participate in resolving
             // flexible lengths or clamping the final size.
             // https://github.com/w3c/csswg-drafts/issues/10997
-            float hypotheticalInnerMinMain =
-                    F32.maybeMaxO(
-                            F32.maybeMaxO(
-                                    child.resolvedMinimumMainSize,
-                                    transferredMinSize.main(constants.dir)),
-                            paddingBorderAxesSums.main(constants.dir));
+            float hypotheticalInnerMinMain = F32.maybeMaxO(
+                    F32.maybeMaxO(child.resolvedMinimumMainSize, transferredMinSize.main(constants.dir)),
+                    paddingBorderAxesSums.main(constants.dir));
             float hypotheticalInnerSize =
-                    F32.maybeClampO(
-                            child.flexBasis,
-                            hypotheticalInnerMinMain,
-                            transferredMaxSize.main(constants.dir));
-            float hypotheticalOuterSize =
-                    hypotheticalInnerSize + child.margin.mainAxisSum(constants.dir);
+                    F32.maybeClampO(child.flexBasis, hypotheticalInnerMinMain, transferredMaxSize.main(constants.dir));
+            float hypotheticalOuterSize = hypotheticalInnerSize + child.margin.mainAxisSum(constants.dir);
 
-            child.hypotheticalInnerSize =
-                    child.hypotheticalInnerSize.withMain(constants.dir, hypotheticalInnerSize);
-            child.hypotheticalOuterSize =
-                    child.hypotheticalOuterSize.withMain(constants.dir, hypotheticalOuterSize);
+            child.hypotheticalInnerSize = child.hypotheticalInnerSize.withMain(constants.dir, hypotheticalInnerSize);
+            child.hypotheticalOuterSize = child.hypotheticalOuterSize.withMain(constants.dir, hypotheticalOuterSize);
         }
     }
 
@@ -1413,9 +1183,7 @@ public final class Flexbox {
     ///   would not fit the container's inner main size. `&mut Vec<FlexItem>`
     ///   -> `List<FlexItem>`; `split_at_mut` -> `subList` views.
     private static List<FlexLine> collectFlexLines(
-            AlgoConstants constants,
-            Size<AvailableSpace> availableSpace,
-            List<FlexItem> flexItems) {
+            AlgoConstants constants, Size<AvailableSpace> availableSpace, List<FlexItem> flexItems) {
         // Wrapping into multiple lines requires a definite main size. If the
         // container's known main size is derived from its own content (and is
         // thus indefinite) then all items are collected into a single flex
@@ -1430,8 +1198,7 @@ public final class Flexbox {
         AvailableSpace mainAxisAvailableSpace;
         float maxMainSize = constants.maxSize.main(constants.dir);
         if (OptF32.isSome(maxMainSize)) {
-            float available =
-                    OptF32.unwrapOr(availableSpace.main(constants.dir).intoOption(), maxMainSize);
+            float available = OptF32.unwrapOr(availableSpace.main(constants.dir).intoOption(), maxMainSize);
             // If the container's main size is not definite then it is at
             // most the max main size, so the max size (and not the available
             // space) is the limit that items wrap against.
@@ -1439,8 +1206,7 @@ public final class Flexbox {
                 available = F32.min(available, maxMainSize);
             }
             mainAxisAvailableSpace =
-                    new AvailableSpace.Definite(
-                            F32.maybeMaxO(available, constants.minSize.main(constants.dir)));
+                    new AvailableSpace.Definite(F32.maybeMaxO(available, constants.minSize.main(constants.dir)));
         } else if (!constants.dir.isRow()
                 && !constants.hasDefiniteMainSize
                 && availableSpace.main(constants.dir).isDefinite()) {
@@ -1486,8 +1252,7 @@ public final class Flexbox {
                 // after the last one), so the first item in the line does not
                 // contribute a gap to the line length
                 float gapContribution = i == offset ? 0.0f : mainAxisGap;
-                lineLength += flexItems.get(i).hypotheticalOuterSize.main(constants.dir)
-                        + gapContribution;
+                lineLength += flexItems.get(i).hypotheticalOuterSize.main(constants.dir) + gapContribution;
                 if (lineLength > limit && i != offset) {
                     index = i - offset;
                     break;
@@ -1514,9 +1279,7 @@ public final class Flexbox {
     ///
     /// See <https://drafts.csswg.org/css-flexbox-2/#balance-values>
     private static List<FlexLine> collectBalancedFlexLines(
-            AlgoConstants constants,
-            Size<AvailableSpace> availableSpace,
-            List<FlexItem> flexItems) {
+            AlgoConstants constants, Size<AvailableSpace> availableSpace, List<FlexItem> flexItems) {
         if (flexItems.isEmpty()) {
             return new ArrayList<>(0);
         }
@@ -1530,8 +1293,7 @@ public final class Flexbox {
             float maxMainSize = constants.maxSize.main(constants.dir);
             if (OptF32.isSome(maxMainSize)) {
                 float available =
-                        OptF32.unwrapOr(
-                                availableSpace.main(constants.dir).intoOption(), maxMainSize);
+                        OptF32.unwrapOr(availableSpace.main(constants.dir).intoOption(), maxMainSize);
                 // If the container's main size is not definite then it is at
                 // most the max main size, so the max size (and not the
                 // available space) is the limit that items wrap against.
@@ -1539,8 +1301,7 @@ public final class Flexbox {
                     available = F32.min(available, maxMainSize);
                 }
                 mainAxisAvailableSpace =
-                        new AvailableSpace.Definite(
-                                F32.maybeMaxO(available, constants.minSize.main(constants.dir)));
+                        new AvailableSpace.Definite(F32.maybeMaxO(available, constants.minSize.main(constants.dir)));
             } else if (!constants.dir.isRow()
                     && !constants.hasDefiniteMainSize
                     && availableSpace.main(constants.dir).isDefinite()) {
@@ -1569,17 +1330,14 @@ public final class Flexbox {
             return lines;
         }
 
-        float lineBreakSize =
-                OptF32.unwrapOr(
-                        mainAxisAvailableSpace.intoOption(), Float.POSITIVE_INFINITY);
+        float lineBreakSize = OptF32.unwrapOr(mainAxisAvailableSpace.intoOption(), Float.POSITIVE_INFINITY);
         int minLineCount = constants.lineCount != OptI32.NONE ? constants.lineCount : 1;
         float[] itemSizes = new float[flexItems.size()];
         for (int i = 0; i < flexItems.size(); i++) {
             itemSizes[i] = flexItems.get(i).hypotheticalOuterSize.main(constants.dir);
         }
-        int[] itemCounts =
-                Balance.balancedLineItemCounts(
-                        itemSizes, lineBreakSize, constants.gap.main(constants.dir), minLineCount);
+        int[] itemCounts = Balance.balancedLineItemCounts(
+                itemSizes, lineBreakSize, constants.gap.main(constants.dir), minLineCount);
 
         List<FlexLine> lines = new ArrayList<>(itemCounts.length);
         int offset = 0;
@@ -1655,12 +1413,8 @@ public final class Flexbox {
                                 itemLengths[i++] = itemMainLength(child, constants);
                             }
                         }
-                        int[] itemCounts =
-                                Balance.balancedLineItemCounts(
-                                        itemLengths,
-                                        Float.POSITIVE_INFINITY,
-                                        mainAxisGap,
-                                        Balance.iMax(minLineCount, 1));
+                        int[] itemCounts = Balance.balancedLineItemCounts(
+                                itemLengths, Float.POSITIVE_INFINITY, mainAxisGap, Balance.iMax(minLineCount, 1));
                         float widestLineLength = 0.0f;
                         int index = 0;
                         for (int count : itemCounts) {
@@ -1672,8 +1426,7 @@ public final class Flexbox {
                             index += count;
                         }
                         float maxContentSize = widestLineLength + mainContentBoxInset;
-                        outerMainSize =
-                                F32.max(size, F32.min(maxContentSize, mainAxisAvailableSpace));
+                        outerMainSize = F32.max(size, F32.min(maxContentSize, mainAxisAvailableSpace));
                     }
                 } else if (lines.size() > 1) {
                     outerMainSize = F32.max(size, mainAxisAvailableSpace);
@@ -1684,8 +1437,7 @@ public final class Flexbox {
                 float longestLineLength = 0.0f;
                 boolean any = false;
                 for (FlexLine line : lines) {
-                    float lineMainAxisGap =
-                            sumAxisGaps(constants.gap.main(dir), line.items.size());
+                    float lineMainAxisGap = sumAxisGaps(constants.gap.main(dir), line.items.size());
                     float totalTargetSize = 0.0f;
                     for (FlexItem child : line.items) {
                         totalTargetSize += itemMainLength(child, constants);
@@ -1732,42 +1484,30 @@ public final class Flexbox {
                         // Gentest: padding_border_overrides_size_flex_basis_0.html
                         // Gentest: blockflex_min_content_ignores_own_height_as_percentage_basis.html
                         float clampingBasis =
-                                constants.isRow
-                                        ? OptF32.maybeMaxO(item.flexBasis, stylePreferred)
-                                        : item.flexBasis;
-                        float flexBasisMin =
-                                OptF32.filter(clampingBasis, v -> item.flexShrink == 0.0f);
-                        float flexBasisMax =
-                                OptF32.filter(clampingBasis, v -> item.flexGrow == 0.0f);
+                                constants.isRow ? OptF32.maybeMaxO(item.flexBasis, stylePreferred) : item.flexBasis;
+                        float flexBasisMin = OptF32.filter(clampingBasis, v -> item.flexShrink == 0.0f);
+                        float flexBasisMax = OptF32.filter(clampingBasis, v -> item.flexGrow == 0.0f);
 
-                        float minMainSize =
-                                F32.max(
-                                        OptF32.unwrapOr(
-                                                OptF32.or(
-                                                        OptF32.maybeMaxO(styleMin, flexBasisMin),
-                                                        flexBasisMin),
-                                                item.resolvedMinimumMainSize),
-                                        item.resolvedMinimumMainSize);
-                        float maxMainSize =
+                        float minMainSize = F32.max(
                                 OptF32.unwrapOr(
-                                        OptF32.or(
-                                                OptF32.maybeMinO(styleMax, flexBasisMax),
-                                                flexBasisMax),
-                                        Float.POSITIVE_INFINITY);
+                                        OptF32.or(OptF32.maybeMaxO(styleMin, flexBasisMin), flexBasisMin),
+                                        item.resolvedMinimumMainSize),
+                                item.resolvedMinimumMainSize);
+                        float maxMainSize = OptF32.unwrapOr(
+                                OptF32.or(OptF32.maybeMinO(styleMax, flexBasisMax), flexBasisMax),
+                                Float.POSITIVE_INFINITY);
 
                         float contentContribution;
                         // `match (min_main_size, style_preferred, max_main_size)`
                         // -> if-chain (guards read top to bottom)
                         if (OptF32.isSome(stylePreferred)
-                                && (maxMainSize <= minMainSize
-                                        || maxMainSize <= stylePreferred)) {
+                                && (maxMainSize <= minMainSize || maxMainSize <= stylePreferred)) {
                             // If the clamping values are such that max <=
                             // min, then we can avoid the expensive step of
                             // computing the content size as we know that the
                             // clamping values will override it anyway
                             contentContribution =
-                                    F32.max(F32.min(stylePreferred, maxMainSize), minMainSize)
-                                            + marginSum;
+                                    F32.max(F32.min(stylePreferred, maxMainSize), minMainSize) + marginSum;
                         } else if (maxMainSize <= minMainSize) {
                             contentContribution = minMainSize + marginSum;
                         } else if (item.isScrollContainer()) {
@@ -1780,19 +1520,13 @@ public final class Flexbox {
                             // padding+border, so measuring the item can be
                             // skipped. Min/max clamping is applied in the
                             // same way as for measured contributions.
-                            float itemPbMain =
-                                    item.padding.mainAxisSum(dir) + item.border.mainAxisSum(dir);
+                            float itemPbMain = item.padding.mainAxisSum(dir) + item.border.mainAxisSum(dir);
                             float innerMainSize = F32.max(stylePreferred, itemPbMain);
                             if (constants.isRow) {
-                                contentContribution =
-                                        F32.maybeClampO(
-                                                innerMainSize + marginSum, styleMin, styleMax);
+                                contentContribution = F32.maybeClampO(innerMainSize + marginSum, styleMin, styleMax);
                             } else {
-                                contentContribution =
-                                        F32.maybeClampO(
-                                                F32.max(innerMainSize, item.flexBasis) + marginSum,
-                                                styleMin,
-                                                styleMax);
+                                contentContribution = F32.maybeClampO(
+                                        F32.max(innerMainSize, item.flexBasis) + marginSum, styleMin, styleMax);
                             }
                         } else {
                             // Parent size for child sizing
@@ -1802,22 +1536,13 @@ public final class Flexbox {
                             // child's margins)
                             float childMinCross = item.minSize.cross(dir);
                             float childMaxCross = item.maxSize.cross(dir);
-                            AvailableSpace crossAxisAvailableSpace =
-                                    availableSpace
-                                            .cross(dir)
-                                            .mapDefiniteValue(
-                                                    val ->
-                                                            F32.max(
-                                                                    constants.dividedCrossSpace(
-                                                                                    OptF32
-                                                                                            .unwrapOr(
-                                                                                                    crossAxisParentSize,
-                                                                                                    val))
-                                                                            - item.margin
-                                                                                    .crossAxisSum(
-                                                                                            dir),
-                                                                    0.0f))
-                                            .maybeClampO(childMinCross, childMaxCross);
+                            AvailableSpace crossAxisAvailableSpace = availableSpace
+                                    .cross(dir)
+                                    .mapDefiniteValue(val -> F32.max(
+                                            constants.dividedCrossSpace(OptF32.unwrapOr(crossAxisParentSize, val))
+                                                    - item.margin.crossAxisSum(dir),
+                                            0.0f))
+                                    .maybeClampO(childMinCross, childMaxCross);
 
                             Size<AvailableSpace> childAvailableSpace =
                                     availableSpace.withCross(dir, crossAxisAvailableSpace);
@@ -1829,22 +1554,16 @@ public final class Flexbox {
                             // does: an item measured wider than its max-width
                             // wraps onto fewer lines and under-reports its
                             // height.
-                            SizeOptF32 transferredMinSize =
-                                    item.minSize.maybeApplyAspectRatio(item.aspectRatio);
-                            SizeOptF32 transferredMaxSize =
-                                    item.maxSize.maybeApplyAspectRatio(item.aspectRatio);
-                            ckd =
-                                    ckd.withCross(
-                                            dir,
-                                            F32.maybeClampO(
-                                                    ckd.cross(dir),
-                                                    transferredMinSize.cross(dir),
-                                                    transferredMaxSize.cross(dir)));
-                            if (item.alignSelf.equals(AlignItems.STRETCH)
-                                    && OptF32.isNone(ckd.cross(dir))) {
-                                ckd =
-                                        ckd.withCross(
-                                                dir, crossAxisAvailableSpace.intoOption());
+                            SizeOptF32 transferredMinSize = item.minSize.maybeApplyAspectRatio(item.aspectRatio);
+                            SizeOptF32 transferredMaxSize = item.maxSize.maybeApplyAspectRatio(item.aspectRatio);
+                            ckd = ckd.withCross(
+                                    dir,
+                                    F32.maybeClampO(
+                                            ckd.cross(dir),
+                                            transferredMinSize.cross(dir),
+                                            transferredMaxSize.cross(dir)));
+                            if (item.alignSelf.equals(AlignItems.STRETCH) && OptF32.isNone(ckd.cross(dir))) {
+                                ckd = ckd.withCross(dir, crossAxisAvailableSpace.intoOption());
                             }
                             SizeOptF32 childKnownDimensions = ckd;
 
@@ -1852,32 +1571,28 @@ public final class Flexbox {
                             // on which constraint we are sizing under.
                             // TODO: Optimise by using already computed values
                             // where available
-                            float measuredMainSize =
-                                    tree.measureChildSize(
-                                            item.node,
-                                            childKnownDimensions,
-                                            constants.nodeInnerSize,
-                                            childAvailableSpace,
-                                            SizingMode.CONTENT_SIZE,
-                                            dir.mainAxis(),
-                                            LineBool.FALSE);
+                            float measuredMainSize = tree.measureChildSize(
+                                    item.node,
+                                    childKnownDimensions,
+                                    constants.nodeInnerSize,
+                                    childAvailableSpace,
+                                    SizingMode.CONTENT_SIZE,
+                                    dir.mainAxis(),
+                                    LineBool.FALSE);
 
                             // A known cross size is transferred through the
                             // item's aspect-ratio and floors the measured
                             // content size
                             float transferredMainSize;
-                            if (OptF32.isSome(item.aspectRatio)
-                                    && OptF32.isSome(childKnownDimensions.cross(dir))) {
+                            if (OptF32.isSome(item.aspectRatio) && OptF32.isSome(childKnownDimensions.cross(dir))) {
                                 float ratio = item.aspectRatio;
                                 float cross = childKnownDimensions.cross(dir);
-                                transferredMainSize =
-                                        constants.isRow ? cross * ratio : cross / ratio;
+                                transferredMainSize = constants.isRow ? cross * ratio : cross / ratio;
                             } else {
                                 transferredMainSize = OptF32.NONE;
                             }
 
-                            float innerMainSize =
-                                    F32.maybeMaxO(measuredMainSize, transferredMainSize);
+                            float innerMainSize = F32.maybeMaxO(measuredMainSize, transferredMainSize);
 
                             // This is somewhat bizarre in that it's
                             // asymmetrical depending whether the flex
@@ -1905,15 +1620,10 @@ public final class Flexbox {
                             // `flex_basis_uncontraint_column` generated tests
                             // which demonstrate this)
                             if (constants.isRow) {
-                                contentContribution =
-                                        F32.maybeClampO(
-                                                innerMainSize + marginSum, styleMin, styleMax);
+                                contentContribution = F32.maybeClampO(innerMainSize + marginSum, styleMin, styleMax);
                             } else {
-                                contentContribution =
-                                        F32.maybeClampO(
-                                                F32.max(innerMainSize, item.flexBasis) + marginSum,
-                                                styleMin,
-                                                styleMax);
+                                contentContribution = F32.maybeClampO(
+                                        F32.max(innerMainSize, item.flexBasis) + marginSum, styleMin, styleMax);
                             }
                         }
 
@@ -1921,8 +1631,7 @@ public final class Flexbox {
                         if (diff > 0.0f) {
                             item.contentFlexFraction = diff / F32.max(1.0f, item.flexGrow);
                         } else if (diff < 0.0f) {
-                            float scaledShrinkFactor =
-                                    F32.max(1.0f, item.flexShrink) * item.innerFlexBasis;
+                            float scaledShrinkFactor = F32.max(1.0f, item.flexShrink) * item.innerFlexBasis;
                             item.contentFlexFraction = diff / scaledShrinkFactor;
                         } else {
                             // We are assuming that diff is 0.0 here and that
@@ -1970,17 +1679,12 @@ public final class Flexbox {
                         if (item.contentFlexFraction > 0.0f) {
                             flexContribution = F32.max(1.0f, item.flexGrow) * flexFraction;
                         } else if (item.contentFlexFraction < 0.0f) {
-                            float scaledShrinkFactor =
-                                    F32.max(1.0f, item.flexShrink) * item.innerFlexBasis;
-                            flexContribution =
-                                    scaledShrinkFactor == 0.0f
-                                            ? 0.0f
-                                            : scaledShrinkFactor * flexFraction;
+                            float scaledShrinkFactor = F32.max(1.0f, item.flexShrink) * item.innerFlexBasis;
+                            flexContribution = scaledShrinkFactor == 0.0f ? 0.0f : scaledShrinkFactor * flexFraction;
                         } else {
                             flexContribution = 0.0f;
                         }
-                        float size =
-                                item.flexBasis + flexContribution + item.margin.mainAxisSum(dir);
+                        float size = item.flexBasis + flexContribution + item.margin.mainAxisSum(dir);
                         if (floorByLargestItem) {
                             largestItemSize = F32.max(largestItemSize, size);
                         }
@@ -1988,23 +1692,16 @@ public final class Flexbox {
                     }
 
                     float gapSum = sumAxisGaps(constants.gap.main(dir), line.items.size());
-                    mainSize =
-                            F32.max(
-                                    mainSize,
-                                    F32.max(largestItemSize, itemMainSizeSum + gapSum));
+                    mainSize = F32.max(mainSize, F32.max(largestItemSize, itemMainSizeSum + gapSum));
                 }
 
                 outerMainSize = mainSize + mainContentBoxInset;
             }
         }
 
-        outerMainSize =
-                F32.max(
-                        F32.maybeClampO(
-                                outerMainSize,
-                                constants.minSize.main(dir),
-                                constants.maxSize.main(dir)),
-                        mainContentBoxInset - constants.scrollbarGutter.main(dir));
+        outerMainSize = F32.max(
+                F32.maybeClampO(outerMainSize, constants.minSize.main(dir), constants.maxSize.main(dir)),
+                mainContentBoxInset - constants.scrollbarGutter.main(dir));
 
         float innerMainSize = F32.max(outerMainSize - mainContentBoxInset, 0.0f);
         constants.containerSize = constants.containerSize.withMain(dir, outerMainSize);
@@ -2060,14 +1757,11 @@ public final class Flexbox {
 
             if (exactlySized
                     || (child.flexGrow == 0.0f && child.flexShrink == 0.0f)
-                    || (growing
-                            && child.flexBasis > child.hypotheticalInnerSize.main(constants.dir))
-                    || (shrinking
-                            && child.flexBasis < child.hypotheticalInnerSize.main(constants.dir))) {
+                    || (growing && child.flexBasis > child.hypotheticalInnerSize.main(constants.dir))
+                    || (shrinking && child.flexBasis < child.hypotheticalInnerSize.main(constants.dir))) {
                 child.frozen = true;
                 float outerTargetSize = innerTargetSize + child.margin.mainAxisSum(constants.dir);
-                child.outerTargetSize =
-                        child.outerTargetSize.withMain(constants.dir, outerTargetSize);
+                child.outerTargetSize = child.outerTargetSize.withMain(constants.dir, outerTargetSize);
             }
         }
 
@@ -2082,16 +1776,13 @@ public final class Flexbox {
 
         float usedSpace = totalMainAxisGap;
         for (FlexItem child : line.items) {
-            usedSpace +=
-                    child.frozen
-                            ? child.outerTargetSize.main(constants.dir)
-                            : child.flexBasis + child.margin.mainAxisSum(constants.dir);
+            usedSpace += child.frozen
+                    ? child.outerTargetSize.main(constants.dir)
+                    : child.flexBasis + child.margin.mainAxisSum(constants.dir);
         }
 
         float initialFreeSpace =
-                OptF32.unwrapOr(
-                        OptF32.maybeSubF(constants.nodeInnerSize.main(constants.dir), usedSpace),
-                        0.0f);
+                OptF32.unwrapOr(OptF32.maybeSubF(constants.nodeInnerSize.main(constants.dir), usedSpace), 0.0f);
 
         // 4. Loop
 
@@ -2131,26 +1822,17 @@ public final class Flexbox {
 
             float freeSpace;
             if (growing && sumFlexGrow < 1.0f) {
-                freeSpace =
-                        OptF32.maybeMinO(
-                                initialFreeSpace * sumFlexGrow - totalMainAxisGap,
-                                OptF32.maybeSubF(
-                                        constants.nodeInnerSize.main(constants.dir),
-                                        innerUsedSpace));
+                freeSpace = OptF32.maybeMinO(
+                        initialFreeSpace * sumFlexGrow - totalMainAxisGap,
+                        OptF32.maybeSubF(constants.nodeInnerSize.main(constants.dir), innerUsedSpace));
             } else if (shrinking && sumFlexShrink < 1.0f) {
-                freeSpace =
-                        OptF32.maybeMaxO(
-                                initialFreeSpace * sumFlexShrink - totalMainAxisGap,
-                                OptF32.maybeSubF(
-                                        constants.nodeInnerSize.main(constants.dir),
-                                        innerUsedSpace));
+                freeSpace = OptF32.maybeMaxO(
+                        initialFreeSpace * sumFlexShrink - totalMainAxisGap,
+                        OptF32.maybeSubF(constants.nodeInnerSize.main(constants.dir), innerUsedSpace));
             } else {
-                freeSpace =
-                        OptF32.unwrapOr(
-                                OptF32.maybeSubF(
-                                        constants.nodeInnerSize.main(constants.dir),
-                                        innerUsedSpace),
-                                usedFlexFactor - innerUsedSpace);
+                freeSpace = OptF32.unwrapOr(
+                        OptF32.maybeSubF(constants.nodeInnerSize.main(constants.dir), innerUsedSpace),
+                        usedFlexFactor - innerUsedSpace);
             }
 
             // c. Distribute free space proportional to the flex factors.
@@ -2184,11 +1866,8 @@ public final class Flexbox {
                         if (child.frozen) {
                             continue;
                         }
-                        child.targetSize =
-                                child.targetSize.withMain(
-                                        constants.dir,
-                                        child.flexBasis
-                                                + freeSpace * (child.flexGrow / sumFlexGrow));
+                        child.targetSize = child.targetSize.withMain(
+                                constants.dir, child.flexBasis + freeSpace * (child.flexGrow / sumFlexGrow));
                     }
                 } else if (shrinking && sumFlexShrink > 0.0f) {
                     float sumScaledShrinkFactor = 0.0f;
@@ -2204,13 +1883,9 @@ public final class Flexbox {
                                 continue;
                             }
                             float scaledShrinkFactor = child.innerFlexBasis * child.flexShrink;
-                            child.targetSize =
-                                    child.targetSize.withMain(
-                                            constants.dir,
-                                            child.flexBasis
-                                                    + freeSpace
-                                                            * (scaledShrinkFactor
-                                                                    / sumScaledShrinkFactor));
+                            child.targetSize = child.targetSize.withMain(
+                                    constants.dir,
+                                    child.flexBasis + freeSpace * (scaledShrinkFactor / sumScaledShrinkFactor));
                         }
                     }
                 }
@@ -2232,19 +1907,11 @@ public final class Flexbox {
                 float resolvedMinMain = child.resolvedMinimumMainSize;
                 float maxMain = child.maxSize.main(constants.dir);
                 float clamped =
-                        F32.max(
-                                F32.maybeClampO(
-                                        child.targetSize.main(constants.dir),
-                                        resolvedMinMain,
-                                        maxMain),
-                                0.0f);
+                        F32.max(F32.maybeClampO(child.targetSize.main(constants.dir), resolvedMinMain, maxMain), 0.0f);
                 child.violation = clamped - child.targetSize.main(constants.dir);
                 child.targetSize = child.targetSize.withMain(constants.dir, clamped);
-                child.outerTargetSize =
-                        child.outerTargetSize.withMain(
-                                constants.dir,
-                                child.targetSize.main(constants.dir)
-                                        + child.margin.mainAxisSum(constants.dir));
+                child.outerTargetSize = child.outerTargetSize.withMain(
+                        constants.dir, child.targetSize.main(constants.dir) + child.margin.mainAxisSum(constants.dir));
 
                 totalViolation += child.violation;
             }
@@ -2292,12 +1959,10 @@ public final class Flexbox {
         // If the flex container is single-line and has a definite cross size
         // then that is the cross size of the line, whatever the hypothetical
         // cross sizes of the items are
-        boolean lineCrossSizeIsKnown =
-                !constants.isWrap && OptF32.isSome(nodeSize.cross(constants.dir));
+        boolean lineCrossSizeIsKnown = !constants.isWrap && OptF32.isSome(nodeSize.cross(constants.dir));
 
         for (FlexItem child : line.items) {
-            float paddingBorderSum =
-                    child.padding.plus(child.border).crossAxisSum(constants.dir);
+            float paddingBorderSum = child.padding.plus(child.border).crossAxisSum(constants.dir);
 
             // An item that will be stretched to a line whose cross size is
             // already known is not measured: its hypothetical cross size
@@ -2311,12 +1976,8 @@ public final class Flexbox {
 
             // The available space passed to the child excludes the child's
             // margins
-            AvailableSpace childAvailableMain =
-                    new AvailableSpace.Definite(
-                            F32.max(
-                                    constants.containerSize.main(constants.dir)
-                                            - child.margin.mainAxisSum(constants.dir),
-                                    0.0f));
+            AvailableSpace childAvailableMain = new AvailableSpace.Definite(F32.max(
+                    constants.containerSize.main(constants.dir) - child.margin.mainAxisSum(constants.dir), 0.0f));
 
             // Sizes transferred through the aspect ratio clamp the
             // hypothetical cross size
@@ -2326,48 +1987,33 @@ public final class Flexbox {
             float transferredMaxCross =
                     child.maxSize.maybeApplyAspectRatio(child.aspectRatio).cross(constants.dir);
 
-            float childCross =
-                    OptF32.maybeMaxF(
-                            F32.maybeClampO(
-                                    child.size.cross(constants.dir),
-                                    transferredMinCross,
-                                    transferredMaxCross),
-                            paddingBorderSum);
+            float childCross = OptF32.maybeMaxF(
+                    F32.maybeClampO(child.size.cross(constants.dir), transferredMinCross, transferredMaxCross),
+                    paddingBorderSum);
 
-            AvailableSpace childAvailableCross =
-                    availableSpace
-                            .cross(constants.dir)
-                            .mapDefiniteValue(
-                                    val ->
-                                            F32.max(
-                                                    constants.dividedCrossSpace(val)
-                                                            - child.margin.crossAxisSum(
-                                                                    constants.dir),
-                                                    0.0f))
-                            .maybeClampO(transferredMinCross, transferredMaxCross)
-                            .maybeMaxF(paddingBorderSum);
+            AvailableSpace childAvailableCross = availableSpace
+                    .cross(constants.dir)
+                    .mapDefiniteValue(val ->
+                            F32.max(constants.dividedCrossSpace(val) - child.margin.crossAxisSum(constants.dir), 0.0f))
+                    .maybeClampO(transferredMinCross, transferredMaxCross)
+                    .maybeMaxF(paddingBorderSum);
 
             // A cross size that is a sizing keyword (min-content, max-content,
             // fit-content, fit-content(...)) determines the available space
             // constraint the item is measured under. The `stretch` keyword is
             // not resolved here: it stretches to the flex line, which is
             // handled in `determine_used_cross_size`
-            float crossStretchSize =
-                    OptF32.maybeMaxF(
-                            OptF32.maybeSubF(
-                                    OptF32.map(
-                                            constants.nodeInnerSize.cross(constants.dir),
-                                            constants::dividedCrossSpace),
-                                    child.margin.crossAxisSum(constants.dir)),
-                            0.0f);
-            SizingKeyword.SizingKeywordResolution crossResolution =
-                    SizingKeyword.resolveSizingKeyword(
-                            child.sizeStyle.cross(constants.dir),
-                            crossStretchSize,
-                            constants.nodeInnerSize.cross(constants.dir),
-                            tree::calc);
-            if (crossResolution
-                    instanceof SizingKeyword.SizingKeywordResolution.Measure measure) {
+            float crossStretchSize = OptF32.maybeMaxF(
+                    OptF32.maybeSubF(
+                            OptF32.map(constants.nodeInnerSize.cross(constants.dir), constants::dividedCrossSpace),
+                            child.margin.crossAxisSum(constants.dir)),
+                    0.0f);
+            SizingKeyword.SizingKeywordResolution crossResolution = SizingKeyword.resolveSizingKeyword(
+                    child.sizeStyle.cross(constants.dir),
+                    crossStretchSize,
+                    constants.nodeInnerSize.cross(constants.dir),
+                    tree::calc);
+            if (crossResolution instanceof SizingKeyword.SizingKeywordResolution.Measure measure) {
                 childAvailableCross = measure.availableSpace();
             }
 
@@ -2375,44 +2021,32 @@ public final class Flexbox {
             if (OptF32.isSome(childCross)) {
                 childInnerCross = childCross;
             } else {
-                LayoutOutput output =
-                        tree.computeChildLayout(
-                                child.node,
-                                new LayoutInput(
-                                        RunMode.COMPUTE_SIZE,
-                                        SizingMode.CONTENT_SIZE,
-                                        RequestedAxis.from(constants.dir.crossAxis()),
-                                        new SizeOptF32(
-                                                constants.isRow
-                                                        ? child.targetSize.width()
-                                                        : childCross,
-                                                constants.isRow
-                                                        ? childCross
-                                                        : child.targetSize.height()),
-                                        itemKnownDimensionDefiniteness(constants, child),
-                                        constants.nodeInnerSize,
-                                        new Size<>(
-                                                constants.isRow
-                                                        ? childAvailableMain
-                                                        : childAvailableCross,
-                                                constants.isRow
-                                                        ? childAvailableCross
-                                                        : childAvailableMain),
-                                        LineBool.FALSE));
-                childInnerCross =
-                        F32.max(
-                                F32.maybeClampO(
-                                        output.size().getAbs(constants.dir.crossAxis()),
-                                        transferredMinCross,
-                                        transferredMaxCross),
-                                paddingBorderSum);
+                LayoutOutput output = tree.computeChildLayout(
+                        child.node,
+                        new LayoutInput(
+                                RunMode.COMPUTE_SIZE,
+                                SizingMode.CONTENT_SIZE,
+                                RequestedAxis.from(constants.dir.crossAxis()),
+                                new SizeOptF32(
+                                        constants.isRow ? child.targetSize.width() : childCross,
+                                        constants.isRow ? childCross : child.targetSize.height()),
+                                itemKnownDimensionDefiniteness(constants, child),
+                                constants.nodeInnerSize,
+                                new Size<>(
+                                        constants.isRow ? childAvailableMain : childAvailableCross,
+                                        constants.isRow ? childAvailableCross : childAvailableMain),
+                                LineBool.FALSE));
+                childInnerCross = F32.max(
+                        F32.maybeClampO(
+                                output.size().getAbs(constants.dir.crossAxis()),
+                                transferredMinCross,
+                                transferredMaxCross),
+                        paddingBorderSum);
             }
             float childOuterCross = childInnerCross + child.margin.crossAxisSum(constants.dir);
 
-            child.hypotheticalInnerSize =
-                    child.hypotheticalInnerSize.withCross(constants.dir, childInnerCross);
-            child.hypotheticalOuterSize =
-                    child.hypotheticalOuterSize.withCross(constants.dir, childOuterCross);
+            child.hypotheticalInnerSize = child.hypotheticalInnerSize.withCross(constants.dir, childInnerCross);
+            child.hypotheticalOuterSize = child.hypotheticalOuterSize.withCross(constants.dir, childOuterCross);
         }
     }
 
@@ -2452,61 +2086,47 @@ public final class Flexbox {
                     continue;
                 }
 
-                LayoutOutput measuredSizeAndBaselines =
-                        tree.computeChildLayout(
-                                child.node,
-                                new LayoutInput(
-                                        RunMode.PERFORM_LAYOUT,
-                                        SizingMode.CONTENT_SIZE,
-                                        RequestedAxis.BOTH,
-                                        new SizeOptF32(
-                                                constants.isRow
-                                                        ? child.targetSize.width()
-                                                        : child.hypotheticalInnerSize.width(),
-                                                constants.isRow
-                                                        ? child.hypotheticalInnerSize.height()
-                                                        : child.targetSize.height()),
-                                        itemKnownDimensionDefiniteness(constants, child),
-                                        constants.nodeInnerSize,
-                                        // The available space passed to the
-                                        // child excludes the child's margins
-                                        SizeAvailableSpaceExt.maybeSub(
-                                                SizeAvailableSpaceExt.maybeMax(
-                                                        new Size<>(
-                                                                constants.isRow
-                                                                        ? new AvailableSpace
-                                                                                .Definite(
-                                                                                constants
-                                                                                        .containerSize
-                                                                                        .width())
-                                                                        : availableSpace
-                                                                                .width()
-                                                                                .maybeSet(
-                                                                                        nodeSize
-                                                                                                .width()),
-                                                                constants.isRow
-                                                                        ? availableSpace
-                                                                                .height()
-                                                                                .maybeSet(
-                                                                                        nodeSize
-                                                                                                .height())
-                                                                        : new AvailableSpace
-                                                                                .Definite(
-                                                                                constants
-                                                                                        .containerSize
-                                                                                        .height())),
-                                                        SizeF32.ZERO),
-                                                child.margin.sumAxes()),
-                                        LineBool.FALSE));
+                LayoutOutput measuredSizeAndBaselines = tree.computeChildLayout(
+                        child.node,
+                        new LayoutInput(
+                                RunMode.PERFORM_LAYOUT,
+                                SizingMode.CONTENT_SIZE,
+                                RequestedAxis.BOTH,
+                                new SizeOptF32(
+                                        constants.isRow
+                                                ? child.targetSize.width()
+                                                : child.hypotheticalInnerSize.width(),
+                                        constants.isRow
+                                                ? child.hypotheticalInnerSize.height()
+                                                : child.targetSize.height()),
+                                itemKnownDimensionDefiniteness(constants, child),
+                                constants.nodeInnerSize,
+                                // The available space passed to the
+                                // child excludes the child's margins
+                                SizeAvailableSpaceExt.maybeSub(
+                                        SizeAvailableSpaceExt.maybeMax(
+                                                new Size<>(
+                                                        constants.isRow
+                                                                ? new AvailableSpace.Definite(
+                                                                        constants.containerSize.width())
+                                                                : availableSpace
+                                                                        .width()
+                                                                        .maybeSet(nodeSize.width()),
+                                                        constants.isRow
+                                                                ? availableSpace
+                                                                        .height()
+                                                                        .maybeSet(nodeSize.height())
+                                                                : new AvailableSpace.Definite(
+                                                                        constants.containerSize.height())),
+                                                SizeF32.ZERO),
+                                        child.margin.sumAxes()),
+                                LineBool.FALSE));
 
                 float height = measuredSizeAndBaselines.size().height();
-                float baseline =
-                        OptF32.unwrapOr(
-                                net.morphismmc.jaffy.compute.common.Alignment.childFirstBaseline(
-                                        measuredSizeAndBaselines.baselines().first(),
-                                        height,
-                                        child.overflow.y()),
-                                height);
+                float baseline = OptF32.unwrapOr(
+                        net.morphismmc.jaffy.compute.common.Alignment.childFirstBaseline(
+                                measuredSizeAndBaselines.baselines().first(), height, child.overflow.y()),
+                        height);
 
                 child.baseline = baseline + child.margin.top();
             }
@@ -2527,11 +2147,9 @@ public final class Flexbox {
     ///      margins to zero.
     ///
     ///   2. Align the items along the main-axis per `justify-content`.
-    private static void distributeRemainingFreeSpace(
-            List<FlexLine> flexLines, AlgoConstants constants) {
+    private static void distributeRemainingFreeSpace(List<FlexLine> flexLines, AlgoConstants constants) {
         for (FlexLine line : flexLines) {
-            float totalMainAxisGap =
-                    sumAxisGaps(constants.gap.main(constants.dir), line.items.size());
+            float totalMainAxisGap = sumAxisGaps(constants.gap.main(constants.dir), line.items.size());
             float usedSpace = totalMainAxisGap;
             for (FlexItem child : line.items) {
                 usedSpace += child.outerTargetSize.main(constants.dir);
@@ -2590,14 +2208,8 @@ public final class Flexbox {
             float finalFreeSpace = freeSpace;
             for (int i = 0; i < numItems; i++) {
                 FlexItem child = line.items.get(layoutReverse ? numItems - 1 - i : i);
-                child.offsetMain =
-                        net.morphismmc.jaffy.compute.common.Alignment.computeAlignmentOffset(
-                                finalFreeSpace,
-                                numItems,
-                                gap,
-                                justifyContentMode,
-                                layoutReverse,
-                                i == 0);
+                child.offsetMain = net.morphismmc.jaffy.compute.common.Alignment.computeAlignmentOffset(
+                        finalFreeSpace, numItems, gap, justifyContentMode, layoutReverse, i == 0);
             }
         }
     }
@@ -2608,22 +2220,17 @@ public final class Flexbox {
     /// here and the overflow rect is returned.
     private static RectF32 finalLayoutPass(
             LayoutFlexboxContainer tree, List<FlexLine> flexLines, AlgoConstants constants) {
-        ScrollableOverflowContainer overflowContainer =
-                new ScrollableOverflowContainer(
-                        constants.isScrollContainer,
-                        constants
-                                .containerSize
-                                .minus(constants.border.sumAxes())
-                                .minus(
-                                        new SizeF32(
-                                                constants.scrollbarGutter.x(),
-                                                constants.scrollbarGutter.y())),
-                        constants.scrollOriginReversed(),
-                        constants.padding);
+        ScrollableOverflowContainer overflowContainer = new ScrollableOverflowContainer(
+                constants.isScrollContainer,
+                constants
+                        .containerSize
+                        .minus(constants.border.sumAxes())
+                        .minus(new SizeF32(constants.scrollbarGutter.x(), constants.scrollbarGutter.y())),
+                constants.scrollOriginReversed(),
+                constants.padding);
         float[] totalOffsetCross = {
             constants.isColumn && constants.layoutDirection.isRtl()
-                    ? constants.containerSize.width()
-                            - constants.contentBoxInset.crossEnd(constants.dir)
+                    ? constants.containerSize.width() - constants.contentBoxInset.crossEnd(constants.dir)
                     : constants.contentBoxInset.crossStart(constants.dir)
         };
 
@@ -2632,59 +2239,45 @@ public final class Flexbox {
         if (constants.isWrapReverse) {
             for (int i = flexLines.size() - 1; i >= 0; i--) {
                 calculateLayoutLine(
-                        tree,
-                        flexLines.get(i),
-                        totalOffsetCross,
-                        overflowRect,
-                        overflowContainer,
-                        constants);
+                        tree, flexLines.get(i), totalOffsetCross, overflowRect, overflowContainer, constants);
             }
         } else {
             for (FlexLine line : flexLines) {
-                calculateLayoutLine(
-                        tree, line, totalOffsetCross, overflowRect, overflowContainer, constants);
+                calculateLayoutLine(tree, line, totalOffsetCross, overflowRect, overflowContainer, constants);
             }
         }
 
         if (constants.layoutDirection.isRtl()) {
-            float clientWidth =
-                    F32.max(
-                            constants.containerSize.width()
-                                    - constants.border.horizontalAxisSum()
-                                    - constants.scrollbarGutter.x(),
-                            0.0f);
-            overflowRect[0] =
-                    overflowRect[0].union(new RectF32(0.0f, clientWidth, 0.0f, 0.0f));
+            float clientWidth = F32.max(
+                    constants.containerSize.width()
+                            - constants.border.horizontalAxisSum()
+                            - constants.scrollbarGutter.x(),
+                    0.0f);
+            overflowRect[0] = overflowRect[0].union(new RectF32(0.0f, clientWidth, 0.0f, 0.0f));
         }
 
         if (constants.isScrollContainer) {
-            float clientWidth =
-                    F32.max(
-                            constants.containerSize.width()
-                                    - constants.border.horizontalAxisSum()
+            float clientWidth = F32.max(
+                    constants.containerSize.width()
+                            - constants.border.horizontalAxisSum()
+                            - constants.scrollbarGutter.x(),
+                    0.0f);
+            overflowRect[0] = overflowRect[0].union(new RectF32(
+                    constants.layoutDirection.isRtl()
+                            ? F32.min(
+                                    clientWidth
+                                            - (constants.contentBoxInset.left()
+                                                    - constants.border.left()
+                                                    - constants.scrollbarGutter.x()),
+                                    0.0f)
+                            : 0.0f,
+                    constants.layoutDirection.isRtl()
+                            ? clientWidth
+                            : constants.contentBoxInset.right()
+                                    - constants.border.right()
                                     - constants.scrollbarGutter.x(),
-                            0.0f);
-            overflowRect[0] =
-                    overflowRect[0].union(
-                            new RectF32(
-                                    constants.layoutDirection.isRtl()
-                                            ? F32.min(
-                                                    clientWidth
-                                                            - (constants.contentBoxInset.left()
-                                                                    - constants.border.left()
-                                                                    - constants.scrollbarGutter
-                                                                            .x()),
-                                                    0.0f)
-                                            : 0.0f,
-                                    constants.layoutDirection.isRtl()
-                                            ? clientWidth
-                                            : constants.contentBoxInset.right()
-                                                    - constants.border.right()
-                                                    - constants.scrollbarGutter.x(),
-                                    0.0f,
-                                    constants.contentBoxInset.bottom()
-                                            - constants.border.bottom()
-                                            - constants.scrollbarGutter.y()));
+                    0.0f,
+                    constants.contentBoxInset.bottom() - constants.border.bottom() - constants.scrollbarGutter.y()));
         }
         return overflowRect[0];
     }
@@ -2728,13 +2321,9 @@ public final class Flexbox {
         // The static-position area in each axis is the container's content
         // box
         LineF32 mainArea =
-                new LineF32(
-                        contentBoxInset.mainStart(dir),
-                        containerSize.main(dir) - contentBoxInset.mainEnd(dir));
+                new LineF32(contentBoxInset.mainStart(dir), containerSize.main(dir) - contentBoxInset.mainEnd(dir));
         LineF32 crossArea =
-                new LineF32(
-                        contentBoxInset.crossStart(dir),
-                        containerSize.cross(dir) - contentBoxInset.crossEnd(dir));
+                new LineF32(contentBoxInset.crossStart(dir), containerSize.cross(dir) - contentBoxInset.crossEnd(dir));
 
         for (int order = 0; order < tree.childCount(node); order++) {
             long child = tree.getChildId(node, order);
@@ -2753,15 +2342,9 @@ public final class Flexbox {
                 continue;
             }
 
-            AlignItems alignSelf =
-                    resolveNormalAlignment(
-                                    childStyle.alignSelf() != null
-                                            ? childStyle.alignSelf()
-                                            : constants.alignItems)
-                            .resolveSelfRelative(
-                                    childStyle.direction(),
-                                    constants.layoutDirection,
-                                    constants.isColumn);
+            AlignItems alignSelf = resolveNormalAlignment(
+                            childStyle.alignSelf() != null ? childStyle.alignSelf() : constants.alignItems)
+                    .resolveSelfRelative(childStyle.direction(), constants.layoutDirection, constants.isColumn);
 
             // Main-axis static position (justify-content).
             //
@@ -2783,26 +2366,18 @@ public final class Flexbox {
             // `flex-end` and the distributed keywords' fallbacks are
             // flex-relative.
             AlignContentKeyword mainKeyword = constants.justifyContent.keyword();
-            boolean mainStartPosition =
-                    switch (mainKeyword) {
-                        case START -> !mainIsRtl;
-                        case END -> mainIsRtl;
-                        default -> true;
-                    };
-            AxisStaticEdge mainEdge =
-                    switch (mainKeyword) {
-                        case SPACE_BETWEEN, NORMAL, STRETCH, FLEX_START ->
-                                mainAxisFlexStartReversed
-                                        ? AxisStaticEdge.END
-                                        : AxisStaticEdge.START;
-                        case FLEX_END -> mainAxisFlexStartReversed
-                                ? AxisStaticEdge.START
-                                : AxisStaticEdge.END;
-                        case START, END -> mainStartPosition
-                                ? AxisStaticEdge.START
-                                : AxisStaticEdge.END;
-                        case SPACE_EVENLY, SPACE_AROUND, CENTER -> AxisStaticEdge.CENTER;
-                    };
+            boolean mainStartPosition = switch (mainKeyword) {
+                case START -> !mainIsRtl;
+                case END -> mainIsRtl;
+                default -> true;
+            };
+            AxisStaticEdge mainEdge = switch (mainKeyword) {
+                case SPACE_BETWEEN, NORMAL, STRETCH, FLEX_START ->
+                    mainAxisFlexStartReversed ? AxisStaticEdge.END : AxisStaticEdge.START;
+                case FLEX_END -> mainAxisFlexStartReversed ? AxisStaticEdge.START : AxisStaticEdge.END;
+                case START, END -> mainStartPosition ? AxisStaticEdge.START : AxisStaticEdge.END;
+                case SPACE_EVENLY, SPACE_AROUND, CENTER -> AxisStaticEdge.CENTER;
+            };
 
             // Cross-axis static position (align-self).
             //
@@ -2810,21 +2385,15 @@ public final class Flexbox {
             // is `start`) are writing-mode relative: they flip for RTL but
             // not for `wrap-reverse`. `flex-start`/`flex-end` and the
             // `stretch` fallback are flex-relative.
-            AxisStaticEdge crossEdge =
-                    crossEdgeFor(alignSelf.keyword(), crossAxisFlexStartReversed, crossIsRtl);
-            AxisStaticEdge crossFallback =
-                    crossEdgeFor(
-                            net.morphismmc.jaffy.compute.common.Alignment
-                                    .resolveSelfAlignmentSafety(alignSelf, true),
-                            crossAxisFlexStartReversed,
-                            crossIsRtl);
+            AxisStaticEdge crossEdge = crossEdgeFor(alignSelf.keyword(), crossAxisFlexStartReversed, crossIsRtl);
+            AxisStaticEdge crossFallback = crossEdgeFor(
+                    net.morphismmc.jaffy.compute.common.Alignment.resolveSelfAlignmentSafety(alignSelf, true),
+                    crossAxisFlexStartReversed,
+                    crossIsRtl);
 
-            AxisStaticPosition cross =
-                    new AxisStaticPosition(
-                            crossArea,
-                            new AxisStaticAlign(crossEdge, alignSelf.safety(), crossFallback));
-            AxisStaticPosition main =
-                    new AxisStaticPosition(mainArea, AxisStaticAlign.fromKeyword(mainEdge));
+            AxisStaticPosition cross = new AxisStaticPosition(
+                    crossArea, new AxisStaticAlign(crossEdge, alignSelf.safety(), crossFallback));
+            AxisStaticPosition main = new AxisStaticPosition(mainArea, AxisStaticAlign.fromKeyword(mainEdge));
 
             Point<AxisStaticPosition> staticPosition =
                     constants.isRow ? new Point<>(main, cross) : new Point<>(cross, main);
@@ -2835,24 +2404,19 @@ public final class Flexbox {
     /// `cross_edge_for` closure from `collect_oof_candidates`
     private static AxisStaticEdge crossEdgeFor(
             AlignItemsKeyword keyword, boolean crossAxisFlexStartReversed, boolean crossIsRtl) {
-        boolean startPosition =
-                switch (keyword) {
-                    case START, BASELINE -> !crossIsRtl;
-                    case END -> crossIsRtl;
-                    default -> true;
-                };
+        boolean startPosition = switch (keyword) {
+            case START, BASELINE -> !crossIsRtl;
+            case END -> crossIsRtl;
+            default -> true;
+        };
         return switch (keyword) {
             // Stretch alignment does not apply to absolutely positioned items
             // See "Example 3" at https://www.w3.org/TR/css-flexbox-1/#abspos-items
             // Note: Stretch should be FlexStart not Start when we support
             // both
             case START, END, BASELINE -> startPosition ? AxisStaticEdge.START : AxisStaticEdge.END;
-            case STRETCH, FLEX_START -> crossAxisFlexStartReversed
-                    ? AxisStaticEdge.END
-                    : AxisStaticEdge.START;
-            case FLEX_END -> crossAxisFlexStartReversed
-                    ? AxisStaticEdge.START
-                    : AxisStaticEdge.END;
+            case STRETCH, FLEX_START -> crossAxisFlexStartReversed ? AxisStaticEdge.END : AxisStaticEdge.START;
+            case FLEX_END -> crossAxisFlexStartReversed ? AxisStaticEdge.START : AxisStaticEdge.END;
             case CENTER -> AxisStaticEdge.CENTER;
             // Normal is resolved to Stretch, and SelfStart/SelfEnd are
             // resolved to Start/End against the item's own direction where
@@ -2867,8 +2431,7 @@ public final class Flexbox {
     /// <https://www.w3.org/TR/css-flexbox-1/>. The most authoritative
     /// description of the algorithm and its requirements is at
     /// <https://www.w3.org/TR/css-flexbox-1/#layout-algorithm>
-    public static LayoutOutput computeFlexboxLayout(
-            LayoutFlexboxContainer tree, long node, LayoutInput inputs) {
+    public static LayoutOutput computeFlexboxLayout(LayoutFlexboxContainer tree, long node, LayoutInput inputs) {
         SizeOptF32 knownDimensions = inputs.knownDimensions();
         SizeOptF32 parentSize = inputs.parentSize();
         RunMode runMode = inputs.runMode();
@@ -2878,47 +2441,36 @@ public final class Flexbox {
         Contain contain = style.contain();
         float aspectRatio = style.aspectRatio();
         RectF32 padding =
-                MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(
-                        style.padding(), parentSize.width(), tree::calc);
+                MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(style.padding(), parentSize.width(), tree::calc);
         RectF32 border =
-                MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(
-                        style.border(), parentSize.width(), tree::calc);
+                MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(style.border(), parentSize.width(), tree::calc);
         SizeF32 paddingBorderSum = padding.sumAxes().plus(border.sumAxes());
-        SizeF32 boxSizingAdjustment =
-                style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSum : SizeF32.ZERO;
+        SizeF32 boxSizingAdjustment = style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSum : SizeF32.ZERO;
 
-        SizeOptF32 minSize =
-                MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
-                                style.minSize(), parentSize, tree::calc)
+        SizeOptF32 minSize = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
+                        style.minSize(), parentSize, tree::calc)
+                .maybeApplyAspectRatio(aspectRatio)
+                .maybeAddF(boxSizingAdjustment);
+        SizeOptF32 maxSize = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
+                        style.maxSize(), parentSize, tree::calc)
+                .maybeApplyAspectRatio(aspectRatio)
+                .maybeAddF(boxSizingAdjustment);
+        SizeOptF32 clampedStyleSize = inputs.sizingMode() == SizingMode.INHERENT_SIZE
+                ? MaybeResolve.SizeDimensionExt.maybeResolveO(style.size(), parentSize, tree::calc)
                         .maybeApplyAspectRatio(aspectRatio)
-                        .maybeAddF(boxSizingAdjustment);
-        SizeOptF32 maxSize =
-                MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
-                                style.maxSize(), parentSize, tree::calc)
-                        .maybeApplyAspectRatio(aspectRatio)
-                        .maybeAddF(boxSizingAdjustment);
-        SizeOptF32 clampedStyleSize =
-                inputs.sizingMode() == SizingMode.INHERENT_SIZE
-                        ? MaybeResolve.SizeDimensionExt.maybeResolveO(
-                                        style.size(), parentSize, tree::calc)
-                                .maybeApplyAspectRatio(aspectRatio)
-                                .maybeAddF(boxSizingAdjustment)
-                                .maybeClampO(minSize, maxSize)
-                        : SizeOptF32.NONE;
+                        .maybeAddF(boxSizingAdjustment)
+                        .maybeClampO(minSize, maxSize)
+                : SizeOptF32.NONE;
 
         // If both min and max in a given axis are set and max <= min then
         // this determines the size in that axis
         SizeOptF32 minMaxDefiniteSize =
-                minSize.zipMap(
-                        maxSize,
-                        (min, max) ->
-                                OptF32.isSome(min) && max <= min ? min : OptF32.NONE);
+                minSize.zipMap(maxSize, (min, max) -> OptF32.isSome(min) && max <= min ? min : OptF32.NONE);
 
         // The size of the container should be floored by the padding and
         // border
         SizeOptF32 styledBasedKnownDimensions =
-                knownDimensions.or(
-                        minMaxDefiniteSize.or(clampedStyleSize).maybeMaxF(paddingBorderSum));
+                knownDimensions.or(minMaxDefiniteSize.or(clampedStyleSize).maybeMaxF(paddingBorderSum));
 
         // Short-circuit layout if the container's size is fully determined by
         // the container's size and the run mode is ComputeSize (and thus the
@@ -2927,74 +2479,63 @@ public final class Flexbox {
             if (OptF32.isSome(styledBasedKnownDimensions.width())
                     && OptF32.isSome(styledBasedKnownDimensions.height())) {
                 return LayoutOutput.fromOuterSize(
-                        new SizeF32(
-                                styledBasedKnownDimensions.width(),
-                                styledBasedKnownDimensions.height()));
+                        new SizeF32(styledBasedKnownDimensions.width(), styledBasedKnownDimensions.height()));
             }
 
             // We can also short-circuit if the width is known and only the
             // width has been requested.
             if (inputs.axis() == RequestedAxis.HORIZONTAL) {
                 if (OptF32.isSome(styledBasedKnownDimensions.width())) {
-                    return LayoutOutput.fromOuterSize(
-                            new SizeF32(styledBasedKnownDimensions.width(), 0.0f));
+                    return LayoutOutput.fromOuterSize(new SizeF32(styledBasedKnownDimensions.width(), 0.0f));
                 }
             }
 
             if (OptF32.isSome(styledBasedKnownDimensions.width())
                     && OptF32.isSome(styledBasedKnownDimensions.height())) {
                 return LayoutOutput.fromOuterSize(
-                        new SizeF32(
-                                styledBasedKnownDimensions.width(),
-                                styledBasedKnownDimensions.height()));
+                        new SizeF32(styledBasedKnownDimensions.width(), styledBasedKnownDimensions.height()));
             }
         }
 
         // Normalize the definiteness flags: they only apply to dimensions
         // which were passed in as known by the parent. Dimensions resolved
         // from the node's own style are always definite.
-        SizeBool knownDimensionsAreDefinite =
-                new SizeBool(
-                        inputs.knownDimensionsAreDefinite().width()
-                                || OptF32.isNone(knownDimensions.width()),
-                        inputs.knownDimensionsAreDefinite().height()
-                                || OptF32.isNone(knownDimensions.height()));
+        SizeBool knownDimensionsAreDefinite = new SizeBool(
+                inputs.knownDimensionsAreDefinite().width() || OptF32.isNone(knownDimensions.width()),
+                inputs.knownDimensionsAreDefinite().height() || OptF32.isNone(knownDimensions.height()));
 
-        LayoutOutput output =
-                computePreliminary(
-                        tree,
-                        node,
-                        new LayoutInput(
-                                runMode,
-                                inputs.sizingMode(),
-                                inputs.axis(),
-                                styledBasedKnownDimensions,
-                                knownDimensionsAreDefinite,
-                                parentSize,
-                                inputs.availableSpace(),
-                                inputs.verticalMarginsAreCollapsible()));
+        LayoutOutput output = computePreliminary(
+                tree,
+                node,
+                new LayoutInput(
+                        runMode,
+                        inputs.sizingMode(),
+                        inputs.axis(),
+                        styledBasedKnownDimensions,
+                        knownDimensionsAreDefinite,
+                        parentSize,
+                        inputs.availableSpace(),
+                        inputs.verticalMarginsAreCollapsible()));
 
         // Layout containment suppresses the box's baseline for
         // baseline-alignment purposes
         if (contain.suppressesBaseline()) {
-            output =
-                    new LayoutOutput(
-                            output.size(),
-                            output.scrollableOverflowRect(),
-                            Baselines.NONE,
-                            output.topMargin(),
-                            output.bottomMargin(),
-                            output.marginsCanCollapseThrough(),
-                            output.oofCandidates(),
-                            output.oofPositioningArea());
+            output = new LayoutOutput(
+                    output.size(),
+                    output.scrollableOverflowRect(),
+                    Baselines.NONE,
+                    output.topMargin(),
+                    output.bottomMargin(),
+                    output.marginsCanCollapseThrough(),
+                    output.oofCandidates(),
+                    output.oofPositioningArea());
         }
 
         return output;
     }
 
     /// Compute a preliminary size for an item (`compute_preliminary`)
-    private static LayoutOutput computePreliminary(
-            LayoutFlexboxContainer tree, long node, LayoutInput inputs) {
+    private static LayoutOutput computePreliminary(LayoutFlexboxContainer tree, long node, LayoutInput inputs) {
         SizeOptF32 knownDimensions = inputs.knownDimensions();
         SizeOptF32 parentSize = inputs.parentSize();
         Size<AvailableSpace> outerAvailableSpace = inputs.availableSpace();
@@ -3002,14 +2543,13 @@ public final class Flexbox {
 
         // Define some general constants we will need for the remainder of the
         // algorithm.
-        AlgoConstants constants =
-                computeConstants(
-                        tree,
-                        tree.getFlexboxContainerStyle(node),
-                        knownDimensions,
-                        inputs.knownDimensionsAreDefinite(),
-                        parentSize,
-                        outerAvailableSpace);
+        AlgoConstants constants = computeConstants(
+                tree,
+                tree.getFlexboxContainerStyle(node),
+                knownDimensions,
+                inputs.knownDimensionsAreDefinite(),
+                parentSize,
+                outerAvailableSpace);
 
         // A container with no children has no flex items or lines, so its
         // size follows directly from its own style and the available space.
@@ -3027,8 +2567,7 @@ public final class Flexbox {
         // 9.2. Line Length Determination
 
         // 2. Determine the available main and cross space for the flex items
-        Size<AvailableSpace> availableSpace =
-                determineAvailableSpace(knownDimensions, outerAvailableSpace, constants);
+        Size<AvailableSpace> availableSpace = determineAvailableSpace(knownDimensions, outerAvailableSpace, constants);
 
         // 3. Determine the flex base size and hypothetical main size of each
         //    item.
@@ -3042,49 +2581,37 @@ public final class Flexbox {
 
         // 5. Collect flex items into flex lines.
         // (`flexbox_balance`-gated dispatch in Rust; unconditional here)
-        List<FlexLine> flexLines =
-                constants.isBalance
-                        ? collectBalancedFlexLines(constants, availableSpace, flexItems)
-                        : collectFlexLines(constants, availableSpace, flexItems);
+        List<FlexLine> flexLines = constants.isBalance
+                ? collectBalancedFlexLines(constants, availableSpace, flexItems)
+                : collectFlexLines(constants, availableSpace, flexItems);
 
         // If container size is undefined, determine the container's main size
         // and then re-resolve gaps based on newly determined size
         if (OptF32.isSome(constants.nodeInnerSize.main(constants.dir))) {
             float innerMainSize = constants.nodeInnerSize.main(constants.dir);
-            float outerMainSize =
-                    innerMainSize + constants.contentBoxInset.mainAxisSum(constants.dir);
-            constants.innerContainerSize =
-                    constants.innerContainerSize.withMain(constants.dir, innerMainSize);
-            constants.containerSize =
-                    constants.containerSize.withMain(constants.dir, outerMainSize);
+            float outerMainSize = innerMainSize + constants.contentBoxInset.mainAxisSum(constants.dir);
+            constants.innerContainerSize = constants.innerContainerSize.withMain(constants.dir, innerMainSize);
+            constants.containerSize = constants.containerSize.withMain(constants.dir, outerMainSize);
         } else {
             // Sets constants.container_size and constants.inner_container_size
             determineContainerMainSize(tree, availableSpace, flexLines, constants);
             constants.nodeInnerSize =
-                    constants.nodeInnerSize.withMain(
-                            constants.dir,
-                            constants.innerContainerSize.main(constants.dir));
+                    constants.nodeInnerSize.withMain(constants.dir, constants.innerContainerSize.main(constants.dir));
             constants.nodeOuterSize =
-                    constants.nodeOuterSize.withMain(
-                            constants.dir, constants.containerSize.main(constants.dir));
+                    constants.nodeOuterSize.withMain(constants.dir, constants.containerSize.main(constants.dir));
 
             // Re-resolve percentage gaps
             Style style = tree.getFlexboxContainerStyle(node);
             float innerContainerSize = constants.innerContainerSize.main(constants.dir);
-            float newGap =
-                    OptF32.unwrapOr(
-                            style.gap()
-                                    .main(constants.dir)
-                                    .maybeResolveO(innerContainerSize, tree::calc),
-                            0.0f);
+            float newGap = OptF32.unwrapOr(
+                    style.gap().main(constants.dir).maybeResolveO(innerContainerSize, tree::calc), 0.0f);
             constants.gap = constants.gap.withMain(constants.dir, newGap);
         }
 
         // If only the container's main size has been requested then we are
         // done, as nothing below changes it. This avoids measuring the cross
         // size of every item.
-        if (runMode == RunMode.COMPUTE_SIZE
-                && constants.dir.mainAxisIsRequestedAxis(inputs.axis())) {
+        if (runMode == RunMode.COMPUTE_SIZE && constants.dir.mainAxisIsRequestedAxis(inputs.axis())) {
             SizeF32 size = SizeF32.ZERO.withMain(constants.dir, constants.containerSize.main(constants.dir));
             return LayoutOutput.fromOuterSize(size);
         }
@@ -3099,14 +2626,12 @@ public final class Flexbox {
 
         // 7. Determine the hypothetical cross size of each item.
         for (FlexLine line : flexLines) {
-            determineHypotheticalCrossSize(
-                    tree, line, constants, knownDimensions, availableSpace);
+            determineHypotheticalCrossSize(tree, line, constants, knownDimensions, availableSpace);
         }
 
         // Calculate child baselines. This function is internally smart and
         // only computes child baselines if they are necessary.
-        calculateChildrenBaseLines(
-                tree, knownDimensions, availableSpace, flexLines, constants);
+        calculateChildrenBaseLines(tree, knownDimensions, availableSpace, flexLines, constants);
 
         // 8. Calculate the cross size of each flex line.
         calculateCrossSize(flexLines, knownDimensions, constants);
@@ -3146,8 +2671,7 @@ public final class Flexbox {
         resolveCrossAxisAutoMargins(flexLines, constants);
 
         // 15. Determine the flex container’s used cross size.
-        float totalLineCrossSize =
-                determineContainerCrossSize(flexLines, knownDimensions, constants);
+        float totalLineCrossSize = determineContainerCrossSize(flexLines, knownDimensions, constants);
 
         // We have the container size.
         // If our caller does not care about performing layout we are done
@@ -3170,17 +2694,14 @@ public final class Flexbox {
         OofCandidates candidates = OofCandidates.create();
         collectOofCandidates(tree, node, constants, flexLines, candidates);
 
-        SizeF32 absolutePositionArea =
-                constants.containerSize.minus(constants.paddingBoxInset.sumAxes());
+        SizeF32 absolutePositionArea = constants.containerSize.minus(constants.paddingBoxInset.sumAxes());
         PointF32 absolutePositionOffset =
-                new PointF32(
-                        constants.paddingBoxInset.left(), constants.paddingBoxInset.top());
+                new PointF32(constants.paddingBoxInset.left(), constants.paddingBoxInset.top());
 
         int len = tree.childCount(node);
         for (int order = 0; order < len; order++) {
             long child = tree.getChildId(node, order);
-            if (tree.getFlexboxChildStyle(child).boxGenerationMode()
-                    == BoxGenerationMode.NONE) {
+            if (tree.getFlexboxChildStyle(child).boxGenerationMode() == BoxGenerationMode.NONE) {
                 tree.setUnroundedLayout(child, Layout.withOrder(order));
                 tree.performChildLayout(
                         child,
@@ -3199,12 +2720,9 @@ public final class Flexbox {
         // "startmost" refers to the line's visual position: for wrap-reverse
         // containers the cross axis is flipped, so the startmost line is the
         // last line in flex-line order rather than the first.
-        FlexLine firstLine =
-                flexLines.isEmpty()
-                        ? null
-                        : constants.isWrapReverse
-                                ? flexLines.get(flexLines.size() - 1)
-                                : flexLines.get(0);
+        FlexLine firstLine = flexLines.isEmpty()
+                ? null
+                : constants.isWrapReverse ? flexLines.get(flexLines.size() - 1) : flexLines.get(0);
         float firstVerticalBaseline = OptF32.NONE;
         if (firstLine != null) {
             if (constants.isColumn) {
@@ -3212,10 +2730,9 @@ public final class Flexbox {
                 // startmost item in the line, which for reverse-direction
                 // containers is the last item in flex order.
                 if (!firstLine.items.isEmpty()) {
-                    FlexItem item =
-                            constants.dir.isReverse()
-                                    ? firstLine.items.get(firstLine.items.size() - 1)
-                                    : firstLine.items.get(0);
+                    FlexItem item = constants.dir.isReverse()
+                            ? firstLine.items.get(firstLine.items.size() - 1)
+                            : firstLine.items.get(0);
                     firstVerticalBaseline = item.baseline;
                 }
             } else {
@@ -3235,23 +2752,18 @@ public final class Flexbox {
             }
         }
 
-        LayoutOutput output =
-                LayoutOutput.fromSizesAndBaselines(
-                        constants.containerSize,
-                        // `content_size` branch — unconditional
-                        net.morphismmc.jaffy.compute.common.ScrollableOverflow
-                                .finalizeScrollableOverflow(
-                                        inflowOverflowRect,
-                                        constants
-                                                .containerSize
-                                                .minus(constants.border.sumAxes())
-                                                .minus(
-                                                        new SizeF32(
-                                                                constants.scrollbarGutter.x(),
-                                                                constants.scrollbarGutter.y())),
-                                        constants.scrollOriginReversed(),
-                                        constants.isScrollContainer),
-                        Baselines.fromFirst(firstVerticalBaseline));
+        LayoutOutput output = LayoutOutput.fromSizesAndBaselines(
+                constants.containerSize,
+                // `content_size` branch — unconditional
+                net.morphismmc.jaffy.compute.common.ScrollableOverflow.finalizeScrollableOverflow(
+                        inflowOverflowRect,
+                        constants
+                                .containerSize
+                                .minus(constants.border.sumAxes())
+                                .minus(new SizeF32(constants.scrollbarGutter.x(), constants.scrollbarGutter.y())),
+                        constants.scrollOriginReversed(),
+                        constants.isScrollContainer),
+                Baselines.fromFirst(firstVerticalBaseline));
         return new LayoutOutput(
                 output.size(),
                 output.scrollableOverflowRect(),
@@ -3274,18 +2786,15 @@ public final class Flexbox {
         RunMode runMode = inputs.runMode();
         FlexDirection dir = constants.dir;
 
-        Size<AvailableSpace> availableSpace =
-                determineAvailableSpace(knownDimensions, outerAvailableSpace, constants);
+        Size<AvailableSpace> availableSpace = determineAvailableSpace(knownDimensions, outerAvailableSpace, constants);
 
         if (OptF32.isSome(constants.nodeInnerSize.main(dir))) {
             float innerMainSize = constants.nodeInnerSize.main(dir);
             float outerMainSize = innerMainSize + constants.contentBoxInset.mainAxisSum(dir);
-            constants.innerContainerSize =
-                    constants.innerContainerSize.withMain(dir, innerMainSize);
+            constants.innerContainerSize = constants.innerContainerSize.withMain(dir, innerMainSize);
             constants.containerSize = constants.containerSize.withMain(dir, outerMainSize);
         } else {
-            determineContainerMainSize(
-                    tree, availableSpace, java.util.Collections.emptyList(), constants);
+            determineContainerMainSize(tree, availableSpace, java.util.Collections.emptyList(), constants);
         }
 
         if (runMode == RunMode.COMPUTE_SIZE && dir.mainAxisIsRequestedAxis(inputs.axis())) {
@@ -3293,8 +2802,7 @@ public final class Flexbox {
             return LayoutOutput.fromOuterSize(size);
         }
 
-        determineContainerCrossSize(
-                java.util.Collections.emptyList(), knownDimensions, constants);
+        determineContainerCrossSize(java.util.Collections.emptyList(), knownDimensions, constants);
 
         // With no children there are no out-of-flow candidates, so the
         // positioning area's value is never read. It still has to be `Some`:
@@ -3303,27 +2811,22 @@ public final class Flexbox {
         // descendants.
         LayoutOutput output = LayoutOutput.fromOuterSize(constants.containerSize);
         // `content_size` branch — unconditional
-        float rtlRight =
-                constants.layoutDirection.isRtl()
-                        ? F32.max(
-                                constants.containerSize.width()
-                                        - constants.border.horizontalAxisSum()
-                                        - constants.scrollbarGutter.x(),
-                                0.0f)
-                        : 0.0f;
+        float rtlRight = constants.layoutDirection.isRtl()
+                ? F32.max(
+                        constants.containerSize.width()
+                                - constants.border.horizontalAxisSum()
+                                - constants.scrollbarGutter.x(),
+                        0.0f)
+                : 0.0f;
         net.morphismmc.jaffy.tree.layout.ScrollableOverflow scrollableOverflow =
-                net.morphismmc.jaffy.compute.common.ScrollableOverflow
-                        .finalizeScrollableOverflow(
-                                new RectF32(0.0f, rtlRight, 0.0f, 0.0f),
-                                constants
-                                        .containerSize
-                                        .minus(constants.border.sumAxes())
-                                        .minus(
-                                                new SizeF32(
-                                                        constants.scrollbarGutter.x(),
-                                                        constants.scrollbarGutter.y())),
-                                constants.scrollOriginReversed(),
-                                constants.isScrollContainer);
+                net.morphismmc.jaffy.compute.common.ScrollableOverflow.finalizeScrollableOverflow(
+                        new RectF32(0.0f, rtlRight, 0.0f, 0.0f),
+                        constants
+                                .containerSize
+                                .minus(constants.border.sumAxes())
+                                .minus(new SizeF32(constants.scrollbarGutter.x(), constants.scrollbarGutter.y())),
+                        constants.scrollOriginReversed(),
+                        constants.isScrollContainer);
         return new LayoutOutput(
                 output.size(),
                 scrollableOverflow,
@@ -3334,5 +2837,4 @@ public final class Flexbox {
                 output.oofCandidates(),
                 new OofPositioningArea(SizeF32.ZERO, PointF32.ZERO));
     }
-
 }

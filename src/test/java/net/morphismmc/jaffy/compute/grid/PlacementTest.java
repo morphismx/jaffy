@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
 import net.morphismmc.jaffy.compute.grid.types.cell_occupancy.CellOccupancyMatrix;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
@@ -25,6 +26,7 @@ import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.style.grid.GenericGridPlacement;
 import net.morphismmc.jaffy.style.grid.GridAutoFlow;
 import net.morphismmc.jaffy.style.grid.GridPlacement;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -71,8 +73,8 @@ class PlacementTest {
                     TestHelpers.resolveNamedLines(childStyles, nameResolver, explicitColCount, explicitRowCount);
             InBothAbsAxis<TrackCounts> estimatedSizes =
                     ImplicitGrid.computeGridSizeEstimate(explicitColCount, explicitRowCount, placements);
-            CellOccupancyMatrix cellOccupancyMatrix = CellOccupancyMatrix.withTrackCounts(
-                    estimatedSizes.horizontal(), estimatedSizes.vertical());
+            CellOccupancyMatrix cellOccupancyMatrix =
+                    CellOccupancyMatrix.withTrackCounts(estimatedSizes.horizontal(), estimatedSizes.vertical());
 
             // Run placement algorithm
             Placement.placeGridItems(cellOccupancyMatrix, items, placements, flow);
@@ -83,20 +85,15 @@ class PlacementTest {
                 TestChild child = children.get(idx);
                 GridItem item = items.get(idx);
                 assertEquals(child.index(), item.node);
-                OzPlacement actualPlacement = new OzPlacement(
-                        item.column.start(), item.column.end(), item.row.start(), item.row.end());
+                OzPlacement actualPlacement =
+                        new OzPlacement(item.column.start(), item.column.end(), item.row.start(), item.row.end());
                 assertEquals(child.expected(), actualPlacement, "Item " + idx + " (0-indexed)");
             }
 
             // Assert that the correct number of implicit rows have been generated
+            assertEquals(expectedRowCounts, cellOccupancyMatrix.trackCounts(AbsoluteAxis.VERTICAL), "row track counts");
             assertEquals(
-                    expectedRowCounts,
-                    cellOccupancyMatrix.trackCounts(AbsoluteAxis.VERTICAL),
-                    "row track counts");
-            assertEquals(
-                    expectedColCounts,
-                    cellOccupancyMatrix.trackCounts(AbsoluteAxis.HORIZONTAL),
-                    "column track counts");
+                    expectedColCounts, cellOccupancyMatrix.trackCounts(AbsoluteAxis.HORIZONTAL), "column track counts");
         }
 
         @Test
@@ -106,16 +103,20 @@ class PlacementTest {
             int explicitRowCount = 2;
             // node, style (grid coords), expected_placement (oz coords)
             List<TestChild> children = List.of(
-                    new TestChild(1,
+                    new TestChild(
+                            1,
                             TestHelpers.intoGridChild(line(1), GridPlacement.AUTO, line(1), GridPlacement.AUTO),
                             TestHelpers.intoOz(0, 1, 0, 1)),
-                    new TestChild(2,
+                    new TestChild(
+                            2,
                             TestHelpers.intoGridChild(line(-4), GridPlacement.AUTO, line(-3), GridPlacement.AUTO),
                             TestHelpers.intoOz(-1, 0, 0, 1)),
-                    new TestChild(3,
+                    new TestChild(
+                            3,
                             TestHelpers.intoGridChild(line(-3), GridPlacement.AUTO, line(-4), GridPlacement.AUTO),
                             TestHelpers.intoOz(0, 1, -1, 0)),
-                    new TestChild(4,
+                    new TestChild(
+                            4,
                             TestHelpers.intoGridChild(line(3), span(2), line(5), GridPlacement.AUTO),
                             TestHelpers.intoOz(2, 4, 4, 5)));
             TrackCounts expectedCols = new TrackCounts(1, 2, 2);
@@ -129,13 +130,21 @@ class PlacementTest {
             int explicitColCount = 2;
             int explicitRowCount = 2;
             List<TestChild> children = List.of(
-                    new TestChild(1, TestHelpers.intoGridChild(line(-1), line(-1), line(-1), line(-1)),
+                    new TestChild(
+                            1,
+                            TestHelpers.intoGridChild(line(-1), line(-1), line(-1), line(-1)),
                             TestHelpers.intoOz(2, 3, 2, 3)),
-                    new TestChild(2, TestHelpers.intoGridChild(line(-1), span(2), line(-1), span(2)),
+                    new TestChild(
+                            2,
+                            TestHelpers.intoGridChild(line(-1), span(2), line(-1), span(2)),
                             TestHelpers.intoOz(2, 4, 2, 4)),
-                    new TestChild(3, TestHelpers.intoGridChild(line(-4), line(-4), line(-4), line(-4)),
+                    new TestChild(
+                            3,
+                            TestHelpers.intoGridChild(line(-4), line(-4), line(-4), line(-4)),
                             TestHelpers.intoOz(-1, 0, -1, 0)),
-                    new TestChild(4, TestHelpers.intoGridChild(line(-4), span(2), line(-4), span(2)),
+                    new TestChild(
+                            4,
+                            TestHelpers.intoGridChild(line(-4), span(2), line(-4), span(2)),
                             TestHelpers.intoOz(-1, 1, -1, 1)));
             TrackCounts expectedCols = new TrackCounts(1, 2, 2);
             TrackCounts expectedRows = new TrackCounts(1, 2, 2);
@@ -187,11 +196,10 @@ class PlacementTest {
             GridAutoFlow flow = GridAutoFlow.ROW;
             int explicitColCount = 2;
             int explicitRowCount = 2;
-            List<TestChild> children = List.of(
-                    new TestChild(1,
-                            TestHelpers.intoGridChild(span(5), GridPlacement.AUTO,
-                                    GridPlacement.AUTO, GridPlacement.AUTO),
-                            TestHelpers.intoOz(0, 5, 0, 1)));
+            List<TestChild> children = List.of(new TestChild(
+                    1,
+                    TestHelpers.intoGridChild(span(5), GridPlacement.AUTO, GridPlacement.AUTO, GridPlacement.AUTO),
+                    TestHelpers.intoOz(0, 5, 0, 1)));
             TrackCounts expectedCols = new TrackCounts(0, 2, 3);
             TrackCounts expectedRows = new TrackCounts(0, 2, 0);
             placementTestRunner(explicitColCount, explicitRowCount, children, expectedCols, expectedRows, flow);
@@ -203,20 +211,24 @@ class PlacementTest {
             int explicitColCount = 2;
             int explicitRowCount = 2;
             List<TestChild> children = List.of(
-                    new TestChild(1,
+                    new TestChild(
+                            1,
                             TestHelpers.intoGridChild(span(2), GridPlacement.AUTO, line(1), GridPlacement.AUTO),
                             TestHelpers.intoOz(0, 2, 0, 1)),
-                    new TestChild(2,
-                            TestHelpers.intoGridChild(GridPlacement.AUTO, GridPlacement.AUTO,
-                                    line(2), GridPlacement.AUTO),
+                    new TestChild(
+                            2,
+                            TestHelpers.intoGridChild(
+                                    GridPlacement.AUTO, GridPlacement.AUTO, line(2), GridPlacement.AUTO),
                             TestHelpers.intoOz(0, 1, 1, 2)),
-                    new TestChild(3,
-                            TestHelpers.intoGridChild(GridPlacement.AUTO, GridPlacement.AUTO,
-                                    line(1), GridPlacement.AUTO),
+                    new TestChild(
+                            3,
+                            TestHelpers.intoGridChild(
+                                    GridPlacement.AUTO, GridPlacement.AUTO, line(1), GridPlacement.AUTO),
                             TestHelpers.intoOz(2, 3, 0, 1)),
-                    new TestChild(4,
-                            TestHelpers.intoGridChild(GridPlacement.AUTO, GridPlacement.AUTO,
-                                    line(4), GridPlacement.AUTO),
+                    new TestChild(
+                            4,
+                            TestHelpers.intoGridChild(
+                                    GridPlacement.AUTO, GridPlacement.AUTO, line(4), GridPlacement.AUTO),
                             TestHelpers.intoOz(0, 1, 3, 4)));
             TrackCounts expectedCols = new TrackCounts(0, 2, 1);
             TrackCounts expectedRows = new TrackCounts(0, 2, 2);
@@ -229,17 +241,19 @@ class PlacementTest {
             int explicitColCount = 2;
             int explicitRowCount = 2;
             List<TestChild> children = List.of(
-                    new TestChild(2,
-                            TestHelpers.intoGridChild(GridPlacement.AUTO, GridPlacement.AUTO,
-                                    line(2), GridPlacement.AUTO),
+                    new TestChild(
+                            2,
+                            TestHelpers.intoGridChild(
+                                    GridPlacement.AUTO, GridPlacement.AUTO, line(2), GridPlacement.AUTO),
                             TestHelpers.intoOz(0, 1, 1, 2)),
-                    new TestChild(1,
-                            TestHelpers.intoGridChild(line(-4), GridPlacement.AUTO,
-                                    line(2), GridPlacement.AUTO),
+                    new TestChild(
+                            1,
+                            TestHelpers.intoGridChild(line(-4), GridPlacement.AUTO, line(2), GridPlacement.AUTO),
                             TestHelpers.intoOz(-1, 0, 1, 2)),
-                    new TestChild(3,
-                            TestHelpers.intoGridChild(GridPlacement.AUTO, GridPlacement.AUTO,
-                                    line(1), GridPlacement.AUTO),
+                    new TestChild(
+                            3,
+                            TestHelpers.intoGridChild(
+                                    GridPlacement.AUTO, GridPlacement.AUTO, line(1), GridPlacement.AUTO),
                             TestHelpers.intoOz(-1, 0, 0, 1)));
             TrackCounts expectedCols = new TrackCounts(1, 2, 0);
             TrackCounts expectedRows = new TrackCounts(0, 2, 0);
@@ -253,13 +267,15 @@ class PlacementTest {
             int explicitRowCount = 4;
             List<TestChild> children = List.of(
                     // Definitely positioned in column 2
-                    new TestChild(1,
+                    new TestChild(
+                            1,
                             TestHelpers.intoGridChild(line(2), GridPlacement.AUTO, line(1), GridPlacement.AUTO),
                             TestHelpers.intoOz(1, 2, 0, 1)),
                     // Spans 2 columns, so positioned after item 1
-                    new TestChild(2,
-                            TestHelpers.intoGridChild(span(2), GridPlacement.AUTO,
-                                    GridPlacement.AUTO, GridPlacement.AUTO),
+                    new TestChild(
+                            2,
+                            TestHelpers.intoGridChild(
+                                    span(2), GridPlacement.AUTO, GridPlacement.AUTO, GridPlacement.AUTO),
                             TestHelpers.intoOz(2, 4, 0, 1)),
                     // Spans 1 column, so should be positioned before item 1
                     new TestChild(3, autoChild(), TestHelpers.intoOz(0, 1, 0, 1)));
@@ -275,19 +291,22 @@ class PlacementTest {
             int explicitRowCount = 4;
             List<TestChild> children = List.of(
                     // Width 3
-                    new TestChild(1,
-                            TestHelpers.intoGridChild(GridPlacement.AUTO, span(3),
-                                    GridPlacement.AUTO, GridPlacement.AUTO),
+                    new TestChild(
+                            1,
+                            TestHelpers.intoGridChild(
+                                    GridPlacement.AUTO, span(3), GridPlacement.AUTO, GridPlacement.AUTO),
                             TestHelpers.intoOz(0, 3, 0, 1)),
                     // Width 3 (wraps to next row)
-                    new TestChild(2,
-                            TestHelpers.intoGridChild(GridPlacement.AUTO, span(3),
-                                    GridPlacement.AUTO, GridPlacement.AUTO),
+                    new TestChild(
+                            2,
+                            TestHelpers.intoGridChild(
+                                    GridPlacement.AUTO, span(3), GridPlacement.AUTO, GridPlacement.AUTO),
                             TestHelpers.intoOz(0, 3, 1, 2)),
                     // Width 1 (uses second row as we're already on it)
-                    new TestChild(3,
-                            TestHelpers.intoGridChild(GridPlacement.AUTO, span(1),
-                                    GridPlacement.AUTO, GridPlacement.AUTO),
+                    new TestChild(
+                            3,
+                            TestHelpers.intoGridChild(
+                                    GridPlacement.AUTO, span(1), GridPlacement.AUTO, GridPlacement.AUTO),
                             TestHelpers.intoOz(3, 4, 1, 2)));
             TrackCounts expectedCols = new TrackCounts(0, 4, 0);
             TrackCounts expectedRows = new TrackCounts(0, 4, 0);
@@ -301,13 +320,15 @@ class PlacementTest {
             int explicitRowCount = 2;
             List<TestChild> children = List.of(
                     // Row 1. Definitely positioned in column -2
-                    new TestChild(1,
+                    new TestChild(
+                            1,
                             TestHelpers.intoGridChild(line(-5), GridPlacement.AUTO, line(1), GridPlacement.AUTO),
                             TestHelpers.intoOz(-2, -1, 0, 1)),
                     // Row 2. Auto positioned in column -2
-                    new TestChild(2,
-                            TestHelpers.intoGridChild(GridPlacement.AUTO, GridPlacement.AUTO,
-                                    line(2), GridPlacement.AUTO),
+                    new TestChild(
+                            2,
+                            TestHelpers.intoGridChild(
+                                    GridPlacement.AUTO, GridPlacement.AUTO, line(2), GridPlacement.AUTO),
                             TestHelpers.intoOz(-2, -1, 1, 2)),
                     // Row 1. Auto positioned in column -1
                     new TestChild(3, autoChild(), TestHelpers.intoOz(-1, 0, 0, 1)));
@@ -320,8 +341,8 @@ class PlacementTest {
         void overlargePlacementIsClamped() {
             int explicitColCount = 9000;
             int explicitRowCount = 0;
-            Style style = TestHelpers.intoGridChild(
-                    line(-19005), GridPlacement.AUTO, GridPlacement.AUTO, GridPlacement.AUTO);
+            Style style =
+                    TestHelpers.intoGridChild(line(-19005), GridPlacement.AUTO, GridPlacement.AUTO, GridPlacement.AUTO);
             List<Style> childStyles = List.of(style);
             NamedLineResolver nameResolver = NamedLineResolver.newNamedLineResolver(Style.DEFAULT, 0, 0);
             nameResolver.setExplicitColumnCount(explicitColCount);
@@ -332,20 +353,17 @@ class PlacementTest {
                     TestHelpers.resolveNamedLines(childStyles, nameResolver, explicitColCount, explicitRowCount);
             InBothAbsAxis<TrackCounts> estimatedSizes =
                     ImplicitGrid.computeGridSizeEstimate(explicitColCount, explicitRowCount, placements);
-            CellOccupancyMatrix cellOccupancyMatrix = CellOccupancyMatrix.withTrackCounts(
-                    estimatedSizes.horizontal(), estimatedSizes.vertical());
+            CellOccupancyMatrix cellOccupancyMatrix =
+                    CellOccupancyMatrix.withTrackCounts(estimatedSizes.horizontal(), estimatedSizes.vertical());
             Placement.placeGridItems(cellOccupancyMatrix, items, placements, GridAutoFlow.ROW);
-            assertEquals(
-                    new Line<>(new OriginZeroLine(-10000), new OriginZeroLine(-9999)),
-                    items.get(0).column);
+            assertEquals(new Line<>(new OriginZeroLine(-10000), new OriginZeroLine(-9999)), items.get(0).column);
         }
     }
 
     @Test
     void autoPlacementCursorSaturatesAtIntegerBounds() {
         assertEquals(
-                new OriginZeroLine(Short.MAX_VALUE),
-                Placement.advancePosition(new OriginZeroLine(Short.MAX_VALUE)));
+                new OriginZeroLine(Short.MAX_VALUE), Placement.advancePosition(new OriginZeroLine(Short.MAX_VALUE)));
     }
 
     @Test

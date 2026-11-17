@@ -7,7 +7,11 @@ import net.morphismmc.just.function.FloatUnaryOperator;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
 
-public record RectOptF32(@Opt float left, @Opt float right, @Opt float top, @Opt float bottom) {
+public record RectOptF32(
+        @Opt float left,
+        @Opt float right,
+        @Opt float top,
+        @Opt float bottom) {
 
     /// A [`Rect`] with `None` as all parameters
     public static final RectOptF32 NONE = new RectOptF32(OptF32.NONE, OptF32.NONE, OptF32.NONE, OptF32.NONE);
@@ -22,8 +26,7 @@ public record RectOptF32(@Opt float left, @Opt float right, @Opt float top, @Opt
     /// Applies the function `f` to all four sides
     /// (f sees the raw @Opt encoding, including NONE)
     public RectOptF32 map(FloatUnaryOperator f) {
-        return new RectOptF32(
-                f.applyAsFloat(left), f.applyAsFloat(right), f.applyAsFloat(top), f.applyAsFloat(bottom));
+        return new RectOptF32(f.applyAsFloat(left), f.applyAsFloat(right), f.applyAsFloat(top), f.applyAsFloat(bottom));
     }
 
     /// `map` producing `Rect<f32>` — same closure shape (GAP-006 F suffix)

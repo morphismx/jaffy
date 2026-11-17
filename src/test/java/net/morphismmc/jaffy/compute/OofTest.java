@@ -4,8 +4,6 @@ package net.morphismmc.jaffy.compute;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Test;
-
 import net.morphismmc.jaffy.geometry.LineF32;
 import net.morphismmc.jaffy.geometry.Point;
 import net.morphismmc.jaffy.geometry.RectF32;
@@ -15,6 +13,8 @@ import net.morphismmc.jaffy.tree.layout.AxisStaticAlign;
 import net.morphismmc.jaffy.tree.layout.AxisStaticEdge;
 import net.morphismmc.jaffy.tree.layout.AxisStaticPosition;
 
+import org.junit.jupiter.api.Test;
+
 class OofTest {
 
     private static AxisStaticPosition sp(
@@ -23,10 +23,9 @@ class OofTest {
     }
 
     private static float resolveX(AxisStaticPosition spX, float width, RectF32 margin) {
-        Point<AxisStaticPosition> position =
-                new Point<>(
-                        spX, AxisStaticPosition.fromEdge(0.0f, AxisStaticEdge.START));
-        return Oof.resolveStaticOffset(position, new SizeF32(width, 10.0f), margin).x();
+        Point<AxisStaticPosition> position = new Point<>(spX, AxisStaticPosition.fromEdge(0.0f, AxisStaticEdge.START));
+        return Oof.resolveStaticOffset(position, new SizeF32(width, 10.0f), margin)
+                .x();
     }
 
     private static final LineF32 AREA = new LineF32(10.0f, 110.0f);
@@ -35,24 +34,21 @@ class OofTest {
 
     @Test
     void startAlignment() {
-        AxisStaticPosition spX =
-                sp(AREA, AxisStaticEdge.START, AlignmentSafety.UNSAFE, AxisStaticEdge.START);
+        AxisStaticPosition spX = sp(AREA, AxisStaticEdge.START, AlignmentSafety.UNSAFE, AxisStaticEdge.START);
         assertEquals(10.0f, resolveX(spX, 20.0f, NO_MARGIN));
         assertEquals(15.0f, resolveX(spX, 20.0f, MARGIN));
     }
 
     @Test
     void endAlignment() {
-        AxisStaticPosition spX =
-                sp(AREA, AxisStaticEdge.END, AlignmentSafety.UNSAFE, AxisStaticEdge.END);
+        AxisStaticPosition spX = sp(AREA, AxisStaticEdge.END, AlignmentSafety.UNSAFE, AxisStaticEdge.END);
         assertEquals(90.0f, resolveX(spX, 20.0f, NO_MARGIN));
         assertEquals(75.0f, resolveX(spX, 20.0f, MARGIN));
     }
 
     @Test
     void centerAlignment() {
-        AxisStaticPosition spX =
-                sp(AREA, AxisStaticEdge.CENTER, AlignmentSafety.UNSAFE, AxisStaticEdge.CENTER);
+        AxisStaticPosition spX = sp(AREA, AxisStaticEdge.CENTER, AlignmentSafety.UNSAFE, AxisStaticEdge.CENTER);
         assertEquals(50.0f, resolveX(spX, 20.0f, NO_MARGIN));
         // Center offsets by half the margin difference
         assertEquals(45.0f, resolveX(spX, 20.0f, MARGIN));
@@ -60,8 +56,7 @@ class OofTest {
 
     @Test
     void safeAlignmentFallsBackOnlyOnOverflow() {
-        AxisStaticPosition spX =
-                sp(AREA, AxisStaticEdge.END, AlignmentSafety.SAFE, AxisStaticEdge.START);
+        AxisStaticPosition spX = sp(AREA, AxisStaticEdge.END, AlignmentSafety.SAFE, AxisStaticEdge.START);
         // Fits: aligned to the end
         assertEquals(90.0f, resolveX(spX, 20.0f, NO_MARGIN));
         // Margin box exactly fills the area: no fallback
@@ -73,8 +68,7 @@ class OofTest {
 
     @Test
     void unsafeAlignmentNeverFallsBack() {
-        AxisStaticPosition spX =
-                sp(AREA, AxisStaticEdge.END, AlignmentSafety.UNSAFE, AxisStaticEdge.START);
+        AxisStaticPosition spX = sp(AREA, AxisStaticEdge.END, AlignmentSafety.UNSAFE, AxisStaticEdge.START);
         assertEquals(-10.0f, resolveX(spX, 120.0f, NO_MARGIN));
     }
 

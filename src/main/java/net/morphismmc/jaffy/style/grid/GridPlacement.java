@@ -53,12 +53,14 @@ public sealed interface GridPlacement {
             case Auto a -> new GenericGridPlacement.Auto<>();
             // Spans are clamped between 1 (a zero span is an invalid value
             // which is treated as 1) and the maximum track limit
-            case Span s -> new GenericGridPlacement.Span<>(
-                    s.span < 1 ? 1 : s.span > Coordinates.MAX_GRID_TRACKS ? Coordinates.MAX_GRID_TRACKS : s.span);
+            case Span s ->
+                new GenericGridPlacement.Span<>(
+                        s.span < 1 ? 1 : s.span > Coordinates.MAX_GRID_TRACKS ? Coordinates.MAX_GRID_TRACKS : s.span);
             // Grid line zero is an invalid index, so it gets treated as Auto
-            case Line l -> l.line().asI16() == 0
-                    ? new GenericGridPlacement.Auto<>()
-                    : new GenericGridPlacement.Line<>(l.line().intoOriginZeroLine(explicitTrackCount));
+            case Line l ->
+                l.line().asI16() == 0
+                        ? new GenericGridPlacement.Auto<>()
+                        : new GenericGridPlacement.Line<>(l.line().intoOriginZeroLine(explicitTrackCount));
             case NamedLine n -> new GenericGridPlacement.Auto<>();
             case NamedSpan n -> new GenericGridPlacement.Auto<>();
         };

@@ -17,7 +17,8 @@ public record Rect<T>(T left, T right, T top, T bottom) {
     /// `impl Add<Rect<U>> for Rect<T>` — field-wise `self + rhs` with an
     /// explicit add function (Rust resolves `T::add` statically).
     public <U, R> Rect<R> zipMap(Rect<U> rhs, BiFunction<T, U, R> f) {
-        return new Rect<>(f.apply(left, rhs.left), f.apply(right, rhs.right), f.apply(top, rhs.top), f.apply(bottom, rhs.bottom));
+        return new Rect<>(
+                f.apply(left, rhs.left), f.apply(right, rhs.right), f.apply(top, rhs.top), f.apply(bottom, rhs.bottom));
     }
 
     /// Swap the horizontal and vertical sides (`left <-> top`, `right <-> bottom`)

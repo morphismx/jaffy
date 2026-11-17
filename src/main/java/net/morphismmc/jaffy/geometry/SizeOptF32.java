@@ -47,8 +47,7 @@ public record SizeOptF32(@Opt float width, @Opt float height) {
 
     /// `or` on each component
     public SizeOptF32 or(SizeOptF32 alt) {
-        return new SizeOptF32(
-                OptF32.isSome(width) ? width : alt.width, OptF32.isSome(height) ? height : alt.height);
+        return new SizeOptF32(OptF32.isSome(width) ? width : alt.width, OptF32.isSome(height) ? height : alt.height);
     }
 
     /// Return true if both components are Some, else false.

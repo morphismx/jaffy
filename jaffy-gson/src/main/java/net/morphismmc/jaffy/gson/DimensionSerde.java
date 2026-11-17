@@ -10,17 +10,19 @@
 // because Java has no pointer to reattach (upstream rejects them identically).
 package net.morphismmc.jaffy.gson;
 
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+
 import net.morphismmc.jaffy.style.CompactLength;
 import net.morphismmc.jaffy.style.dimension.Dimension;
 import net.morphismmc.jaffy.style.dimension.LengthPercentage;
 import net.morphismmc.jaffy.style.dimension.LengthPercentageAuto;
 import net.morphismmc.jaffy.style.grid.MaxTrackSizingFunction;
 import net.morphismmc.jaffy.style.grid.MinTrackSizingFunction;
+
+import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
 final class DimensionSerde {
 

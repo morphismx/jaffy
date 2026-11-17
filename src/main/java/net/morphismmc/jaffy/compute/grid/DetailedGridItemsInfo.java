@@ -6,7 +6,6 @@ package net.morphismmc.jaffy.compute.grid;
 
 import net.morphismmc.jaffy.compute.grid.types.grid_item.GridItem;
 
-
 /// Grid area information from the placement algorithm
 ///
 /// The values are 1-indexed grid line numbers bounding the area.

@@ -9,9 +9,11 @@
 // Not ported: retain/entry/iterators/serde/clone — no upstream call sites.
 package net.morphismmc.jaffy.infra.slotmap;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.function.IntFunction;
+
 import org.jspecify.annotations.Nullable;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 public final class SparseSecondaryMap<V> {
 

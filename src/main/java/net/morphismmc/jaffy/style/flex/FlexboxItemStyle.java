@@ -2,11 +2,12 @@
 // (`flexbox`). `impl ... for &T` has no Java counterpart.
 package net.morphismmc.jaffy.style.flex;
 
-import org.jspecify.annotations.Nullable;
 import net.morphismmc.jaffy.style.CoreStyle;
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.dimension.Dimension;
+
+import org.jspecify.annotations.Nullable;
 
 /// The set of styles required for a flexbox item (child of a flexbox container)
 public interface FlexboxItemStyle extends CoreStyle {

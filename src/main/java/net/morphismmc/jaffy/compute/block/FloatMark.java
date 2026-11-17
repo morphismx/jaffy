@@ -2,7 +2,6 @@
 // feature is always on).
 package net.morphismmc.jaffy.compute.block;
 
-
 /// A mark of how many floats a Block Formatting Context held when it was
 /// taken. See {@link BlockContext#floatMark}.
 ///

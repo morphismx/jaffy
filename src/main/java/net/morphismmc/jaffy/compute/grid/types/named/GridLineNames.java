@@ -7,7 +7,6 @@
 // Clone -> copy() (deep, incl. the per-name position lists) (GAP-005).
 package net.morphismmc.jaffy.compute.grid.types.named;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,13 +14,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 import net.morphismmc.jaffy.compute.grid.types.coordinates.GridLine;
 import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.jaffy.style.grid.GenericGridPlacement;
 import net.morphismmc.jaffy.style.grid.GridAreaAxis;
 import net.morphismmc.jaffy.style.grid.GridPlacement;
-import org.jspecify.annotations.Nullable;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 /// The names of each explicit grid line in a single axis, stored in CSR (compressed sparse
 /// row) format: a single flat `List` of names plus an `IntArrayList` of offsets into it (one more offset
@@ -91,8 +91,7 @@ public final class GridLineNames implements Iterable<List<String>> {
     /// Resolve named lines and spans using the retained line-name map and the passed grid area map
     /// (`pub(crate)` upstream -> public)
     public Line<GenericGridPlacement<GridLine>> resolveLineNames(
-            Line<GridPlacement> line, Map<String, AreaLines> areas, GridAreaAxis axis,
-            int explicitTrackCount) {
+            Line<GridPlacement> line, Map<String, AreaLines> areas, GridAreaAxis axis, int explicitTrackCount) {
         return new NamedLineResolverAxis(resolver, areas, axis, explicitTrackCount).resolveLineNames(line);
     }
 

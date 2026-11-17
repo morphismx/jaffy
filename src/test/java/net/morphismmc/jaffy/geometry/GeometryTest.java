@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.morphismmc.jaffy.style.available_space.AvailableSpace;
-import net.morphismmc.jaffy.style.dimension.Dimension;
-import net.morphismmc.jaffy.style.flex.FlexDirection;
-import net.morphismmc.jaffy.style.dimension.RectDimensionExt;
 import net.morphismmc.jaffy.style.available_space.SizeAvailableSpaceExt;
+import net.morphismmc.jaffy.style.dimension.Dimension;
+import net.morphismmc.jaffy.style.dimension.RectDimensionExt;
+import net.morphismmc.jaffy.style.flex.FlexDirection;
 import net.morphismmc.jaffy.tree.layout.RequestedAxis;
 import net.morphismmc.just.math.OptF32;
 
@@ -39,7 +39,8 @@ class GeometryTest {
         assertEquals("w!", s.map(v -> v + "!").width());
         assertEquals("w?", s.mapWidth(v -> v + "?").width());
         assertEquals("h?", s.mapHeight(v -> v + "?").height());
-        assertEquals("w+H", s.zipMap(new Size<>("H", "W"), (a, b) -> a + "+" + b).width());
+        assertEquals(
+                "w+H", s.zipMap(new Size<>("H", "W"), (a, b) -> a + "+" + b).width());
 
         // flexbox helpers
         assertEquals("w", s.main(FlexDirection.ROW));
@@ -77,8 +78,16 @@ class GeometryTest {
         assertTrue(new SizeF32(1.0f, 2.0f).f32Max(new SizeF32(2.0f, 1.0f)).rustEq(new SizeF32(2.0f, 2.0f)));
         assertTrue(new SizeF32(1.0f, 2.0f).f32Min(new SizeF32(2.0f, 1.0f)).rustEq(new SizeF32(1.0f, 1.0f)));
         // GAP-002: NaN is dropped, not propagated (non-NaN operand wins)
-        assertEquals(2.0f, new SizeF32(Float.NaN, 1.0f).f32Max(new SizeF32(2.0f, Float.NaN)).width());
-        assertEquals(1.0f, new SizeF32(Float.NaN, 1.0f).f32Max(new SizeF32(2.0f, Float.NaN)).height());
+        assertEquals(
+                2.0f,
+                new SizeF32(Float.NaN, 1.0f)
+                        .f32Max(new SizeF32(2.0f, Float.NaN))
+                        .width());
+        assertEquals(
+                1.0f,
+                new SizeF32(Float.NaN, 1.0f)
+                        .f32Max(new SizeF32(2.0f, Float.NaN))
+                        .height());
         assertTrue(new SizeF32(1.0f, 0.5f).hasNonZeroArea());
         assertFalse(new SizeF32(1.0f, 0.0f).hasNonZeroArea());
         assertTrue(new SizeF32(1.0f, 2.0f).plus(new SizeF32(3.0f, 4.0f)).rustEq(new SizeF32(4.0f, 6.0f)));
@@ -110,11 +119,16 @@ class GeometryTest {
         assertTrue(new SizeOptF32(1.0f, 2.0f).maybeApplyAspectRatio(2.0f).rustEq(new SizeOptF32(1.0f, 2.0f)));
 
         // Size<Option<f32>> impls
-        assertTrue(new SizeOptF32(1.0f, OptF32.NONE).unwrapOr(new SizeF32(7.0f, 8.0f)).rustEq(new SizeF32(1.0f, 8.0f)));
-        assertTrue(new SizeOptF32(1.0f, OptF32.NONE).or(new SizeOptF32(7.0f, 8.0f)).rustEq(new SizeOptF32(1.0f, 8.0f)));
+        assertTrue(new SizeOptF32(1.0f, OptF32.NONE)
+                .unwrapOr(new SizeF32(7.0f, 8.0f))
+                .rustEq(new SizeF32(1.0f, 8.0f)));
+        assertTrue(
+                new SizeOptF32(1.0f, OptF32.NONE).or(new SizeOptF32(7.0f, 8.0f)).rustEq(new SizeOptF32(1.0f, 8.0f)));
         assertFalse(new SizeOptF32(1.0f, OptF32.NONE).bothAxisDefined());
         assertTrue(new SizeOptF32(1.0f, 2.0f).bothAxisDefined());
-        assertTrue(new SizeOptF32(1.0f, OptF32.NONE).mapF(v -> OptF32.unwrapOr(v, 9.0f)).rustEq(new SizeF32(1.0f, 9.0f)));
+        assertTrue(new SizeOptF32(1.0f, OptF32.NONE)
+                .mapF(v -> OptF32.unwrapOr(v, 9.0f))
+                .rustEq(new SizeF32(1.0f, 9.0f)));
         // GAP-004: None == None
         assertTrue(new SizeOptF32(1.0f, OptF32.NONE).rustEq(new SizeOptF32(1.0f, OptF32.NONE)));
     }
@@ -245,7 +259,9 @@ class GeometryTest {
         assertEquals(RequestedAxis.BOTH, RequestedAxis.BOTH.transpose());
         assertEquals(RequestedAxis.HORIZONTAL, RequestedAxis.from(AbsoluteAxis.HORIZONTAL));
         assertEquals(RequestedAxis.VERTICAL, RequestedAxis.from(AbsoluteAxis.VERTICAL));
-        assertEquals(AbsoluteAxis.HORIZONTAL, AbsoluteAxis.tryFrom(RequestedAxis.HORIZONTAL).ok());
+        assertEquals(
+                AbsoluteAxis.HORIZONTAL,
+                AbsoluteAxis.tryFrom(RequestedAxis.HORIZONTAL).ok());
         assertNull(AbsoluteAxis.tryFrom(RequestedAxis.BOTH).ok());
     }
 

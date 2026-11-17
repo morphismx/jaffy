@@ -17,9 +17,11 @@ package net.morphismmc.jaffy.style;
 /// See <https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing>
 public enum BoxSizing {
 
-    /// Size styles such size, minSize, maxSize specify the box's "border box" (the size excluding margin but including padding/border)
+    /// Size styles such size, minSize, maxSize specify the box's "border box" (the size excluding margin but including
+    /// padding/border)
     BORDER_BOX,
-    /// Size styles such size, minSize, maxSize specify the box's "content box" (the size excluding padding/border/margin)
+    /// Size styles such size, minSize, maxSize specify the box's "content box" (the size excluding
+    /// padding/border/margin)
     CONTENT_BOX;
 
     /// Rust `#[default]` variant

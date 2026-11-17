@@ -4,7 +4,6 @@ package net.morphismmc.jaffy.compute.block;
 
 import net.morphismmc.jaffy.compute.float_.FloatContext;
 
-
 /// Context for positioning Block and Float boxes within a Block Formatting
 /// Context.
 public final class BlockFormattingContext {

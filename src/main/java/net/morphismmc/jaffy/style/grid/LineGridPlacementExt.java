@@ -10,8 +10,7 @@ public final class LineGridPlacementExt {
     private LineGridPlacementExt() {}
 
     /// `Default` impl — `Line { start: Auto, end: Auto }`
-    public static final Line<GridPlacement> DEFAULT =
-            new Line<>(GridPlacement.AUTO, GridPlacement.AUTO);
+    public static final Line<GridPlacement> DEFAULT = new Line<>(GridPlacement.AUTO, GridPlacement.AUTO);
 
     /// `TaffyGridLine for Line<GridPlacement<S>>` — `Line { start: Line(index), end: Auto }`
     public static Line<GridPlacement> fromLineIndex(int index) {

@@ -6,12 +6,12 @@
 // is exact. Clone -> copy() (GAP-005).
 package net.morphismmc.jaffy.compute.grid.types.named;
 
-import it.unimi.dsi.fastutil.ints.IntList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import it.unimi.dsi.fastutil.ints.IntList;
 
 /// Iterator over the per-line name groups of a [`GridLineNames`]. Yields one
 /// `List<String>` per grid line (which is empty for unnamed lines)
@@ -52,8 +52,7 @@ public final class GridLineNamesIter implements Iterator<List<String>> {
             return List.of();
         }
         if (offsetsIndex + 1 < offsets.size()) {
-            List<String> group =
-                    names.subList(offsets.getInt(offsetsIndex), offsets.getInt(offsetsIndex + 1));
+            List<String> group = names.subList(offsets.getInt(offsetsIndex), offsets.getInt(offsetsIndex + 1));
             offsetsIndex++;
             return Collections.unmodifiableList(group);
         }
@@ -83,7 +82,7 @@ public final class GridLineNamesIter implements Iterator<List<String>> {
     /// `#[derive(Debug)]`
     @Override
     public String toString() {
-        return "GridLineNamesIter { names: " + names + ", leading_empty: " + leadingEmpty
-                + ", trailing_empty: " + trailingEmpty + " }";
+        return "GridLineNamesIter { names: " + names + ", leading_empty: " + leadingEmpty + ", trailing_empty: "
+                + trailingEmpty + " }";
     }
 }

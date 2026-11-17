@@ -3,6 +3,25 @@ package net.morphismmc.jaffy.bench.grid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import net.morphismmc.jaffy.bench.JaffyLayoutTree;
+import net.morphismmc.jaffy.bench.JaffyStyles;
+import net.morphismmc.jaffy.bench.Rng;
+import net.morphismmc.jaffy.bench.VfyjxfLayoutTree;
+import net.morphismmc.jaffy.bench.VfyjxfStyles;
+import net.morphismmc.jaffy.geometry.Line;
+import net.morphismmc.jaffy.geometry.MinMax;
+import net.morphismmc.jaffy.geometry.Size;
+import net.morphismmc.jaffy.style.Display;
+import net.morphismmc.jaffy.style.Style;
+import net.morphismmc.jaffy.style.available_space.AvailableSpace;
+import net.morphismmc.jaffy.style.dimension.Dimension;
+import net.morphismmc.jaffy.style.grid.GridAutoFlow;
+import net.morphismmc.jaffy.style.grid.GridPlacement;
+import net.morphismmc.jaffy.style.grid.MaxTrackSizingFunction;
+import net.morphismmc.jaffy.style.grid.MinTrackSizingFunction;
+import net.morphismmc.jaffy.tree.TaffyTree;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -17,24 +36,6 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
 
-import net.morphismmc.jaffy.bench.JaffyLayoutTree;
-import net.morphismmc.jaffy.bench.JaffyStyles;
-import net.morphismmc.jaffy.bench.Rng;
-import net.morphismmc.jaffy.bench.VfyjxfLayoutTree;
-import net.morphismmc.jaffy.bench.VfyjxfStyles;
-import net.morphismmc.jaffy.geometry.Line;
-import net.morphismmc.jaffy.geometry.Size;
-import net.morphismmc.jaffy.style.Display;
-import net.morphismmc.jaffy.style.Style;
-import net.morphismmc.jaffy.style.available_space.AvailableSpace;
-import net.morphismmc.jaffy.style.dimension.Dimension;
-import net.morphismmc.jaffy.style.grid.GridAutoFlow;
-import net.morphismmc.jaffy.style.grid.GridPlacement;
-import net.morphismmc.jaffy.style.grid.MaxTrackSizingFunction;
-import net.morphismmc.jaffy.style.grid.MinTrackSizingFunction;
-import net.morphismmc.jaffy.geometry.MinMax;
-import net.morphismmc.jaffy.tree.TaffyTree;
-
 /// Port of upstream `benches/benches/grid.rs` — `grid/wide` (flat
 /// track_count² hierarchy), `grid/deep` (nested n×n grids),
 /// `grid/superdeep` (1×1 tracks, many levels), and
@@ -46,16 +47,15 @@ import net.morphismmc.jaffy.tree.TaffyTree;
 @Fork(1)
 public class GridBench {
 
-    private static final Size<AvailableSpace> DEFINITE_12000 = new Size<>(
-            new AvailableSpace.Definite(12000.0f), new AvailableSpace.Definite(12000.0f));
-    private static final dev.vfyjxf.taffy.geometry.TaffySize<dev.vfyjxf.taffy.style.AvailableSpace>
-            VFYJXF_12000 = dev.vfyjxf.taffy.geometry.TaffySize.of(
+    private static final Size<AvailableSpace> DEFINITE_12000 =
+            new Size<>(new AvailableSpace.Definite(12000.0f), new AvailableSpace.Definite(12000.0f));
+    private static final dev.vfyjxf.taffy.geometry.TaffySize<dev.vfyjxf.taffy.style.AvailableSpace> VFYJXF_12000 =
+            dev.vfyjxf.taffy.geometry.TaffySize.of(
                     dev.vfyjxf.taffy.style.AvailableSpace.definite(12000.0f),
                     dev.vfyjxf.taffy.style.AvailableSpace.definite(12000.0f));
     private static final Size<AvailableSpace> MAX_CONTENT =
             new Size<>(AvailableSpace.MAX_CONTENT, AvailableSpace.MAX_CONTENT);
-    private static final Size<Dimension> SIZE_20 =
-            new Size<>(Dimension.length(20.0f), Dimension.length(20.0f));
+    private static final Size<Dimension> SIZE_20 = new Size<>(Dimension.length(20.0f), Dimension.length(20.0f));
     private static final MinMax<MinTrackSizingFunction, MaxTrackSizingFunction> AUTO_TRACK =
             new MinMax<>(MinTrackSizingFunction.AUTO, MaxTrackSizingFunction.AUTO);
     private static final MinMax<MinTrackSizingFunction, MaxTrackSizingFunction> LEN1_TRACK =
@@ -75,8 +75,7 @@ public class GridBench {
         return tree;
     }
 
-    static dev.vfyjxf.taffy.tree.TaffyTree vfyjxfFlatGrid(
-            int trackCount, dev.vfyjxf.taffy.tree.NodeId[] rootHolder) {
+    static dev.vfyjxf.taffy.tree.TaffyTree vfyjxfFlatGrid(int trackCount, dev.vfyjxf.taffy.tree.NodeId[] rootHolder) {
         Rng rng = new Rng(12345);
         dev.vfyjxf.taffy.tree.TaffyTree tree = new dev.vfyjxf.taffy.tree.TaffyTree();
         List<dev.vfyjxf.taffy.tree.NodeId> children = new ArrayList<>(trackCount * trackCount);
@@ -95,8 +94,7 @@ public class GridBench {
     // `build_deep_grid_tree`: levels==1 → tracks² leaves, else tracks² nested
     // n×n grid containers; root = `new_with_children(Style::DEFAULT, &tree)`.
 
-    private static long[] jaffyDeepGrid(
-            TaffyTree<Void> tree, Rng rng, int levels, int tracks, List<Long> sink) {
+    private static long[] jaffyDeepGrid(TaffyTree<Void> tree, Rng rng, int levels, int tracks, List<Long> sink) {
         int childCount = tracks * tracks;
         long[] out = new long[childCount];
         if (levels == 1) {
@@ -144,10 +142,8 @@ public class GridBench {
             return out;
         }
         for (int i = 0; i < childCount; i++) {
-            List<dev.vfyjxf.taffy.tree.NodeId> grand =
-                    vfyjxfDeepGrid(tree, rng, levels - 1, tracks, sink);
-            dev.vfyjxf.taffy.tree.NodeId n =
-                    tree.newWithChildren(VfyjxfStyles.gridStyle(rng, tracks), grand);
+            List<dev.vfyjxf.taffy.tree.NodeId> grand = vfyjxfDeepGrid(tree, rng, levels - 1, tracks, sink);
+            dev.vfyjxf.taffy.tree.NodeId n = tree.newWithChildren(VfyjxfStyles.gridStyle(rng, tracks), grand);
             out.add(n);
             sink.add(n);
         }
@@ -159,8 +155,7 @@ public class GridBench {
         Rng rng = new Rng(12345);
         dev.vfyjxf.taffy.tree.TaffyTree tree = new dev.vfyjxf.taffy.tree.TaffyTree();
         List<dev.vfyjxf.taffy.tree.NodeId> sink = new ArrayList<>();
-        List<dev.vfyjxf.taffy.tree.NodeId> children =
-                vfyjxfDeepGrid(tree, rng, levels, tracks, sink);
+        List<dev.vfyjxf.taffy.tree.NodeId> children = vfyjxfDeepGrid(tree, rng, levels, tracks, sink);
         rootHolder[0] = tree.newWithChildren(new dev.vfyjxf.taffy.style.TaffyStyle(), children);
         return tree;
     }
@@ -182,22 +177,19 @@ public class GridBench {
         long[] children = new long[itemCount];
         for (int i = 0; i < itemCount; i++) {
             Line<GridPlacement> lockedAxis = i % 2 == 0 ? LOCKED : SECOND;
-            Style style = isRow
-                    ? Style.DEFAULT.withGridRow(lockedAxis)
-                    : Style.DEFAULT.withGridColumn(lockedAxis);
+            Style style = isRow ? Style.DEFAULT.withGridRow(lockedAxis) : Style.DEFAULT.withGridColumn(lockedAxis);
             children[i] = tree.newLeaf(style);
         }
-        Style container = Style.DEFAULT.withDisplay(Display.GRID)
+        Style container = Style.DEFAULT
+                .withDisplay(Display.GRID)
                 .withGridAutoFlow(flow)
                 .withGridAutoColumns(List.of(LEN1_TRACK))
                 .withGridAutoRows(List.of(LEN1_TRACK));
         container = isRow
-                ? container.withGridTemplateColumns(
-                        java.util.Collections.nCopies(itemCount,
-                                net.morphismmc.jaffy.style.grid.GridTemplateComponent.fromLength(1.0)))
-                : container.withGridTemplateRows(
-                        java.util.Collections.nCopies(itemCount,
-                                net.morphismmc.jaffy.style.grid.GridTemplateComponent.fromLength(1.0)));
+                ? container.withGridTemplateColumns(java.util.Collections.nCopies(
+                        itemCount, net.morphismmc.jaffy.style.grid.GridTemplateComponent.fromLength(1.0)))
+                : container.withGridTemplateRows(java.util.Collections.nCopies(
+                        itemCount, net.morphismmc.jaffy.style.grid.GridTemplateComponent.fromLength(1.0)));
         rootHolder[0] = tree.newWithChildren(container, children);
         return tree;
     }
@@ -215,14 +207,11 @@ public class GridBench {
         List<dev.vfyjxf.taffy.tree.NodeId> children = new ArrayList<>(itemCount);
         for (int i = 0; i < itemCount; i++) {
             dev.vfyjxf.taffy.style.TaffyStyle s = new dev.vfyjxf.taffy.style.TaffyStyle();
-            dev.vfyjxf.taffy.geometry.TaffyLine<dev.vfyjxf.taffy.style.GridPlacement> locked =
-                    i % 2 == 0
-                            ? new dev.vfyjxf.taffy.geometry.TaffyLine<>(
-                                    dev.vfyjxf.taffy.style.GridPlacement.line(1),
-                                    dev.vfyjxf.taffy.style.GridPlacement.span(2))
-                            : new dev.vfyjxf.taffy.geometry.TaffyLine<>(
-                                    dev.vfyjxf.taffy.style.GridPlacement.line(2),
-                                    dev.vfyjxf.taffy.style.GridPlacement.line(2));
+            dev.vfyjxf.taffy.geometry.TaffyLine<dev.vfyjxf.taffy.style.GridPlacement> locked = i % 2 == 0
+                    ? new dev.vfyjxf.taffy.geometry.TaffyLine<>(
+                            dev.vfyjxf.taffy.style.GridPlacement.line(1), dev.vfyjxf.taffy.style.GridPlacement.span(2))
+                    : new dev.vfyjxf.taffy.geometry.TaffyLine<>(
+                            dev.vfyjxf.taffy.style.GridPlacement.line(2), dev.vfyjxf.taffy.style.GridPlacement.line(2));
             if (isRow) {
                 s.gridRow = locked;
             } else {
@@ -233,10 +222,8 @@ public class GridBench {
         dev.vfyjxf.taffy.style.TaffyStyle c = new dev.vfyjxf.taffy.style.TaffyStyle();
         c.display = dev.vfyjxf.taffy.style.TaffyDisplay.GRID;
         c.gridAutoFlow = vflow;
-        c.gridAutoColumns = new ArrayList<>(
-                List.of(dev.vfyjxf.taffy.style.TrackSizingFunction.fixed(1.0f)));
-        c.gridAutoRows = new ArrayList<>(
-                List.of(dev.vfyjxf.taffy.style.TrackSizingFunction.fixed(1.0f)));
+        c.gridAutoColumns = new ArrayList<>(List.of(dev.vfyjxf.taffy.style.TrackSizingFunction.fixed(1.0f)));
+        c.gridAutoRows = new ArrayList<>(List.of(dev.vfyjxf.taffy.style.TrackSizingFunction.fixed(1.0f)));
         List<dev.vfyjxf.taffy.style.TrackSizingFunction> template = new ArrayList<>(itemCount);
         for (int i = 0; i < itemCount; i++) {
             template.add(dev.vfyjxf.taffy.style.TrackSizingFunction.fixed(1.0f));
@@ -257,6 +244,7 @@ public class GridBench {
     public static class WideState {
         @Param({"jaffy", "vfyjxf"})
         String lib;
+
         @Param({"31", "100"})
         int trackCount;
 
@@ -300,6 +288,7 @@ public class GridBench {
     public static class DeepState {
         @Param({"jaffy", "vfyjxf"})
         String lib;
+
         @Param({"2x5", "3x4", "2x7"})
         String shape;
 
@@ -346,6 +335,7 @@ public class GridBench {
     public static class SuperdeepState {
         @Param({"jaffy", "vfyjxf"})
         String lib;
+
         @Param({"100", "1000"})
         int levels;
 
@@ -389,8 +379,10 @@ public class GridBench {
     public static class SpansState {
         @Param({"jaffy", "vfyjxf"})
         String lib;
+
         @Param({"100", "1000"})
         int itemCount;
+
         @Param({"Row", "RowDense", "Column", "ColumnDense"})
         String flow;
 

@@ -17,6 +17,7 @@ package net.morphismmc.jaffy.compute.grid.types.grid_item;
 
 import java.util.List;
 import java.util.function.Predicate;
+
 import net.morphismmc.jaffy.compute.common.SizingKeyword;
 import net.morphismmc.jaffy.compute.common.SizingKeyword.SizingKeywordResolution;
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
@@ -32,7 +33,6 @@ import net.morphismmc.jaffy.geometry.RectF32;
 import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
-import net.morphismmc.just.fmt.RustFmt;
 import net.morphismmc.jaffy.style.BoxSizing;
 import net.morphismmc.jaffy.style.CompactBits;
 import net.morphismmc.jaffy.style.Overflow;
@@ -47,15 +47,16 @@ import net.morphismmc.jaffy.tree.layout.OofCandidates;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
 import net.morphismmc.jaffy.tree.traits.LayoutPartialTree;
 import net.morphismmc.jaffy.util.CalcResolver;
-import net.morphismmc.just.math.F32;
 import net.morphismmc.jaffy.util.MaybeResolve.RectLengthPercentageAutoExt;
 import net.morphismmc.jaffy.util.MaybeResolve.RectLengthPercentageExt;
 import net.morphismmc.jaffy.util.MaybeResolve.SizeDimensionExt;
 import net.morphismmc.jaffy.util.MaybeResolve.SizeLengthPercentageAutoExt;
+import net.morphismmc.just.fmt.RustFmt;
+import net.morphismmc.just.math.F32;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
-import org.jspecify.annotations.Nullable;
 
+import org.jspecify.annotations.Nullable;
 
 /// Represents a single grid item
 public final class GridItem {
@@ -122,7 +123,8 @@ public final class GridItem {
     /// Whether the item crosses a intrinsic column
     public boolean crossesIntrinsicColumn;
 
-    // Caches for intrinsic size computation. These caches are only valid for a single run of the track-sizing algorithm.
+    // Caches for intrinsic size computation. These caches are only valid for a single run of the track-sizing
+    // algorithm.
     /// Cache for the known_dimensions input to intrinsic sizing computation
     public @Nullable SizeOptF32 gridAreaSizeCache;
     /// Cache for the known_dimensions passed to the child when computing its intrinsic contributions, stored along with
@@ -152,7 +154,8 @@ public final class GridItem {
     /// track's axis.
     @FunctionalInterface
     public interface GetTrackSizeEstimate {
-        @Opt float estimate(GridTrack track, @Opt float axisAvailableSpace);
+        @Opt
+        float estimate(GridTrack track, @Opt float axisAvailableSpace);
     }
 
     /// Create a new item from its style. Its placement (`row`/`column`) is filled in by the placement algorithm.
@@ -286,7 +289,8 @@ public final class GridItem {
         };
     }
 
-    /// For an item spanning multiple tracks, the upper limit used to calculate its limited min-/max-content contribution is the
+    /// For an item spanning multiple tracks, the upper limit used to calculate its limited min-/max-content
+    /// contribution is the
     /// sum of the fixed max track sizing functions of any tracks it spans, and is applied if it only spans such tracks.
     /// `Option<f32>` -> @Opt float
     public @Opt float spannedTrackLimit(
@@ -294,7 +298,8 @@ public final class GridItem {
         TrackCounts.TrackRange range = trackRangeExcludingLines(axis);
         boolean tracksAllFixed = true;
         for (int i = range.start(); i < range.end(); i++) {
-            if (OptF32.isNone(axisTracks.get(i).maxTrackSizingFunction.definiteLimit(axisParentSize, resolveCalcValue))) {
+            if (OptF32.isNone(
+                    axisTracks.get(i).maxTrackSizingFunction.definiteLimit(axisParentSize, resolveCalcValue))) {
                 tracksAllFixed = false;
                 break;
             }
@@ -302,7 +307,8 @@ public final class GridItem {
         if (tracksAllFixed) {
             float limit = 0.0f;
             for (int i = range.start(); i < range.end(); i++) {
-                limit += OptF32.unwrap(axisTracks.get(i).maxTrackSizingFunction.definiteLimit(axisParentSize, resolveCalcValue));
+                limit += OptF32.unwrap(
+                        axisTracks.get(i).maxTrackSizingFunction.definiteLimit(axisParentSize, resolveCalcValue));
             }
             return limit;
         } else {
@@ -317,7 +323,8 @@ public final class GridItem {
         TrackCounts.TrackRange range = trackRangeExcludingLines(axis);
         boolean tracksAllFixed = true;
         for (int i = range.start(); i < range.end(); i++) {
-            if (OptF32.isNone(axisTracks.get(i).maxTrackSizingFunction.definiteValue(axisParentSize, resolveCalcValue))) {
+            if (OptF32.isNone(
+                    axisTracks.get(i).maxTrackSizingFunction.definiteValue(axisParentSize, resolveCalcValue))) {
                 tracksAllFixed = false;
                 break;
             }
@@ -325,7 +332,8 @@ public final class GridItem {
         if (tracksAllFixed) {
             float limit = 0.0f;
             for (int i = range.start(); i < range.end(); i++) {
-                limit += OptF32.unwrap(axisTracks.get(i).maxTrackSizingFunction.definiteValue(axisParentSize, resolveCalcValue));
+                limit += OptF32.unwrap(
+                        axisTracks.get(i).maxTrackSizingFunction.definiteValue(axisParentSize, resolveCalcValue));
             }
             return limit;
         } else {
@@ -383,7 +391,8 @@ public final class GridItem {
                 .maybeApplyAspectRatio(aspectRatio)
                 .maybeAddF(boxSizingAdjustment);
 
-        SizeOptF32 gridAreaMinusItemMarginsSize = gridAreaSize.maybeSubF(margins).maybeMaxF(SizeF32.ZERO);
+        SizeOptF32 gridAreaMinusItemMarginsSize =
+                gridAreaSize.maybeSubF(margins).maybeMaxF(SizeF32.ZERO);
 
         // If node is absolutely positioned and width is not set explicitly, then deduce it
         // from left, right and container_content_box if both are set.
@@ -395,9 +404,7 @@ public final class GridItem {
                 SizingKeywordResolution res = SizingKeyword.resolveSizingKeyword(
                         size.width(), gridAreaMinusItemMarginsSize.width(), gridAreaSize.width(), tree::calc);
                 width = res instanceof SizingKeywordResolution.Exact e ? e.value() : OptF32.NONE;
-            } else if (!margin.left().isAuto()
-                    && !margin.right().isAuto()
-                    && isStretchAligned(justifySelf)) {
+            } else if (!margin.left().isAuto() && !margin.right().isAuto() && isStretchAligned(justifySelf)) {
                 // Apply width based on stretch alignment if:
                 //  - Alignment style is "stretch" or "normal". Note that "normal" is treated as "stretch"
                 //    here regardless of whether the item has a preferred size or aspect ratio in this axis,
@@ -420,9 +427,7 @@ public final class GridItem {
                 SizingKeywordResolution res = SizingKeyword.resolveSizingKeyword(
                         size.height(), gridAreaMinusItemMarginsSize.height(), gridAreaSize.height(), tree::calc);
                 height = res instanceof SizingKeywordResolution.Exact e ? e.value() : OptF32.NONE;
-            } else if (!margin.top().isAuto()
-                    && !margin.bottom().isAuto()
-                    && isStretchAligned(alignSelf)) {
+            } else if (!margin.top().isAuto() && !margin.bottom().isAuto() && isStretchAligned(alignSelf)) {
                 // Apply height based on stretch alignment if:
                 //  - Alignment style is "stretch" or "normal" (see the note on width above)
                 //  - The node is not absolutely positioned
@@ -467,12 +472,14 @@ public final class GridItem {
             TrackCounts.TrackRange range = trackRangeExcludingLines(axis);
             for (int i = range.start(); i < range.end(); i++) {
                 GridTrack track = axisTracks.get(i);
-                @Opt float minSize = track.minTrackSizingFunction.definiteValue(availableSpace.get(axis), resolveCalcValue);
+                @Opt
+                float minSize = track.minTrackSizingFunction.definiteValue(availableSpace.get(axis), resolveCalcValue);
                 if (OptF32.isNone(minSize)) {
                     sum = OptF32.NONE;
                     break;
                 }
-                @Opt float maxSize = track.maxTrackSizingFunction.definiteValue(availableSpace.get(axis), resolveCalcValue);
+                @Opt
+                float maxSize = track.maxTrackSizingFunction.definiteValue(availableSpace.get(axis), resolveCalcValue);
                 if (OptF32.isNone(maxSize)) {
                     sum = OptF32.NONE;
                     break;
@@ -564,14 +571,18 @@ public final class GridItem {
     private static Size<AvailableSpace> mapToAvailableSpaceMin(SizeOptF32 space) {
         return new Size<>(
                 OptF32.isSome(space.width()) ? new AvailableSpace.Definite(space.width()) : AvailableSpace.MIN_CONTENT,
-                OptF32.isSome(space.height()) ? new AvailableSpace.Definite(space.height()) : AvailableSpace.MIN_CONTENT);
+                OptF32.isSome(space.height())
+                        ? new AvailableSpace.Definite(space.height())
+                        : AvailableSpace.MIN_CONTENT);
     }
 
     /// `Size<Option<f32>>::map(|opt| Some -> Definite / None -> MaxContent)`
     private static Size<AvailableSpace> mapToAvailableSpaceMax(SizeOptF32 space) {
         return new Size<>(
                 OptF32.isSome(space.width()) ? new AvailableSpace.Definite(space.width()) : AvailableSpace.MAX_CONTENT,
-                OptF32.isSome(space.height()) ? new AvailableSpace.Definite(space.height()) : AvailableSpace.MAX_CONTENT);
+                OptF32.isSome(space.height())
+                        ? new AvailableSpace.Definite(space.height())
+                        : AvailableSpace.MAX_CONTENT);
     }
 
     /// Retrieve the item's min content contribution from the cache or compute it using the provided parameters
@@ -624,7 +635,8 @@ public final class GridItem {
         RectF32 margin = RectLengthPercentageAutoExt.resolveOrZeroO(this.margin, gridAreaSize.width(), tree::calc);
         return new SizeOptF32(
                 OptF32.map(availableSpace.width(), width -> F32.max(width - margin.horizontalAxisSum(), 0.0f)),
-                OptF32.map(availableSpace.height(),
+                OptF32.map(
+                        availableSpace.height(),
                         height -> F32.max(height - margin.verticalAxisSum() - baselineShim, 0.0f)));
     }
 
@@ -643,8 +655,8 @@ public final class GridItem {
             if (!sizeStyle.isSizingKeyword()) {
                 continue;
             }
-            @Opt float stretchSize =
-                    OptF32.maybeMaxF(OptF32.maybeSubF(gridAreaSize.get(axis), margins.get(axis)), 0.0f);
+            @Opt
+            float stretchSize = OptF32.maybeMaxF(OptF32.maybeSubF(gridAreaSize.get(axis), margins.get(axis)), 0.0f);
             if (SizingKeyword.resolveSizingKeyword(sizeStyle, stretchSize, gridAreaSize.get(axis), tree::calc)
                     instanceof SizingKeywordResolution.Measure(AvailableSpace available)) {
                 adjusted = adjusted.with(axis, available);
@@ -667,11 +679,14 @@ public final class GridItem {
 
     /// The minimum contribution of an item is the smallest outer size it can have.
     /// Specifically:
-    ///   - If the item’s computed preferred size behaves as auto or depends on the size of its containing block in the relevant axis:
-    ///     Its minimum contribution is the outer size that would result from assuming the item’s used minimum size as its preferred size;
+    ///   - If the item’s computed preferred size behaves as auto or depends on the size of its containing block in the
+    /// relevant axis:
+    ///     Its minimum contribution is the outer size that would result from assuming the item’s used minimum size as
+    /// its preferred size;
     ///   - Else the item’s minimum contribution is its min-content contribution.
     ///
-    /// Because the minimum contribution often depends on the size of the item's content, it is considered a type of intrinsic size contribution.
+    /// Because the minimum contribution often depends on the size of the item's content, it is considered a type of
+    /// intrinsic size contribution.
     /// See: https://www.w3.org/TR/css-grid-1/#min-size-auto
     public float minimumContribution(
             LayoutPartialTree tree,
@@ -686,7 +701,8 @@ public final class GridItem {
 
         // `self.size.maybe_resolve(...).maybe_apply_aspect_ratio(...).maybe_add(adjustment).get(axis)`
         // `.map(...).or_else(...).or_else(...).or_else(...).unwrap_or_else(...)`
-        @Opt float result = SizeDimensionExt.maybeResolveO(size, gridAreaSize, tree::calc)
+        @Opt
+        float result = SizeDimensionExt.maybeResolveO(size, gridAreaSize, tree::calc)
                 .maybeApplyAspectRatio(aspectRatio)
                 .maybeAddF(boxSizingAdjustment)
                 .get(axis);
@@ -728,7 +744,8 @@ public final class GridItem {
         if (OptF32.isNone(result)) {
             // Automatic minimum size. See https://www.w3.org/TR/css-grid-1/#min-size-auto
 
-            // To provide a more reasonable default minimum size for grid items, the used value of its automatic minimum size
+            // To provide a more reasonable default minimum size for grid items, the used value of its automatic minimum
+            // size
             // in a given axis is the content-based minimum size if all of the following are true:
             TrackCounts.TrackRange range = trackRangeExcludingLines(axis);
             List<GridTrack> itemAxisTracks = axisTracks.subList(range.start(), range.end());
@@ -759,13 +776,16 @@ public final class GridItem {
             if (useContentBasedMinimum) {
                 float minimumContribution = minContentContributionCached(axis, tree, gridAreaSize, gridAreaSize);
 
-                // If the item is a compressible replaced element, and has a definite preferred size or maximum size in the
-                // relevant axis, the size suggestion is capped by those sizes; for this purpose, any indefinite percentages
+                // If the item is a compressible replaced element, and has a definite preferred size or maximum size in
+                // the
+                // relevant axis, the size suggestion is capped by those sizes; for this purpose, any indefinite
+                // percentages
                 // in these sizes are resolved against zero (and considered definite).
                 if (isCompressibleReplaced) {
                     @Opt float preferredSize = size.get(axis).maybeResolveO(0.0f, tree::calc);
                     @Opt float resolvedMaxSize = maxSize.get(axis).maybeResolveO(0.0f, tree::calc);
-                    minimumContribution = F32.maybeMinO(F32.maybeMinO(minimumContribution, preferredSize), resolvedMaxSize);
+                    minimumContribution =
+                            F32.maybeMinO(F32.maybeMinO(minimumContribution, preferredSize), resolvedMaxSize);
                 }
 
                 // The content-based minimum size is additionally clamped by the sum of any fixed max track sizing
@@ -774,7 +794,8 @@ public final class GridItem {
                 // minimum size in the same way as a fixed max track sizing function. The clamp is a stretch fit of
                 // the item's margin box (including its baseline shim) into the limit, so it does not shrink the
                 // item below its padding + border.
-                @Opt float limit = spannedFixedTrackLimit(axis, axisTracks, innerNodeSize.get(axis), tree::resolveCalcValue);
+                @Opt
+                float limit = spannedFixedTrackLimit(axis, axisTracks, innerNodeSize.get(axis), tree::resolveCalcValue);
                 SizeF32 margins = marginsAxisSumsWithBaselineShims(gridAreaSize.width(), tree);
                 result = F32.maybeMinO(
                         minimumContribution,
@@ -815,7 +836,8 @@ public final class GridItem {
                 + ", size: " + size
                 + ", min_size: " + minSize
                 + ", max_size: " + maxSize
-                + ", aspect_ratio: " + (OptF32.isSome(aspectRatio) ? "Some(" + RustFmt.debug(aspectRatio) + ")" : "None")
+                + ", aspect_ratio: "
+                + (OptF32.isSome(aspectRatio) ? "Some(" + RustFmt.debug(aspectRatio) + ")" : "None")
                 + ", padding: " + padding
                 + ", border: " + border
                 + ", margin: " + margin

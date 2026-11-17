@@ -3,7 +3,6 @@
 // `pub(crate) struct` -> package-private mutable class.
 package net.morphismmc.jaffy.tree;
 
-
 /// Global configuration values for a TaffyTree instance
 final class TaffyConfig {
 

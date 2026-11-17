@@ -4,12 +4,14 @@
 // writes Number.toString() verbatim).
 package net.morphismmc.jaffy.gson;
 
+import java.io.IOException;
+
+import net.morphismmc.just.fmt.Ryu;
+import net.morphismmc.just.math.OptF32;
+
 import com.google.gson.JsonParseException;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import java.io.IOException;
-import net.morphismmc.just.fmt.Ryu;
-import net.morphismmc.just.math.OptF32;
 
 final class JsonSupport {
 

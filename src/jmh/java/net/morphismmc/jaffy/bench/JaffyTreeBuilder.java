@@ -2,12 +2,13 @@ package net.morphismmc.jaffy.bench;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jspecify.annotations.Nullable;
 
 import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.tree.TaffyTree;
+
+import org.jspecify.annotations.Nullable;
 
 /// `BuildTree` adapter for jaffy — counterpart of upstream
 /// `benches/src/taffy_helpers.rs` `TaffyTreeBuilder`.

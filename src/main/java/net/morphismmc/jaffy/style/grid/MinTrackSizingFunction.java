@@ -2,15 +2,16 @@
 // (CompactLength newtype). serde/parse impls deferred.
 package net.morphismmc.jaffy.style.grid;
 
-import net.morphismmc.jaffy.util.CalcResolver;
-import net.morphismmc.just.math.Opt;
-import net.morphismmc.just.math.OptF32;
-import org.jspecify.annotations.Nullable;
 import net.morphismmc.jaffy.style.CompactBits;
 import net.morphismmc.jaffy.style.CompactLength;
 import net.morphismmc.jaffy.style.dimension.Dimension;
 import net.morphismmc.jaffy.style.dimension.LengthPercentage;
 import net.morphismmc.jaffy.style.dimension.LengthPercentageAuto;
+import net.morphismmc.jaffy.util.CalcResolver;
+import net.morphismmc.just.math.Opt;
+import net.morphismmc.just.math.OptF32;
+
+import org.jspecify.annotations.Nullable;
 
 /// Minimum track sizing function: specifies the minimum size of a grid track.
 public sealed interface MinTrackSizingFunction {
@@ -106,7 +107,8 @@ public sealed interface MinTrackSizingFunction {
 
     float value();
 
-    @Nullable Object calcValue();
+    @Nullable
+    Object calcValue();
 
     default boolean isPlainCalc() {
         return CompactBits.isPlainCalc(calcTag());
@@ -253,7 +255,8 @@ public sealed interface MinTrackSizingFunction {
         if (isPlainCalc()) { // #[cfg(feature = "calc")]
             return new ExpandedMinTrackSizingFunction.Calc(calcValue());
         }
-        throw new IllegalStateException("MinTrackSizingFunction contains a value with an invalid tag"); // JAFFY(GAP-010)
+        throw new IllegalStateException(
+                "MinTrackSizingFunction contains a value with an invalid tag"); // JAFFY(GAP-010)
     }
 
     // ---- Trait impls ----

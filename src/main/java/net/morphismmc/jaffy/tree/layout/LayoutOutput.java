@@ -4,6 +4,7 @@
 package net.morphismmc.jaffy.tree.layout;
 
 import net.morphismmc.jaffy.geometry.SizeF32;
+
 import org.jspecify.annotations.Nullable;
 
 /// A struct containing the result of laying a single node, which is returned up to the parent node

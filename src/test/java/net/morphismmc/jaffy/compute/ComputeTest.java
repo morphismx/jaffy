@@ -3,11 +3,6 @@ package net.morphismmc.jaffy.compute;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongIterator;
-import it.unimi.dsi.fastutil.longs.LongIterators;
-import it.unimi.dsi.fastutil.longs.LongList;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.tree.layout.Layout;
@@ -16,8 +11,15 @@ import net.morphismmc.jaffy.tree.layout.LayoutOutput;
 import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.traits.CacheTree;
 import net.morphismmc.jaffy.tree.traits.LayoutPartialTree;
+
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.longs.LongIterators;
+import it.unimi.dsi.fastutil.longs.LongList;
 
 class ComputeTest {
 

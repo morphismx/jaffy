@@ -9,12 +9,13 @@
 // instantiations live in util.*Ext classes.
 package net.morphismmc.jaffy.style.dimension;
 
+import net.morphismmc.jaffy.style.CompactBits;
+import net.morphismmc.jaffy.style.CompactLength;
 import net.morphismmc.jaffy.util.CalcResolver;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
+
 import org.jspecify.annotations.Nullable;
-import net.morphismmc.jaffy.style.CompactBits;
-import net.morphismmc.jaffy.style.CompactLength;
 
 public sealed interface LengthPercentage {
 
@@ -107,7 +108,8 @@ public sealed interface LengthPercentage {
     float value();
 
     /// `self.0.calc_value()`
-    @Nullable Object calcValue();
+    @Nullable
+    Object calcValue();
 
     /// `self.0.is_plain_calc()`
     default boolean isPlainCalc() {

@@ -4,11 +4,13 @@
 package net.morphismmc.jaffy.geometry;
 
 import java.util.function.IntUnaryOperator;
+
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptI32;
 import net.morphismmc.just.math.Unsigned;
 
-public record LineOptI32(@Opt @Unsigned int start, @Opt @Unsigned int end) {
+public record LineOptI32(
+        @Opt @Unsigned int start, @Opt @Unsigned int end) {
 
     /// A `Line<Option<u32>>` with both start and end `None`
     public static final LineOptI32 NONE = new LineOptI32(OptI32.NONE, OptI32.NONE);

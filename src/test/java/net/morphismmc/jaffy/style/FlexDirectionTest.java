@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.morphismmc.jaffy.geometry.AbsoluteAxis;
+import net.morphismmc.jaffy.style.flex.FlexDirection;
+import net.morphismmc.jaffy.style.flex.FlexWrap;
 import net.morphismmc.jaffy.tree.layout.RequestedAxis;
 
 import org.junit.jupiter.api.Test;
-import net.morphismmc.jaffy.style.flex.FlexDirection;
-import net.morphismmc.jaffy.style.flex.FlexWrap;
 
 class FlexDirectionTest {
 

@@ -7,12 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import net.morphismmc.just.math.OptF32;
-
-import org.junit.jupiter.api.Test;
 import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.style.float_.Float;
 import net.morphismmc.jaffy.style.float_.FloatDirection;
+import net.morphismmc.just.math.OptF32;
+
+import org.junit.jupiter.api.Test;
 
 class AvailableSpaceTest {
 
@@ -46,7 +46,9 @@ class AvailableSpaceTest {
         assertTrue(m.maybeSet(OptF32.NONE).rustEq(m));
         assertTrue(m.maybeSet(4.0f).rustEq(new AvailableSpace.Definite(4.0f)));
         assertTrue(m.mapDefiniteValue(v -> v * 2).rustEq(m));
-        assertTrue(new AvailableSpace.Definite(4.0f).mapDefiniteValue(v -> v * 2).rustEq(new AvailableSpace.Definite(8.0f)));
+        assertTrue(new AvailableSpace.Definite(4.0f)
+                .mapDefiniteValue(v -> v * 2)
+                .rustEq(new AvailableSpace.Definite(8.0f)));
     }
 
     @Test

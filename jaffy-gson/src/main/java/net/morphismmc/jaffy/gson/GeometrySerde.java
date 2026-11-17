@@ -8,13 +8,6 @@
 // LineBool/PointBool) are jaffy's `Size<f32>`/… counterparts — same wire shape.
 package net.morphismmc.jaffy.gson;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -23,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+
 import net.morphismmc.jaffy.geometry.FloatInsets;
 import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.jaffy.geometry.LineBool;
@@ -39,6 +33,14 @@ import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
 import net.morphismmc.jaffy.style.grid.GridPlacement;
 import net.morphismmc.jaffy.style.grid.GridTemplateTracks;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
 final class GeometrySerde {
 

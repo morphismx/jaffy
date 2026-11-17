@@ -12,6 +12,7 @@
 package net.morphismmc.jaffy.compute.grid;
 
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.types.cell_occupancy.CellOccupancyMatrix;
 import net.morphismmc.jaffy.compute.grid.types.cell_occupancy.CellOccupancyState;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.Coordinates;
@@ -24,7 +25,6 @@ import net.morphismmc.jaffy.style.grid.GenericGridPlacement;
 import net.morphismmc.jaffy.style.grid.GridAutoFlow;
 import net.morphismmc.jaffy.style.grid.LineGenericGridPlacementExt;
 import net.morphismmc.jaffy.style.grid.LineOriginZeroGridPlacementExt;
-
 
 /// Implements placing items in the grid and resolving the implicit grid.
 /// <https://www.w3.org/TR/css-grid-1/#placement>
@@ -55,8 +55,10 @@ public final class Placement {
     /// 8.5. Grid Item Placement Algorithm
     /// Place items into the grid, generating new rows/column into the implicit grid as required
     ///
-    /// `items` and `placements` are parallel slices in document order: `placements[i]` holds the `grid-row`/`grid-column`
-    /// styles of `items[i]`, with named lines already resolved. The placement passes run over these (small) values rather
+    /// `items` and `placements` are parallel slices in document order: `placements[i]` holds the
+    /// `grid-row`/`grid-column`
+    /// styles of `items[i]`, with named lines already resolved. The placement passes run over these (small) values
+    /// rather
     /// than re-reading the children's styles.
     ///
     /// [Specification](https://www.w3.org/TR/css-grid-2/#auto-placement-algo)
@@ -82,8 +84,11 @@ public final class Placement {
 
             Spans spans = placeDefiniteGridItem(placement, primaryAxis);
             recordGridPlacement(
-                    cellOccupancyMatrix, item, primaryAxis,
-                    spans.primary, spans.secondary,
+                    cellOccupancyMatrix,
+                    item,
+                    primaryAxis,
+                    spans.primary,
+                    spans.secondary,
                     CellOccupancyState.DEFINITELY_PLACED);
         }
 
@@ -99,8 +104,11 @@ public final class Placement {
             Spans spans = placeDefiniteSecondaryAxisItem(cellOccupancyMatrix, placement, gridAutoFlow);
 
             recordGridPlacement(
-                    cellOccupancyMatrix, item, primaryAxis,
-                    spans.primary, spans.secondary,
+                    cellOccupancyMatrix,
+                    item,
+                    primaryAxis,
+                    spans.primary,
+                    spans.secondary,
                     CellOccupancyState.AUTO_PLACED);
         }
 
@@ -143,8 +151,11 @@ public final class Placement {
 
             // Record item
             recordGridPlacement(
-                    cellOccupancyMatrix, item, primaryAxis,
-                    spans.primary, spans.secondary,
+                    cellOccupancyMatrix,
+                    item,
+                    primaryAxis,
+                    spans.primary,
+                    spans.secondary,
                     CellOccupancyState.AUTO_PLACED);
 
             // If using the "dense" placement algorithm then reset the grid position back to grid_start_position
@@ -167,8 +178,8 @@ public final class Placement {
         // Resolve spans to tracks
         Line<OriginZeroLine> primarySpan =
                 LineOriginZeroGridPlacementExt.resolveDefiniteGridLines(placement.get(primaryAxis));
-        Line<OriginZeroLine> secondarySpan = LineOriginZeroGridPlacementExt.resolveDefiniteGridLines(
-                placement.get(primaryAxis.otherAxis()));
+        Line<OriginZeroLine> secondarySpan =
+                LineOriginZeroGridPlacementExt.resolveDefiniteGridLines(placement.get(primaryAxis.otherAxis()));
         return new Spans(primarySpan, secondarySpan);
     }
 
@@ -223,8 +234,7 @@ public final class Placement {
         Line<GenericGridPlacement<OriginZeroLine>> secondaryPlacementStyle = placement.get(secondaryAxis);
 
         int secondarySpan = LineGenericGridPlacementExt.indefiniteSpan(secondaryPlacementStyle);
-        boolean hasDefinitePrimaryAxisPosition =
-                LineOriginZeroGridPlacementExt.isDefinite(primaryPlacementStyle);
+        boolean hasDefinitePrimaryAxisPosition = LineOriginZeroGridPlacementExt.isDefinite(primaryPlacementStyle);
         OriginZeroLine primaryAxisGridStartLine =
                 cellOccupancyMatrix.trackCounts(primaryAxis).implicitStartLine();
         OriginZeroLine primaryAxisGridEndLine =
@@ -250,8 +260,8 @@ public final class Placement {
                 Line<OriginZeroLine> secondarySpanLine = resolveIndefiniteGridSpan(secondaryIdx, secondarySpan);
 
                 // If area is occupied, jump the index past the collision and try again
-                OriginZeroLine collision = cellOccupancyMatrix.lineAreaCollisionJump(
-                        secondaryAxis, secondarySpanLine, primarySpan);
+                OriginZeroLine collision =
+                        cellOccupancyMatrix.lineAreaCollisionJump(secondaryAxis, secondarySpanLine, primarySpan);
                 if (collision != null) {
                     secondaryIdx = collision;
                     continue;
@@ -305,8 +315,8 @@ public final class Placement {
                 }
 
                 // If area is occupied, jump the primary index past the collision and try again
-                OriginZeroLine collision = cellOccupancyMatrix.lineAreaCollisionJump(
-                        primaryAxis, primarySpanLine, secondarySpanLine);
+                OriginZeroLine collision =
+                        cellOccupancyMatrix.lineAreaCollisionJump(primaryAxis, primarySpanLine, secondarySpanLine);
                 if (collision != null) {
                     primaryIdx = collision;
                     continue;
@@ -323,8 +333,8 @@ public final class Placement {
     ///
     /// See: <https://www.w3.org/TR/css-grid-1/#overlarge-grids>
     private static Line<OriginZeroLine> clampSpanToLimitedGrid(Line<OriginZeroLine> span) {
-        int start = Integer.max(
-                Coordinates.MIN_OZ_LINE, Integer.min(span.start().value(), Coordinates.MAX_OZ_LINE - 1));
+        int start =
+                Integer.max(Coordinates.MIN_OZ_LINE, Integer.min(span.start().value(), Coordinates.MAX_OZ_LINE - 1));
         int end = Integer.max(start + 1, Integer.min(span.end().value(), Coordinates.MAX_OZ_LINE));
         return new Line<>(new OriginZeroLine(start), new OriginZeroLine(end));
     }

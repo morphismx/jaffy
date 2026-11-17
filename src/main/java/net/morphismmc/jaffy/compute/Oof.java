@@ -16,13 +16,9 @@
 // `OofLayoutResult` and fastutil `LongList` while accumulating.
 package net.morphismmc.jaffy.compute;
 
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
-
-import org.jspecify.annotations.Nullable;
 
 import net.morphismmc.jaffy.compute.common.ScrollableOverflow.ScrollableOverflowContainer;
 import net.morphismmc.jaffy.compute.common.SizingKeyword;
@@ -62,9 +58,12 @@ import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
 import net.morphismmc.jaffy.tree.traits.LayoutContainingBlock;
 import net.morphismmc.jaffy.util.MaybeResolve;
+import net.morphismmc.jaffy.util.Sys;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
-import net.morphismmc.jaffy.util.Sys;
+
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
 
 /// Shared positioning pass for out-of-flow (`position: absolute` / `position:
 /// fixed`) boxes.
@@ -104,9 +103,8 @@ public final class Oof {
     /// Single-axis version of {@link #resolveStaticOffset}
     private static float resolveStaticOffsetAxis(AxisStaticPosition sp, float size, LineF32 margin) {
         float marginBoxSize = size + margin.start() + margin.end();
-        boolean overflows =
-                sp.align().safety() == AlignmentSafety.SAFE
-                        && marginBoxSize > sp.area().end() - sp.area().start();
+        boolean overflows = sp.align().safety() == AlignmentSafety.SAFE
+                && marginBoxSize > sp.area().end() - sp.area().start();
         AxisStaticEdge keyword = overflows ? sp.align().fallback() : sp.align().keyword();
         return alignInLine(sp.area(), marginBoxSize, keyword) + margin.start();
     }
@@ -231,22 +229,21 @@ public final class Oof {
                 // Both insets are auto: resolve them from the static position
                 // rectangle and the alignment within it
                 AxisStaticPosition sp = staticPosition;
-                imcb =
-                        switch (sp.align().keyword()) {
-                            case START -> new LineF32(sp.area().start(), cbSize);
-                            case END -> new LineF32(0.0f, sp.area().end());
-                            case CENTER -> {
-                                // Center the IMCB on the static position
-                                // rectangle's center, bounded by the nearer
-                                // edge of the containing block
-                                float center = (sp.area().start() + sp.area().end()) / 2.0f;
-                                float startDistance = center;
-                                float endDistance = cbSize - center;
-                                yield Math.abs(startDistance) <= Math.abs(endDistance)
-                                        ? new LineF32(0.0f, 2.0f * startDistance)
-                                        : new LineF32(cbSize - 2.0f * endDistance, cbSize);
-                            }
-                        };
+                imcb = switch (sp.align().keyword()) {
+                    case START -> new LineF32(sp.area().start(), cbSize);
+                    case END -> new LineF32(0.0f, sp.area().end());
+                    case CENTER -> {
+                        // Center the IMCB on the static position
+                        // rectangle's center, bounded by the nearer
+                        // edge of the containing block
+                        float center = (sp.area().start() + sp.area().end()) / 2.0f;
+                        float startDistance = center;
+                        float endDistance = cbSize - center;
+                        yield Math.abs(startDistance) <= Math.abs(endDistance)
+                                ? new LineF32(0.0f, 2.0f * startDistance)
+                                : new LineF32(cbSize - 2.0f * endDistance, cbSize);
+                    }
+                };
                 weakerEdge = endEdge();
             }
 
@@ -254,10 +251,9 @@ public final class Oof {
             // IMCB size up to zero
             // <https://www.w3.org/TR/css-position-3/#resolving-insets>
             if (imcb.end() < imcb.start()) {
-                imcb =
-                        weakerEdge == AxisStaticEdge.START
-                                ? new LineF32(imcb.end(), imcb.end())
-                                : new LineF32(imcb.start(), imcb.start());
+                imcb = weakerEdge == AxisStaticEdge.START
+                        ? new LineF32(imcb.end(), imcb.end())
+                        : new LineF32(imcb.start(), imcb.start());
             }
             return imcb;
         }
@@ -273,8 +269,7 @@ public final class Oof {
         /// non-auto margins (auto margins are treated as zero)
         /// <https://www.w3.org/TR/css-position-3/#abspos-auto-size>
         float stretchFitSize() {
-            float nonAutoMarginSum =
-                    OptF32.unwrapOr(margin.start(), 0.0f) + OptF32.unwrapOr(margin.end(), 0.0f);
+            float nonAutoMarginSum = OptF32.unwrapOr(margin.start(), 0.0f) + OptF32.unwrapOr(margin.end(), 0.0f);
             return Sys.f32Max(insetModifiedContainingBlockSize() - nonAutoMarginSum, 0.0f);
         }
 
@@ -332,11 +327,9 @@ public final class Oof {
                 // relative to the IMCB
                 AxisStaticPosition sp = staticPosition;
                 float marginBoxSize = size + margin.start() + margin.end();
-                float offset =
-                        sp.align().safety() == AlignmentSafety.SAFE
-                                        && marginBoxSize > imcb.end() - imcb.start()
-                                ? alignInLine(imcb, marginBoxSize, startEdge())
-                                : alignInLine(sp.area(), marginBoxSize, sp.align().keyword());
+                float offset = sp.align().safety() == AlignmentSafety.SAFE && marginBoxSize > imcb.end() - imcb.start()
+                        ? alignInLine(imcb, marginBoxSize, startEdge())
+                        : alignInLine(sp.area(), marginBoxSize, sp.align().keyword());
                 return offset + margin.start();
             }
             // One auto inset: the margin box is aligned to the edge of the
@@ -387,15 +380,10 @@ public final class Oof {
                             // IMCB and align as specified as far as possible
                             // without overflowing the limit
                             float start = alignInLine(imcb, marginBoxSize, edge);
-                            marginBoxStart =
-                                    Sys.f32Max(Sys.f32Min(start, limitEnd - marginBoxSize), limitStart);
+                            marginBoxStart = Sys.f32Max(Sys.f32Min(start, limitEnd - marginBoxSize), limitStart);
                         } else {
                             // 3. Start-align within the overflow limit rect
-                            marginBoxStart =
-                                    alignInLine(
-                                            new LineF32(limitStart, limitEnd),
-                                            marginBoxSize,
-                                            startEdge());
+                            marginBoxStart = alignInLine(new LineF32(limitStart, limitEnd), marginBoxSize, startEdge());
                         }
                     }
                 }
@@ -438,8 +426,7 @@ public final class Oof {
     ///
     /// Returns the updated `LayoutOutput` (`&mut` receiver -> return,
     /// GAP-018). The input's `oofCandidates` list is drained by `take`.
-    public static LayoutOutput computeOofLayout(
-            LayoutContainingBlock tree, long nodeId, LayoutOutput output) {
+    public static LayoutOutput computeOofLayout(LayoutContainingBlock tree, long nodeId, LayoutOutput output) {
         OofPositioningArea area = output.oofPositioningArea();
         if (area == null) {
             return output;
@@ -455,9 +442,8 @@ public final class Oof {
 
         OofCandidates candidates = output.oofCandidates().take();
         PointBool reversed = output.scrollableOverflowRect().isReversed();
-        OofLayoutResult result =
-                computeOofLayoutForAreaWithOrigin(
-                        tree, nodeId, candidates.asSlice(), area, direction, claims, reversed);
+        OofLayoutResult result = computeOofLayoutForAreaWithOrigin(
+                tree, nodeId, candidates.asSlice(), area, direction, claims, reversed);
         // Always record the hoisted child list (even when empty) so that lists
         // recorded by previous layout runs do not persist
         tree.clearHoistedChildren(nodeId);
@@ -500,13 +486,7 @@ public final class Oof {
             Direction direction,
             ContainingBlockClaims claims) {
         return computeOofLayoutForAreaWithOrigin(
-                tree,
-                geometryOwner,
-                candidates,
-                area,
-                direction,
-                claims,
-                new PointBool(direction.isRtl(), false));
+                tree, geometryOwner, candidates, area, direction, claims, new PointBool(direction.isRtl(), false));
     }
 
     /// Run the positioning pass using the containing block's
@@ -524,27 +504,25 @@ public final class Oof {
 
         LongArrayList hoisted = new LongArrayList();
         OofCandidates unclaimed = OofCandidates.create();
-        RectF32 scrollableOverflowRect =
-                performOofLayout(
-                        tree,
-                        geometryOwner,
-                        candidates,
-                        area.size(),
-                        area.offset(),
-                        direction,
-                        claims,
-                        overflow,
-                        reversed,
-                        hoisted,
-                        unclaimed);
+        RectF32 scrollableOverflowRect = performOofLayout(
+                tree,
+                geometryOwner,
+                candidates,
+                area.size(),
+                area.offset(),
+                direction,
+                claims,
+                overflow,
+                reversed,
+                hoisted,
+                unclaimed);
 
-        scrollableOverflowRect =
-                net.morphismmc.jaffy.compute.common.ScrollableOverflow.finalizeScrollableOverflow(
-                                scrollableOverflowRect,
-                                area.size(),
-                                reversed,
-                                overflow.x().isScrollContainer() || overflow.y().isScrollContainer())
-                        .rect();
+        scrollableOverflowRect = net.morphismmc.jaffy.compute.common.ScrollableOverflow.finalizeScrollableOverflow(
+                        scrollableOverflowRect,
+                        area.size(),
+                        reversed,
+                        overflow.x().isScrollContainer() || overflow.y().isScrollContainer())
+                .rect();
         return new OofLayoutResult(hoisted.toLongArray(), unclaimed, scrollableOverflowRect);
     }
 
@@ -560,8 +538,7 @@ public final class Oof {
     ///        Rust; unconditional here)
     /// @param contain the box's `contain` style (`content_size`-gated in Rust;
     ///        unconditional here)
-    record OofBoxLayout(
-            Layout layout, OofCandidates surfaced, Point<Overflow> overflow, Contain contain) {}
+    record OofBoxLayout(Layout layout, OofCandidates surfaced, Point<Overflow> overflow, Contain contain) {}
 
     /// Size and position a single out-of-flow box against its containing
     /// block, and store its layout (`layout_oof_box`).
@@ -594,38 +571,28 @@ public final class Oof {
         // relative to the grid area determined by its grid-placement
         // properties (which falls back to the passed area for `auto`
         // placement)
-        if (gridOwner != 0L
-                && tree.getDetailedLayoutInfo(gridOwner) instanceof DetailedLayoutInfo.Grid grid) {
-            RectF32 areaRect =
-                    new RectF32(
-                            areaOffset.x(),
-                            areaOffset.x() + areaSize.width(),
-                            areaOffset.y(),
-                            areaOffset.y() + areaSize.height());
-            RectF32 gridArea =
-                    grid.gridInfo()
-                            .resolveAbsoluteGridArea(
-                                    childStyle.gridRow(), childStyle.gridColumn(), direction, areaRect);
-            areaSize =
-                    new SizeF32(
-                            gridArea.right() - gridArea.left(), gridArea.bottom() - gridArea.top());
+        if (gridOwner != 0L && tree.getDetailedLayoutInfo(gridOwner) instanceof DetailedLayoutInfo.Grid grid) {
+            RectF32 areaRect = new RectF32(
+                    areaOffset.x(),
+                    areaOffset.x() + areaSize.width(),
+                    areaOffset.y(),
+                    areaOffset.y() + areaSize.height());
+            RectF32 gridArea = grid.gridInfo()
+                    .resolveAbsoluteGridArea(childStyle.gridRow(), childStyle.gridColumn(), direction, areaRect);
+            areaSize = new SizeF32(gridArea.right() - gridArea.left(), gridArea.bottom() - gridArea.top());
             areaOffset = new PointF32(gridArea.left(), gridArea.top());
         }
         float areaWidth = areaSize.width();
         float areaHeight = areaSize.height();
 
         float aspectRatio = childStyle.aspectRatio();
-        RectOptF32 margin =
-                childStyle.margin().mapO(m -> m.resolveToOption(areaWidth, tree::calc));
+        RectOptF32 margin = childStyle.margin().mapO(m -> m.resolveToOption(areaWidth, tree::calc));
         RectF32 padding =
-                MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(
-                        childStyle.padding(), areaWidth, tree::calc);
+                MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(childStyle.padding(), areaWidth, tree::calc);
         RectF32 border =
-                MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(
-                        childStyle.border(), areaWidth, tree::calc);
+                MaybeResolve.RectLengthPercentageExt.resolveOrZeroO(childStyle.border(), areaWidth, tree::calc);
         SizeF32 paddingBorderSum = padding.plus(border).sumAxes();
-        SizeF32 boxSizingAdjustment =
-                childStyle.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSum : SizeF32.ZERO;
+        SizeF32 boxSizingAdjustment = childStyle.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSum : SizeF32.ZERO;
 
         // Resolve inset
         float left = childStyle.inset().left().maybeResolveF(areaWidth, tree::calc);
@@ -635,22 +602,19 @@ public final class Oof {
 
         // Compute known dimensions from min/max/inherent size styles
         var sizeStyle = childStyle.size();
-        SizeOptF32 styleSize =
-                MaybeResolve.SizeDimensionExt.maybeResolveF(sizeStyle, areaSize, tree::calc)
-                        .maybeApplyAspectRatio(aspectRatio)
-                        .maybeAddF(boxSizingAdjustment);
-        SizeOptF32 minSize =
-                MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveF(
-                                childStyle.minSize(), areaSize, tree::calc)
-                        .maybeApplyAspectRatio(aspectRatio)
-                        .maybeAddF(boxSizingAdjustment)
-                        .or(new SizeOptF32(paddingBorderSum.width(), paddingBorderSum.height()))
-                        .maybeMaxF(paddingBorderSum);
-        SizeOptF32 maxSize =
-                MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveF(
-                                childStyle.maxSize(), areaSize, tree::calc)
-                        .maybeApplyAspectRatio(aspectRatio)
-                        .maybeAddF(boxSizingAdjustment);
+        SizeOptF32 styleSize = MaybeResolve.SizeDimensionExt.maybeResolveF(sizeStyle, areaSize, tree::calc)
+                .maybeApplyAspectRatio(aspectRatio)
+                .maybeAddF(boxSizingAdjustment);
+        SizeOptF32 minSize = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveF(
+                        childStyle.minSize(), areaSize, tree::calc)
+                .maybeApplyAspectRatio(aspectRatio)
+                .maybeAddF(boxSizingAdjustment)
+                .or(new SizeOptF32(paddingBorderSum.width(), paddingBorderSum.height()))
+                .maybeMaxF(paddingBorderSum);
+        SizeOptF32 maxSize = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveF(
+                        childStyle.maxSize(), areaSize, tree::calc)
+                .maybeApplyAspectRatio(aspectRatio)
+                .maybeAddF(boxSizingAdjustment);
         SizeOptF32 knownDimensions = styleSize.maybeClampO(minSize, maxSize);
 
         boolean isReplaced = childStyle.isReplaced();
@@ -660,12 +624,10 @@ public final class Oof {
         // inline axis can be reversed. `auto` (`None`) behaves as `normal` for
         // absolutely positioned boxes: it does not defer to the `*-items`
         // properties of the containing block.
-        AlignItems justifySelf =
-                (childStyle.justifySelf() != null ? childStyle.justifySelf() : AlignItems.NORMAL)
-                        .resolveSelfRelative(itemDirection, direction, true);
-        AlignItems alignSelf =
-                (childStyle.alignSelf() != null ? childStyle.alignSelf() : AlignItems.NORMAL)
-                        .resolveSelfRelative(itemDirection, direction, false);
+        AlignItems justifySelf = (childStyle.justifySelf() != null ? childStyle.justifySelf() : AlignItems.NORMAL)
+                .resolveSelfRelative(itemDirection, direction, true);
+        AlignItems alignSelf = (childStyle.alignSelf() != null ? childStyle.alignSelf() : AlignItems.NORMAL)
+                .resolveSelfRelative(itemDirection, direction, false);
         Point<Overflow> overflow = childStyle.overflow();
         float scrollbarWidth = childStyle.scrollbarWidth();
         Contain contain = childStyle.contain();
@@ -674,39 +636,35 @@ public final class Oof {
         // make them relative to the inset-resolution area
         float areaOffsetX = areaOffset.x();
         float areaOffsetY = areaOffset.y();
-        Point<AxisStaticPosition> staticPosition =
-                new Point<>(
-                        new AxisStaticPosition(
-                                candidate.staticPosition().x().area().map(v -> v - areaOffsetX),
-                                candidate.staticPosition().x().align()),
-                        new AxisStaticPosition(
-                                candidate.staticPosition().y().area().map(v -> v - areaOffsetY),
-                                candidate.staticPosition().y().align()));
+        Point<AxisStaticPosition> staticPosition = new Point<>(
+                new AxisStaticPosition(
+                        candidate.staticPosition().x().area().map(v -> v - areaOffsetX),
+                        candidate.staticPosition().x().align()),
+                new AxisStaticPosition(
+                        candidate.staticPosition().y().area().map(v -> v - areaOffsetY),
+                        candidate.staticPosition().y().align()));
 
-        OofAxis horizontal =
-                new OofAxis(
-                        areaWidth,
-                        new LineOptF32(left, right),
-                        new LineOptF32(margin.left(), margin.right()),
-                        staticPosition.x(),
-                        OofAlignment.fromResolved(justifySelf),
-                        justifySelf.safety(),
-                        true,
-                        direction.isRtl(),
-                        containerOverflow.x().isScrollContainer());
-        OofAxis vertical =
-                new OofAxis(
-                        areaHeight,
-                        new LineOptF32(top, bottom),
-                        new LineOptF32(margin.top(), margin.bottom()),
-                        staticPosition.y(),
-                        OofAlignment.fromResolved(alignSelf),
-                        alignSelf.safety(),
-                        false,
-                        false,
-                        containerOverflow.y().isScrollContainer());
-        SizeF32 stretchFitSize =
-                new SizeF32(horizontal.stretchFitSize(), vertical.stretchFitSize());
+        OofAxis horizontal = new OofAxis(
+                areaWidth,
+                new LineOptF32(left, right),
+                new LineOptF32(margin.left(), margin.right()),
+                staticPosition.x(),
+                OofAlignment.fromResolved(justifySelf),
+                justifySelf.safety(),
+                true,
+                direction.isRtl(),
+                containerOverflow.x().isScrollContainer());
+        OofAxis vertical = new OofAxis(
+                areaHeight,
+                new LineOptF32(top, bottom),
+                new LineOptF32(margin.top(), margin.bottom()),
+                staticPosition.y(),
+                OofAlignment.fromResolved(alignSelf),
+                alignSelf.safety(),
+                false,
+                false,
+                containerOverflow.y().isScrollContainer());
+        SizeF32 stretchFitSize = new SizeF32(horizontal.stretchFitSize(), vertical.stretchFitSize());
         // The space available to the box's border box is its stretch-fit size
         // (the IMCB minus its non-auto margins). The available space for a
         // table never exceeds that of the containing block (minus the margins)
@@ -714,34 +672,29 @@ public final class Oof {
         SizeF32 availableSpaceSize = stretchFitSize;
         if (isTable) {
             RectF32 nonAutoMargin = margin.mapF(m -> OptF32.unwrapOr(m, 0.0f));
-            availableSpaceSize =
-                    availableSpaceSize.f32Min(
-                            new SizeF32(
-                                    Sys.f32Max(areaWidth - nonAutoMargin.horizontalAxisSum(), 0.0f),
-                                    Sys.f32Max(areaHeight - nonAutoMargin.verticalAxisSum(), 0.0f)));
+            availableSpaceSize = availableSpaceSize.f32Min(new SizeF32(
+                    Sys.f32Max(areaWidth - nonAutoMargin.horizontalAxisSum(), 0.0f),
+                    Sys.f32Max(areaHeight - nonAutoMargin.verticalAxisSum(), 0.0f)));
         }
         SizeF32 clampedAvailable = availableSpaceSize.maybeClampO(minSize, maxSize);
-        Size<AvailableSpace> availableSpace =
-                new Size<>(
-                        new AvailableSpace.Definite(clampedAvailable.width()),
-                        new AvailableSpace.Definite(clampedAvailable.height()));
+        Size<AvailableSpace> availableSpace = new Size<>(
+                new AvailableSpace.Definite(clampedAvailable.width()),
+                new AvailableSpace.Definite(clampedAvailable.height()));
 
         // Resolve any sizing keywords (min-content, max-content, fit-content,
         // fit-content(...), stretch) in the size styles. An explicitly sized
         // axis takes precedence over the automatic size below.
         if (sizeStyle.width().isSizingKeyword() || sizeStyle.height().isSizingKeyword()) {
-            knownDimensions =
-                    SizingKeyword.resolveAbsoluteSizingKeywords(
-                            tree,
-                            candidate.node(),
-                            knownDimensions,
-                            sizeStyle,
-                            areaSize,
-                            new RectOptF32(left, right, top, bottom),
-                            margin,
-                            SizingMode.CONTENT_SIZE);
-            knownDimensions =
-                    knownDimensions.maybeApplyAspectRatio(aspectRatio).maybeClampO(minSize, maxSize);
+            knownDimensions = SizingKeyword.resolveAbsoluteSizingKeywords(
+                    tree,
+                    candidate.node(),
+                    knownDimensions,
+                    sizeStyle,
+                    areaSize,
+                    new RectOptF32(left, right, top, bottom),
+                    margin,
+                    SizingMode.CONTENT_SIZE);
+            knownDimensions = knownDimensions.maybeApplyAspectRatio(aspectRatio).maybeClampO(minSize, maxSize);
         }
 
         // Resolve automatic sizes
@@ -757,49 +710,35 @@ public final class Oof {
         // through the aspect ratio rather than also stretching the block size.
         // An explicit `stretch` in both axes stretches both and ignores the
         // aspect ratio.
-        boolean stretchWidth =
-                OptF32.isNone(knownDimensions.width())
-                        && horizontal.isStretchSized(isReplaced, isTable);
-        boolean stretchHeight =
-                OptF32.isNone(knownDimensions.height())
-                        && vertical.isStretchSized(isReplaced, isTable);
+        boolean stretchWidth = OptF32.isNone(knownDimensions.width()) && horizontal.isStretchSized(isReplaced, isTable);
+        boolean stretchHeight = OptF32.isNone(knownDimensions.height()) && vertical.isStretchSized(isReplaced, isTable);
         boolean bothExplicitStretch =
-                horizontal.alignment() == OofAlignment.STRETCH
-                        && vertical.alignment() == OofAlignment.STRETCH;
-        float stretchAspectRatio =
-                stretchWidth && stretchHeight && bothExplicitStretch ? OptF32.NONE : aspectRatio;
+                horizontal.alignment() == OofAlignment.STRETCH && vertical.alignment() == OofAlignment.STRETCH;
+        float stretchAspectRatio = stretchWidth && stretchHeight && bothExplicitStretch ? OptF32.NONE : aspectRatio;
         if (stretchWidth) {
             if (isTable) {
                 // A table cannot be stretched smaller than its content:
                 // stretch-fit is a minimum
-                minSize =
-                        minSize.with(
-                                AbstractAxis.INLINE,
-                                Sys.f32Max(
-                                        OptF32.unwrapOr(minSize.width(), 0.0f),
-                                        stretchFitSize.width()));
+                minSize = minSize.with(
+                        AbstractAxis.INLINE,
+                        Sys.f32Max(OptF32.unwrapOr(minSize.width(), 0.0f), stretchFitSize.width()));
             } else {
                 knownDimensions = knownDimensions.with(AbstractAxis.INLINE, stretchFitSize.width());
-                knownDimensions =
-                        knownDimensions
-                                .maybeApplyAspectRatio(stretchAspectRatio)
-                                .maybeClampO(minSize, maxSize);
+                knownDimensions = knownDimensions
+                        .maybeApplyAspectRatio(stretchAspectRatio)
+                        .maybeClampO(minSize, maxSize);
             }
         }
         if (OptF32.isNone(knownDimensions.height()) && stretchHeight) {
             if (isTable) {
-                minSize =
-                        minSize.with(
-                                AbstractAxis.BLOCK,
-                                Sys.f32Max(
-                                        OptF32.unwrapOr(minSize.height(), 0.0f),
-                                        stretchFitSize.height()));
+                minSize = minSize.with(
+                        AbstractAxis.BLOCK,
+                        Sys.f32Max(OptF32.unwrapOr(minSize.height(), 0.0f), stretchFitSize.height()));
             } else {
                 knownDimensions = knownDimensions.with(AbstractAxis.BLOCK, stretchFitSize.height());
-                knownDimensions =
-                        knownDimensions
-                                .maybeApplyAspectRatio(stretchAspectRatio)
-                                .maybeClampO(minSize, maxSize);
+                knownDimensions = knownDimensions
+                        .maybeApplyAspectRatio(stretchAspectRatio)
+                        .maybeClampO(minSize, maxSize);
             }
         }
 
@@ -807,65 +746,56 @@ public final class Oof {
         if (OptF32.isSome(knownDimensions.width()) && OptF32.isSome(knownDimensions.height())) {
             finalSize = new SizeF32(knownDimensions.width(), knownDimensions.height());
         } else {
-            SizeF32 measuredSize =
-                    tree.measureChildSizeBoth(
-                            candidate.node(),
-                            knownDimensions,
-                            new SizeOptF32(areaSize.width(), areaSize.height()),
-                            availableSpace,
-                            SizingMode.CONTENT_SIZE,
-                            LineBool.FALSE);
+            SizeF32 measuredSize = tree.measureChildSizeBoth(
+                    candidate.node(),
+                    knownDimensions,
+                    new SizeOptF32(areaSize.width(), areaSize.height()),
+                    availableSpace,
+                    SizingMode.CONTENT_SIZE,
+                    LineBool.FALSE);
             finalSize = knownDimensions.unwrapOr(measuredSize);
         }
         finalSize = finalSize.maybeClampO(minSize, maxSize);
 
-        LayoutInput layoutInput =
-                new LayoutInput(
-                        RunMode.PERFORM_LAYOUT,
-                        SizingMode.CONTENT_SIZE,
-                        RequestedAxis.BOTH,
-                        new SizeOptF32(finalSize.width(), finalSize.height()),
-                        SizeBool.TRUE,
-                        new SizeOptF32(areaSize.width(), areaSize.height()),
-                        availableSpace,
-                        LineBool.FALSE);
+        LayoutInput layoutInput = new LayoutInput(
+                RunMode.PERFORM_LAYOUT,
+                SizingMode.CONTENT_SIZE,
+                RequestedAxis.BOTH,
+                new SizeOptF32(finalSize.width(), finalSize.height()),
+                SizeBool.TRUE,
+                new SizeOptF32(areaSize.width(), areaSize.height()),
+                availableSpace,
+                LineBool.FALSE);
         beforeLayout.accept(tree, layoutInput);
         LayoutOutput layoutOutput = tree.computeChildLayout(candidate.node(), layoutInput);
 
         // Resolve auto margins <https://www.w3.org/TR/css-position-3/#abspos-margins>
         LineF32 horizontalMargin = horizontal.resolveMargins(finalSize.width());
         LineF32 verticalMargin = vertical.resolveMargins(finalSize.height());
-        RectF32 resolvedMargin =
-                new RectF32(
-                        horizontalMargin.start(),
-                        horizontalMargin.end(),
-                        verticalMargin.start(),
-                        verticalMargin.end());
+        RectF32 resolvedMargin = new RectF32(
+                horizontalMargin.start(), horizontalMargin.end(), verticalMargin.start(), verticalMargin.end());
 
         // Align the margin box within the IMCB
         // <https://www.w3.org/TR/css-position-3/#abspos-alignment>
-        PointF32 location =
-                new PointF32(
-                        horizontal.position(finalSize.width(), horizontalMargin) + areaOffset.x(),
-                        vertical.position(finalSize.height(), verticalMargin) + areaOffset.y());
+        PointF32 location = new PointF32(
+                horizontal.position(finalSize.width(), horizontalMargin) + areaOffset.x(),
+                vertical.position(finalSize.height(), verticalMargin) + areaOffset.y());
 
         // Note: axis intentionally switched here as scrollbars take up space
         // in the opposite axis to the axis in which scrolling is enabled.
-        SizeF32 scrollbarSize =
-                new SizeF32(
-                        overflow.y() == Overflow.SCROLL ? scrollbarWidth : 0.0f,
-                        overflow.x() == Overflow.SCROLL ? scrollbarWidth : 0.0f);
+        SizeF32 scrollbarSize = new SizeF32(
+                overflow.y() == Overflow.SCROLL ? scrollbarWidth : 0.0f,
+                overflow.x() == Overflow.SCROLL ? scrollbarWidth : 0.0f);
 
-        Layout layout =
-                new Layout(
-                        candidate.order(),
-                        location,
-                        finalSize,
-                        layoutOutput.scrollableOverflowRect(),
-                        scrollbarSize,
-                        border,
-                        padding,
-                        resolvedMargin);
+        Layout layout = new Layout(
+                candidate.order(),
+                location,
+                finalSize,
+                layoutOutput.scrollableOverflowRect(),
+                scrollbarSize,
+                border,
+                padding,
+                resolvedMargin);
         tree.setUnroundedLayout(candidate.node(), layout);
 
         return new OofBoxLayout(layout, layoutOutput.oofCandidates().take(), overflow, contain);
@@ -914,16 +844,15 @@ public final class Oof {
         RectF32 absoluteOverflowRect = RectF32.ZERO;
         if (direction.isRtl()) {
             absoluteOverflowRect =
-                    absoluteOverflowRect.union(
-                            new RectF32(0.0f, Sys.f32Max(areaSize.width(), 0.0f), 0.0f, 0.0f));
+                    absoluteOverflowRect.union(new RectF32(0.0f, Sys.f32Max(areaSize.width(), 0.0f), 0.0f, 0.0f));
         }
 
         if (candidates.isEmpty()) {
             return absoluteOverflowRect;
         }
 
-        boolean isScrollContainer =
-                containerOverflow.x().isScrollContainer() || containerOverflow.y().isScrollContainer();
+        boolean isScrollContainer = containerOverflow.x().isScrollContainer()
+                || containerOverflow.y().isScrollContainer();
         ScrollableOverflowContainer overflowContainer =
                 new ScrollableOverflowContainer(isScrollContainer, areaSize, reversed, RectF32.ZERO);
 
@@ -946,16 +875,8 @@ public final class Oof {
             index += 1;
             hoisted.add(candidate.node());
 
-            OofBoxLayout result =
-                    layoutOofBox(
-                            tree,
-                            candidate,
-                            areaSize,
-                            areaOffset,
-                            direction,
-                            containerOverflow,
-                            nodeId,
-                            (t, in) -> {});
+            OofBoxLayout result = layoutOofBox(
+                    tree, candidate, areaSize, areaOffset, direction, containerOverflow, nodeId, (t, in) -> {});
             PointF32 location = result.layout().location();
             SizeF32 finalSize = result.layout().size();
 
@@ -974,20 +895,17 @@ public final class Oof {
                 }
             }
 
-            PointF32 relativeLocation =
-                    new PointF32(location.x() - areaOffset.x(), location.y() - areaOffset.y());
-            absoluteOverflowRect =
-                    absoluteOverflowRect.union(
-                            net.morphismmc.jaffy.compute.common.ScrollableOverflow
-                                    .computeScrollableOverflowContribution(
-                                    relativeLocation,
-                                    finalSize,
-                                    result.layout().scrollableOverflowRect().rect(),
-                                    result.layout().border(),
-                                    result.overflow(),
-                                    result.contain(),
-                                    overflowContainer,
-                                    RectF32.ZERO));
+            PointF32 relativeLocation = new PointF32(location.x() - areaOffset.x(), location.y() - areaOffset.y());
+            absoluteOverflowRect = absoluteOverflowRect.union(
+                    net.morphismmc.jaffy.compute.common.ScrollableOverflow.computeScrollableOverflowContribution(
+                            relativeLocation,
+                            finalSize,
+                            result.layout().scrollableOverflowRect().rect(),
+                            result.layout().border(),
+                            result.overflow(),
+                            result.contain(),
+                            overflowContainer,
+                            RectF32.ZERO));
         }
 
         return absoluteOverflowRect;

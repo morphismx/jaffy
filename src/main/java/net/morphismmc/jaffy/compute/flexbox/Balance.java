@@ -194,14 +194,7 @@ final class Balance {
     /// monotone this way, which is why they are excluded from the scan
     /// and merged in separately.)
     private static void fillRow(
-            Row row,
-            double[] cur,
-            int[] opts,
-            int optsOffset,
-            int startLo,
-            int startHi,
-            int colLo,
-            int colHi) {
+            Row row, double[] cur, int[] opts, int optsOffset, int startLo, int startHi, int colLo, int colHi) {
         if (startLo > startHi) {
             return;
         }
@@ -270,8 +263,7 @@ final class Balance {
     /// `O(line_count * item_count)` transient memory.
     ///
     /// `impl ExactSizeIterator<Item = f32>` -> `float[]`.
-    static int[] balancedLineItemCounts(
-            float[] itemSizes, float lineLimit, float gapBetweenItems, int minLineCount) {
+    static int[] balancedLineItemCounts(float[] itemSizes, float lineLimit, float gapBetweenItems, int minLineCount) {
         int itemCount = itemSizes.length;
         double gap = toSize(gapBetweenItems);
         double limit = lineLimit;
@@ -289,8 +281,7 @@ final class Balance {
         // breaking produces for items `start..`, which is also the
         // *fewest* lines the suffix can validly be divided into
         int[] suffixGreedy = sizes.suffixGreedyLineCounts();
-        int lineCount =
-                iMax(suffixGreedy[0], iMin(iMax(minLineCount, 1), itemCount));
+        int lineCount = iMax(suffixGreedy[0], iMin(iMax(minLineCount, 1), itemCount));
 
         if (lineCount == itemCount) {
             // One item per line is the only division (this covers

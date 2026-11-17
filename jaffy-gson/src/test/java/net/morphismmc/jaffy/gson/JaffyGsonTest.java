@@ -7,10 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.types.coordinates.GridLine;
 import net.morphismmc.jaffy.geometry.FloatInsets;
 import net.morphismmc.jaffy.geometry.LineBool;
@@ -18,9 +16,7 @@ import net.morphismmc.jaffy.geometry.MinMax;
 import net.morphismmc.jaffy.geometry.Point;
 import net.morphismmc.jaffy.geometry.PointBool;
 import net.morphismmc.jaffy.geometry.PointF32;
-import net.morphismmc.jaffy.geometry.Rect;
 import net.morphismmc.jaffy.geometry.RectF32;
-import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.geometry.SizeBool;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
@@ -32,7 +28,6 @@ import net.morphismmc.jaffy.style.Display;
 import net.morphismmc.jaffy.style.Overflow;
 import net.morphismmc.jaffy.style.Position;
 import net.morphismmc.jaffy.style.Style;
-import net.morphismmc.jaffy.style.StyleHelpers;
 import net.morphismmc.jaffy.style.alignment.AlignContent;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.alignment.AlignmentSafety;
@@ -51,7 +46,6 @@ import net.morphismmc.jaffy.style.grid.GridPlacement;
 import net.morphismmc.jaffy.style.grid.GridTemplateArea;
 import net.morphismmc.jaffy.style.grid.GridTemplateAreas;
 import net.morphismmc.jaffy.style.grid.GridTemplateRepetition;
-import net.morphismmc.jaffy.style.grid.LineGridPlacementExt;
 import net.morphismmc.jaffy.style.grid.MaxTrackSizingFunction;
 import net.morphismmc.jaffy.style.grid.MinTrackSizingFunction;
 import net.morphismmc.jaffy.style.grid.NamedGridLine;
@@ -62,12 +56,17 @@ import net.morphismmc.jaffy.tree.layout.Layout;
 import net.morphismmc.jaffy.tree.layout.LayoutInput;
 import net.morphismmc.jaffy.tree.layout.LayoutOutput;
 import net.morphismmc.jaffy.tree.layout.OofPositioningArea;
+import net.morphismmc.jaffy.tree.layout.RequestedAxis;
+import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.layout.ScrollableOverflow;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
-import net.morphismmc.jaffy.tree.layout.RunMode;
-import net.morphismmc.jaffy.tree.layout.RequestedAxis;
 import net.morphismmc.just.math.OptF32;
+
 import org.junit.jupiter.api.Test;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 
 class JaffyGsonTest {
 
@@ -127,20 +126,42 @@ class JaffyGsonTest {
     @Test
     void serde_align_items_round_trip() {
         AlignItems[] items = {
-            AlignItems.NORMAL, AlignItems.START, AlignItems.END,
-            AlignItems.FLEX_START, AlignItems.FLEX_END, AlignItems.CENTER,
-            AlignItems.BASELINE, AlignItems.STRETCH,
-            AlignItems.SAFE_START, AlignItems.SAFE_END,
-            AlignItems.SAFE_FLEX_START, AlignItems.SAFE_FLEX_END,
+            AlignItems.NORMAL,
+            AlignItems.START,
+            AlignItems.END,
+            AlignItems.FLEX_START,
+            AlignItems.FLEX_END,
+            AlignItems.CENTER,
+            AlignItems.BASELINE,
+            AlignItems.STRETCH,
+            AlignItems.SAFE_START,
+            AlignItems.SAFE_END,
+            AlignItems.SAFE_FLEX_START,
+            AlignItems.SAFE_FLEX_END,
             AlignItems.SAFE_CENTER,
-            AlignItems.SELF_START, AlignItems.SELF_END,
-            AlignItems.SAFE_SELF_START, AlignItems.SAFE_SELF_END,
+            AlignItems.SELF_START,
+            AlignItems.SELF_END,
+            AlignItems.SAFE_SELF_START,
+            AlignItems.SAFE_SELF_END,
         };
         String[] json = {
-            "\"Normal\"", "\"Start\"", "\"End\"", "\"FlexStart\"", "\"FlexEnd\"",
-            "\"Center\"", "\"Baseline\"", "\"Stretch\"", "\"SafeStart\"", "\"SafeEnd\"",
-            "\"SafeFlexStart\"", "\"SafeFlexEnd\"", "\"SafeCenter\"",
-            "\"SelfStart\"", "\"SelfEnd\"", "\"SafeSelfStart\"", "\"SafeSelfEnd\"",
+            "\"Normal\"",
+            "\"Start\"",
+            "\"End\"",
+            "\"FlexStart\"",
+            "\"FlexEnd\"",
+            "\"Center\"",
+            "\"Baseline\"",
+            "\"Stretch\"",
+            "\"SafeStart\"",
+            "\"SafeEnd\"",
+            "\"SafeFlexStart\"",
+            "\"SafeFlexEnd\"",
+            "\"SafeCenter\"",
+            "\"SelfStart\"",
+            "\"SelfEnd\"",
+            "\"SafeSelfStart\"",
+            "\"SafeSelfEnd\"",
         };
         for (int i = 0; i < items.length; i++) {
             assertEquals(json[i], GSON.toJson(items[i]), "serialize " + items[i]);
@@ -153,19 +174,37 @@ class JaffyGsonTest {
     @Test
     void serde_align_content_round_trip() {
         AlignContent[] contents = {
-            AlignContent.NORMAL, AlignContent.START, AlignContent.END,
-            AlignContent.FLEX_START, AlignContent.FLEX_END, AlignContent.CENTER,
+            AlignContent.NORMAL,
+            AlignContent.START,
+            AlignContent.END,
+            AlignContent.FLEX_START,
+            AlignContent.FLEX_END,
+            AlignContent.CENTER,
             AlignContent.STRETCH,
-            AlignContent.SPACE_BETWEEN, AlignContent.SPACE_EVENLY, AlignContent.SPACE_AROUND,
-            AlignContent.SAFE_START, AlignContent.SAFE_END,
-            AlignContent.SAFE_FLEX_START, AlignContent.SAFE_FLEX_END,
+            AlignContent.SPACE_BETWEEN,
+            AlignContent.SPACE_EVENLY,
+            AlignContent.SPACE_AROUND,
+            AlignContent.SAFE_START,
+            AlignContent.SAFE_END,
+            AlignContent.SAFE_FLEX_START,
+            AlignContent.SAFE_FLEX_END,
             AlignContent.SAFE_CENTER,
         };
         String[] json = {
-            "\"Normal\"", "\"Start\"", "\"End\"", "\"FlexStart\"", "\"FlexEnd\"",
-            "\"Center\"", "\"Stretch\"",
-            "\"SpaceBetween\"", "\"SpaceEvenly\"", "\"SpaceAround\"",
-            "\"SafeStart\"", "\"SafeEnd\"", "\"SafeFlexStart\"", "\"SafeFlexEnd\"",
+            "\"Normal\"",
+            "\"Start\"",
+            "\"End\"",
+            "\"FlexStart\"",
+            "\"FlexEnd\"",
+            "\"Center\"",
+            "\"Stretch\"",
+            "\"SpaceBetween\"",
+            "\"SpaceEvenly\"",
+            "\"SpaceAround\"",
+            "\"SafeStart\"",
+            "\"SafeEnd\"",
+            "\"SafeFlexStart\"",
+            "\"SafeFlexEnd\"",
             "\"SafeCenter\"",
         };
         for (int i = 0; i < contents.length; i++) {
@@ -182,9 +221,7 @@ class JaffyGsonTest {
         assertEquals("\"Stretch\"", GSON.toJson(AlignItems.STRETCH.withSafety(AlignmentSafety.UNSAFE)));
         assertEquals("\"Normal\"", GSON.toJson(AlignItems.NORMAL.withSafety(AlignmentSafety.SAFE)));
         assertEquals("\"UnsafeFlexEnd\"", GSON.toJson(AlignContent.FLEX_END.withSafety(AlignmentSafety.UNSAFE)));
-        assertEquals(
-                "\"SpaceAround\"",
-                GSON.toJson(AlignContent.SPACE_AROUND.withSafety(AlignmentSafety.SAFE)));
+        assertEquals("\"SpaceAround\"", GSON.toJson(AlignContent.SPACE_AROUND.withSafety(AlignmentSafety.SAFE)));
 
         // round-trips incl. Unsafe* -> withSafety reconstruction
         assertEquals(
@@ -229,9 +266,7 @@ class JaffyGsonTest {
 
         // round-trips
         assertEquals(Dimension.length(22), GSON.fromJson(Long.toString(ser(LENGTH, 22.0f)), Dimension.class));
-        assertEquals(
-                LengthPercentageAuto.auto(),
-                GSON.fromJson(Long.toString(3L << 32), LengthPercentageAuto.class));
+        assertEquals(LengthPercentageAuto.auto(), GSON.fromJson(Long.toString(3L << 32), LengthPercentageAuto.class));
 
         // tag validation
         assertThrows(JsonParseException.class, () -> GSON.fromJson(Long.toString(4L << 32), Dimension.class)); // CALC
@@ -254,22 +289,13 @@ class JaffyGsonTest {
     void geometry() {
         assertEquals(
                 "{\"x\":\"Visible\",\"y\":\"Hidden\"}",
-                GSON.toJson(new Point<>(Overflow.VISIBLE, Overflow.HIDDEN), new TypeToken<Point<Overflow>>() {}.getType()));
-        assertEquals(
-                "{\"width\":10.0,\"height\":-2.5}",
-                GSON.toJson(new SizeF32(10.0f, -2.5f)));
-        assertEquals(
-                "{\"left\":1.0,\"right\":2.0,\"top\":3.0,\"bottom\":4.0}",
-                GSON.toJson(new RectF32(1, 2, 3, 4)));
-        assertEquals(
-                "{\"width\":null,\"height\":4.0}",
-                GSON.toJson(new SizeOptF32(OptF32.NONE, 4.0f)));
-        assertEquals(
-                "{\"width\":true,\"height\":false}",
-                GSON.toJson(new SizeBool(true, false)));
-        assertEquals(
-                "{\"start\":true,\"end\":false}",
-                GSON.toJson(new LineBool(true, false)));
+                GSON.toJson(
+                        new Point<>(Overflow.VISIBLE, Overflow.HIDDEN), new TypeToken<Point<Overflow>>() {}.getType()));
+        assertEquals("{\"width\":10.0,\"height\":-2.5}", GSON.toJson(new SizeF32(10.0f, -2.5f)));
+        assertEquals("{\"left\":1.0,\"right\":2.0,\"top\":3.0,\"bottom\":4.0}", GSON.toJson(new RectF32(1, 2, 3, 4)));
+        assertEquals("{\"width\":null,\"height\":4.0}", GSON.toJson(new SizeOptF32(OptF32.NONE, 4.0f)));
+        assertEquals("{\"width\":true,\"height\":false}", GSON.toJson(new SizeBool(true, false)));
+        assertEquals("{\"start\":true,\"end\":false}", GSON.toJson(new LineBool(true, false)));
         assertEquals("{\"x\":false,\"y\":true}", GSON.toJson(new PointBool(false, true)));
         assertEquals("{\"left\":0.5,\"right\":1.5}", GSON.toJson(new FloatInsets(0.5f, 1.5f)));
 
@@ -281,16 +307,13 @@ class JaffyGsonTest {
                         new TypeToken<net.morphismmc.jaffy.geometry.Line<GridPlacement>>() {}.getType()));
 
         // deserialization incl. missing-field defaults on Line
-        assertEquals(
-                new LineBool(false, false),
-                GSON.fromJson("{}", LineBool.class));
+        assertEquals(new LineBool(false, false), GSON.fromJson("{}", LineBool.class));
         assertThrows(
                 JsonParseException.class,
                 () -> GSON.fromJson("{\"x\":\"Visible\"}", new TypeToken<Point<Overflow>>() {}.getType()));
         assertThrows(
                 JsonParseException.class,
-                () -> GSON.fromJson(
-                        "{\"left\":1,\"right\":2,\"top\":3,\"bottom\":4,\"bottom\":5}", RectF32.class));
+                () -> GSON.fromJson("{\"left\":1,\"right\":2,\"top\":3,\"bottom\":4,\"bottom\":5}", RectF32.class));
     }
 
     @Test
@@ -298,20 +321,13 @@ class JaffyGsonTest {
         assertEquals("\"Auto\"", GSON.toJson(GridPlacement.AUTO));
         assertEquals("{\"Line\":-2}", GSON.toJson(GridPlacement.fromLineIndex(-2)));
         assertEquals("{\"Span\":3}", GSON.toJson(GridPlacement.fromSpan(3)));
-        assertEquals(
-                "{\"NamedLine\":[\"foo\",2]}",
-                GSON.toJson(new GridPlacement.NamedLine("foo", 2)));
-        assertEquals(
-                "{\"NamedSpan\":[\"main\",1]}",
-                GSON.toJson(new GridPlacement.NamedSpan("main", 1)));
+        assertEquals("{\"NamedLine\":[\"foo\",2]}", GSON.toJson(new GridPlacement.NamedLine("foo", 2)));
+        assertEquals("{\"NamedSpan\":[\"main\",1]}", GSON.toJson(new GridPlacement.NamedSpan("main", 1)));
 
         assertEquals(GridPlacement.AUTO, GSON.fromJson("\"Auto\"", GridPlacement.class));
+        assertEquals(new GridPlacement.Line(GridLine.from(-2)), GSON.fromJson("{\"Line\":-2}", GridPlacement.class));
         assertEquals(
-                new GridPlacement.Line(GridLine.from(-2)),
-                GSON.fromJson("{\"Line\":-2}", GridPlacement.class));
-        assertEquals(
-                new GridPlacement.NamedLine("a", 4),
-                GSON.fromJson("{\"NamedLine\":[\"a\",4]}", GridPlacement.class));
+                new GridPlacement.NamedLine("a", 4), GSON.fromJson("{\"NamedLine\":[\"a\",4]}", GridPlacement.class));
         assertThrows(JsonParseException.class, () -> GSON.fromJson("{\"Bogus\":1}", GridPlacement.class));
         assertThrows(JsonParseException.class, () -> GSON.fromJson("\"Bogus\"", GridPlacement.class));
     }
@@ -322,8 +338,8 @@ class JaffyGsonTest {
         assertEquals("\"AutoFit\"", GSON.toJson(RepetitionCount.AUTO_FIT));
         assertEquals("{\"Count\":4}", GSON.toJson(new RepetitionCount.Count(4)));
 
-        MinMax<MinTrackSizingFunction, MaxTrackSizingFunction> tsf = new MinMax<>(
-                MinTrackSizingFunction.minContent(), MaxTrackSizingFunction.fr(2));
+        MinMax<MinTrackSizingFunction, MaxTrackSizingFunction> tsf =
+                new MinMax<>(MinTrackSizingFunction.minContent(), MaxTrackSizingFunction.fr(2));
         long minSer = ser(0b1011, 0.0f); // MIN_CONTENT
         long maxSer = ser(0b0001_0011, 2.0f); // FR
         assertEquals(
@@ -338,17 +354,17 @@ class JaffyGsonTest {
                 GSON.toJson(rep));
         assertEquals(rep, GSON.fromJson(GSON.toJson(rep), GridTemplateRepetition.class));
 
-        GenericGridTemplateComponent<GridTemplateRepetition> single =
-                new GenericGridTemplateComponent.Single<>(tsf);
-        GenericGridTemplateComponent<GridTemplateRepetition> repeat =
-                new GenericGridTemplateComponent.Repeat<>(rep);
+        GenericGridTemplateComponent<GridTemplateRepetition> single = new GenericGridTemplateComponent.Single<>(tsf);
+        GenericGridTemplateComponent<GridTemplateRepetition> repeat = new GenericGridTemplateComponent.Repeat<>(rep);
         assertEquals(
                 "{\"Single\":{\"min\":" + minSer + ",\"max\":" + maxSer + "}}",
-                GSON.toJson(single, new TypeToken<GenericGridTemplateComponent<GridTemplateRepetition>>() {}.getType()));
+                GSON.toJson(
+                        single, new TypeToken<GenericGridTemplateComponent<GridTemplateRepetition>>() {}.getType()));
         assertEquals(
-                "{\"Repeat\":{\"count\":{\"Count\":2},\"tracks\":[{\"min\":" + minSer + ",\"max\":"
-                        + maxSer + "}],\"line_names\":[[\"row-a\"],[]]}}",
-                GSON.toJson(repeat, new TypeToken<GenericGridTemplateComponent<GridTemplateRepetition>>() {}.getType()));
+                "{\"Repeat\":{\"count\":{\"Count\":2},\"tracks\":[{\"min\":" + minSer + ",\"max\":" + maxSer
+                        + "}],\"line_names\":[[\"row-a\"],[]]}}",
+                GSON.toJson(
+                        repeat, new TypeToken<GenericGridTemplateComponent<GridTemplateRepetition>>() {}.getType()));
 
         GridTemplateArea area = new GridTemplateArea("header", 1, 2, 1, 3);
         assertEquals(
@@ -393,17 +409,18 @@ class JaffyGsonTest {
                 + "\"item_is_compressible_replaced\":false,\"box_sizing\":\"BorderBox\",\"direction\":\"Ltr\","
                 + "\"overflow\":{\"x\":\"Visible\",\"y\":\"Visible\"},\"scrollbar_width\":0.0,\"contain\":0,"
                 + "\"float\":\"None\",\"clear\":\"None\",\"position\":\"Static\","
-                + "\"inset\":" + rectA + ",\"size\":" + sizeA + ",\"min_size\":" + sizeA + ",\"max_size\":" + sizeA + ","
+                + "\"inset\":" + rectA + ",\"size\":" + sizeA + ",\"min_size\":" + sizeA + ",\"max_size\":" + sizeA
+                + ","
                 + "\"aspect_ratio\":null,\"margin\":" + rectZ + ",\"padding\":" + rectZ + ",\"border\":" + rectZ + ","
                 + "\"align_items\":\"Normal\",\"align_self\":null,\"justify_items\":\"Normal\",\"justify_self\":null,"
                 + "\"align_content\":\"Normal\",\"justify_content\":\"Normal\",\"gap\":" + sizeZ + ","
                 + "\"text_align\":\"Auto\",\"flex_direction\":\"Row\",\"flex_wrap\":\"NoWrap\",\"flex_line_count\":1,"
                 + "\"flex_basis\":" + auto + ",\"flex_grow\":0.0,\"flex_shrink\":1.0,"
-                + "\"grid_template_rows\":[],\"grid_template_columns\":[],\"grid_auto_rows\":[],\"grid_auto_columns\":[],"
-                + "\"grid_auto_flow\":\"Row\",\"grid_template_areas\":null,"
-                + "\"grid_template_column_names\":[],\"grid_template_row_names\":[],"
-                + "\"grid_row\":{\"start\":\"Auto\",\"end\":\"Auto\"},"
-                + "\"grid_column\":{\"start\":\"Auto\",\"end\":\"Auto\"}}";
+                                           + "\"grid_template_rows\":[],\"grid_template_columns\":[],\"grid_auto_rows\":[],\"grid_auto_columns\":[],"
+                                           + "\"grid_auto_flow\":\"Row\",\"grid_template_areas\":null,"
+                                           + "\"grid_template_column_names\":[],\"grid_template_row_names\":[],"
+                                           + "\"grid_row\":{\"start\":\"Auto\",\"end\":\"Auto\"},"
+                                           + "\"grid_column\":{\"start\":\"Auto\",\"end\":\"Auto\"}}";
         assertEquals(expected, GSON.toJson(Style.DEFAULT));
         // full round-trip of the default
         assertEquals(Style.DEFAULT, GSON.fromJson(expected, Style.class));
@@ -421,8 +438,8 @@ class JaffyGsonTest {
                 .withAspectRatio(1.5f)
                 .withPosition(Position.ABSOLUTE)
                 .withGridTemplateAreas(new GridTemplateAreas(List.of(new GridTemplateArea("a", 1, 2, 1, 2)), 1, 1))
-                .withGridRow(new net.morphismmc.jaffy.geometry.Line<>(
-                        GridPlacement.fromLineIndex(3), GridPlacement.AUTO))
+                .withGridRow(
+                        new net.morphismmc.jaffy.geometry.Line<>(GridPlacement.fromLineIndex(3), GridPlacement.AUTO))
                 .withGridTemplateRows(List.of(new GenericGridTemplateComponent.Single<>(
                         new MinMax<>(MinTrackSizingFunction.length(10), MaxTrackSizingFunction.maxContent()))))
                 .withItemIsTable(true)
@@ -465,8 +482,7 @@ class JaffyGsonTest {
                 GSON.toJson(so));
 
         // upstream: serialization_exposes_rect_and_flags_not_packed_signs (tree/layout.rs)
-        ScrollableOverflow upstreamCase =
-                ScrollableOverflow.of(new RectF32(-10, 20, 0, 0), new PointBool(true, true));
+        ScrollableOverflow upstreamCase = ScrollableOverflow.of(new RectF32(-10, 20, 0, 0), new PointBool(true, true));
         assertEquals(
                 "{\"rect\":{\"left\":-10.0,\"right\":20.0,\"top\":0.0,\"bottom\":0.0},"
                         + "\"reversed\":{\"x\":true,\"y\":true}}",
@@ -484,8 +500,7 @@ class JaffyGsonTest {
         assertEquals(
                 "{\"size\":{\"width\":4.0,\"height\":5.0},"
                         + "\"scrollable_overflow_rect\":{\"rect\":{\"left\":-5.0,\"right\":10.0,\"top\":-2.0,\"bottom\":8.0},"
-                        + "\"reversed\":{\"x\":true,\"y\":false}},"
-                        + "\"baselines\":{\"first\":3.0,\"last\":null},"
+                        + "\"reversed\":{\"x\":true,\"y\":false}},\"baselines\":{\"first\":3.0,\"last\":null},"
                         + "\"top_margin\":{\"positive\":1.5,\"negative\":-0.5},"
                         + "\"bottom_margin\":{\"positive\":0.0,\"negative\":0.0},"
                         + "\"margins_can_collapse_through\":true,"
@@ -511,9 +526,8 @@ class JaffyGsonTest {
     @Test
     void serde_edge_behaviors() {
         // serde_json serializes non-finite floats as null (silently)
-        Style nanStyle = Style.DEFAULT
-                .withScrollbarWidth(java.lang.Float.NaN)
-                .withFlexGrow(java.lang.Float.POSITIVE_INFINITY);
+        Style nanStyle =
+                Style.DEFAULT.withScrollbarWidth(java.lang.Float.NaN).withFlexGrow(java.lang.Float.POSITIVE_INFINITY);
         String json = GSON.toJson(nanStyle);
         assertTrue(json.contains("\"scrollbar_width\":null"), json);
         assertTrue(json.contains("\"flex_grow\":null"), json);
@@ -525,9 +539,7 @@ class JaffyGsonTest {
         assertTrue(OptF32.isNone(GSON.fromJson(json2, Style.class).aspectRatio()));
 
         // null is not a valid f32
-        assertThrows(
-                Exception.class,
-                () -> GSON.fromJson("{\"scrollbar_width\":null}", Style.class));
+        assertThrows(Exception.class, () -> GSON.fromJson("{\"scrollbar_width\":null}", Style.class));
 
         // serde u16/i16/u8 range-check; Gson nextInt does not — our helpers do
         assertThrows(JsonParseException.class, () -> GSON.fromJson("{\"Span\":65536}", GridPlacement.class));

@@ -5,12 +5,13 @@
 // (GAP-017). `impl ... for &T` has no Java counterpart.
 package net.morphismmc.jaffy.style.block;
 
-import org.jspecify.annotations.Nullable;
 import net.morphismmc.jaffy.style.CoreStyle;
 import net.morphismmc.jaffy.style.alignment.AlignContent;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.float_.Clear;
 import net.morphismmc.jaffy.style.float_.Float;
+
+import org.jspecify.annotations.Nullable;
 
 /// The set of styles required for a block item (child of a block container)
 public interface BlockItemStyle extends CoreStyle {

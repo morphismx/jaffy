@@ -14,6 +14,7 @@
 package net.morphismmc.jaffy.infra.slotmap;
 
 import java.util.ArrayList;
+
 import org.jspecify.annotations.Nullable;
 
 public final class SlotMap<V> {
@@ -21,7 +22,9 @@ public final class SlotMap<V> {
     /// `union SlotUnion` + `version`: value + nextFree share no storage, but
     /// only one is live at a time (version % 2 > 0 means occupied).
     private static final class Slot<V> {
-        @Nullable V value;
+        @Nullable
+        V value;
+
         int nextFree;
         int version; // Even = vacant, odd = occupied.
 

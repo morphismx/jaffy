@@ -3,7 +3,6 @@
 // `pub(in super::super)` -> public (callers cross Java package boundaries).
 package net.morphismmc.jaffy.compute.grid.types.grid_track;
 
-
 /// Whether a GridTrack represents an actual track or a gutter.
 public enum GridTrackKind {
     /// Track is an actual track

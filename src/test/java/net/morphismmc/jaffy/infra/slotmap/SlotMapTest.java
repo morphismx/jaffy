@@ -74,9 +74,9 @@ class SlotMapTest {
     @Test
     void sparseInsertVersionRules() {
         SparseSecondaryMap<Integer> sec = new SparseSecondaryMap<>();
-        long k1v1 = (1L << 32) | 1;   // idx 1, v1
-        long k1v3 = (3L << 32) | 1;   // idx 1, v3 (newer)
-        long k1v2 = (2L << 32) | 1;   // idx 1, v2 — even, invalid key data
+        long k1v1 = (1L << 32) | 1; // idx 1, v1
+        long k1v3 = (3L << 32) | 1; // idx 1, v3 (newer)
+        long k1v2 = (2L << 32) | 1; // idx 1, v2 — even, invalid key data
 
         // null key silently fails
         assertNull(sec.insert(0xFFFFFFFFL, 9));

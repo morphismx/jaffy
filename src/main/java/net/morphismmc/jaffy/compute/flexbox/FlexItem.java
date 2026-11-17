@@ -34,7 +34,8 @@ final class FlexItem {
     /// The maximum allowable size of this item
     SizeOptF32 maxSize;
     /// The aspect ratio of this item
-    @Opt float aspectRatio;
+    @Opt
+    float aspectRatio;
     /// The cross-alignment of this item
     AlignItems alignSelf;
 
@@ -137,16 +138,13 @@ final class FlexItem {
         Dimension crossSize = sizeStyle.cross(dir);
         return !marginIsAuto.crossStart(dir)
                 && !marginIsAuto.crossEnd(dir)
-                && (crossSize.isStretch()
-                        || (alignSelf.equals(AlignItems.STRETCH) && crossSize.isAuto()));
+                && (crossSize.isStretch() || (alignSelf.equals(AlignItems.STRETCH) && crossSize.isAuto()));
     }
 
     /// Returns true if the item participates in baseline alignment: it has
     /// `align-self: baseline` and neither of its cross-axis margins are
     /// `auto`. See <https://www.w3.org/TR/css-flexbox-1/#baseline-participation>
     boolean participatesInBaselineAlignment(FlexDirection dir) {
-        return alignSelf.equals(AlignItems.BASELINE)
-                && !marginIsAuto.crossStart(dir)
-                && !marginIsAuto.crossEnd(dir);
+        return alignSelf.equals(AlignItems.BASELINE) && !marginIsAuto.crossStart(dir) && !marginIsAuto.crossEnd(dir);
     }
 }

@@ -7,14 +7,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.types.coordinates.GridLine;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
 import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.jaffy.geometry.MinMax;
-import net.morphismmc.just.math.OptF32;
-import org.junit.jupiter.api.Test;
 import net.morphismmc.jaffy.style.dimension.Dimension;
 import net.morphismmc.jaffy.style.dimension.LengthPercentage;
+import net.morphismmc.just.math.OptF32;
+
+import org.junit.jupiter.api.Test;
 
 class GridStyleTest {
 
@@ -35,7 +37,8 @@ class GridStyleTest {
             assertTrue(value.rustEq(MaxTrackSizingFunction.from(value.expand())));
         }
         assertEquals(
-                new ExpandedMaxTrackSizingFunction.Fr(2.0f), MaxTrackSizingFunction.fr(2.0f).expand());
+                new ExpandedMaxTrackSizingFunction.Fr(2.0f),
+                MaxTrackSizingFunction.fr(2.0f).expand());
         assertEquals(
                 new ExpandedMaxTrackSizingFunction.FitContentPx(30.0f),
                 MaxTrackSizingFunction.fitContentPx(30.0f).expand());
@@ -54,7 +57,9 @@ class GridStyleTest {
         for (MinTrackSizingFunction value : cases) {
             assertTrue(value.rustEq(MinTrackSizingFunction.from(value.expand())));
         }
-        assertEquals(new ExpandedMinTrackSizingFunction.MaxContent(), MinTrackSizingFunction.maxContent().expand());
+        assertEquals(
+                new ExpandedMinTrackSizingFunction.MaxContent(),
+                MinTrackSizingFunction.maxContent().expand());
     }
 
     // ---- expand_tests::track_sizing_function_calc_round_trips (calc feature on) ----
@@ -75,8 +80,7 @@ class GridStyleTest {
                 .rustEq(MaxTrackSizingFunction.fitContent(LengthPercentage.calc(handle))));
         assertTrue(MinTrackSizingFunction.AUTO.rustEq(
                 MinTrackSizingFunction.from(MaxTrackSizingFunction.fitContentCalc(handle))));
-        assertTrue(MinTrackSizingFunction.AUTO.rustEq(
-                MinTrackSizingFunction.from(Dimension.fitContentCalc(handle))));
+        assertTrue(MinTrackSizingFunction.AUTO.rustEq(MinTrackSizingFunction.from(Dimension.fitContentCalc(handle))));
         assertTrue(MaxTrackSizingFunction.calc(handle)
                 .rustEq(MaxTrackSizingFunction.from(new ExpandedMaxTrackSizingFunction.Calc(handle))));
         assertEquals(
@@ -89,9 +93,7 @@ class GridStyleTest {
     @Test
     void repetitionTrackCountSaturates() {
         var repetition = new GridTemplateRepetition(
-                new RepetitionCount.Count(1),
-                Collections.nCopies(65536, TrackSizingFunction.AUTO),
-                List.of());
+                new RepetitionCount.Count(1), Collections.nCopies(65536, TrackSizingFunction.AUTO), List.of());
         assertEquals(65535, repetition.trackCount());
     }
 
@@ -128,10 +130,7 @@ class GridStyleTest {
                 LineGenericGridPlacementExt.indefiniteSpan(new Line<>(
                         new GenericGridPlacement.Auto<GridLine>(), new GenericGridPlacement.Auto<GridLine>())));
         var spanned = LineNonNamedGridPlacementExt.intoOriginZero(
-                new Line<>(
-                        new GenericGridPlacement.Auto<GridLine>(),
-                        new GenericGridPlacement.Span<GridLine>(3)),
-                4);
+                new Line<>(new GenericGridPlacement.Auto<GridLine>(), new GenericGridPlacement.Span<GridLine>(3)), 4);
         assertEquals(3, LineGenericGridPlacementExt.indefiniteSpan(spanned));
         // (Line, Line) is definite -> panic
         var definite = LineNonNamedGridPlacementExt.intoOriginZero(
@@ -139,24 +138,21 @@ class GridStyleTest {
                         new GenericGridPlacement.Line<>(GridLine.from(1)),
                         new GenericGridPlacement.Line<>(GridLine.from(3))),
                 4);
-        assertThrows(
-                IllegalStateException.class, () -> LineGenericGridPlacementExt.indefiniteSpan(definite));
+        assertThrows(IllegalStateException.class, () -> LineGenericGridPlacementExt.indefiniteSpan(definite));
     }
 
     @Test
     void resolveDefiniteGridLines() {
         // (Line 2, Line 1) sorts to (1, 2); equal lines bump the end
-        var resolved = LineOriginZeroGridPlacementExt.resolveDefiniteGridLines(
-                new Line<>(
-                        new GenericGridPlacement.Line<>(new OriginZeroLine(2)),
-                        new GenericGridPlacement.Line<>(new OriginZeroLine(1))));
+        var resolved = LineOriginZeroGridPlacementExt.resolveDefiniteGridLines(new Line<>(
+                new GenericGridPlacement.Line<>(new OriginZeroLine(2)),
+                new GenericGridPlacement.Line<>(new OriginZeroLine(1))));
         assertEquals(1, resolved.start().value());
         assertEquals(2, resolved.end().value());
 
-        var equal = LineOriginZeroGridPlacementExt.resolveDefiniteGridLines(
-                new Line<>(
-                        new GenericGridPlacement.Line<>(new OriginZeroLine(3)),
-                        new GenericGridPlacement.Line<>(new OriginZeroLine(3))));
+        var equal = LineOriginZeroGridPlacementExt.resolveDefiniteGridLines(new Line<>(
+                new GenericGridPlacement.Line<>(new OriginZeroLine(3)),
+                new GenericGridPlacement.Line<>(new OriginZeroLine(3))));
         assertEquals(3, equal.start().value());
         assertEquals(4, equal.end().value());
     }
@@ -171,17 +167,14 @@ class GridStyleTest {
 
         assertTrue(MinTrackSizingFunction.percent(0.5f).behavesAsAuto(OptF32.NONE));
         assertFalse(MinTrackSizingFunction.percent(0.5f).behavesAsAuto(100.0f));
-        assertEquals(
-                50.0f, MinTrackSizingFunction.percent(0.5f).resolvedPercentageSize(100.0f, null));
-        assertEquals(
-                OptF32.NONE, MinTrackSizingFunction.length(5.0f).resolvedPercentageSize(100.0f, null));
+        assertEquals(50.0f, MinTrackSizingFunction.percent(0.5f).resolvedPercentageSize(100.0f, null));
+        assertEquals(OptF32.NONE, MinTrackSizingFunction.length(5.0f).resolvedPercentageSize(100.0f, null));
     }
 
     @Test
     void gridTemplateComponentPredicates() {
         assertFalse(GridTemplateComponent.AUTO.isAutoRepetition());
-        var rep = new GridTemplateRepetition(
-                RepetitionCount.AUTO_FILL, List.of(TrackSizingFunction.AUTO), List.of());
+        var rep = new GridTemplateRepetition(RepetitionCount.AUTO_FILL, List.of(TrackSizingFunction.AUTO), List.of());
         var repComponent = new GenericGridTemplateComponent.Repeat<>(rep);
         assertTrue(repComponent.isAutoRepetition());
         assertTrue(GridTemplateComponent.asComponentRef(repComponent).isAutoRepetition());

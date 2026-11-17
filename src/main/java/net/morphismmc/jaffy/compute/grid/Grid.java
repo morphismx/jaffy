@@ -16,12 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import it.unimi.dsi.fastutil.longs.LongIterator;
 import net.morphismmc.jaffy.Features;
-import org.jspecify.annotations.Nullable;
-
-import net.morphismmc.just.fmt.RustFmt;
-
 import net.morphismmc.jaffy.compute.common.ScrollableOverflow.ScrollableOverflowContainer;
 import net.morphismmc.jaffy.compute.grid.ExplicitGrid.AutoRepeatStrategy;
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
@@ -76,14 +71,16 @@ import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
 import net.morphismmc.jaffy.tree.traits.LayoutGridContainer;
 import net.morphismmc.jaffy.util.DebugLogger;
-import net.morphismmc.just.math.F32;
 import net.morphismmc.jaffy.util.MaybeMath;
 import net.morphismmc.jaffy.util.MaybeResolve;
+import net.morphismmc.just.fmt.RustFmt;
+import net.morphismmc.just.math.F32;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
 import net.morphismmc.just.math.OptI32;
 import net.morphismmc.just.math.Unsigned;
 
+import it.unimi.dsi.fastutil.longs.LongIterator;
 
 /// Grid layout algorithm (`compute_grid_layout`) plus the container constants
 /// and static-position area helpers it uses.
@@ -134,20 +131,18 @@ public final class Grid {
         RectF32 border = style.border().mapF(p -> p.resolveOrZero(parentSize.width(), tree::calc));
         RectF32 paddingBorder = padding.plus(border);
         SizeF32 paddingBorderSize = paddingBorder.sumAxes();
-        SizeF32 boxSizingAdjustment =
-                style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSize : SizeF32.ZERO;
+        SizeF32 boxSizingAdjustment = style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSize : SizeF32.ZERO;
 
-        SizeOptF32 minSize = MaybeResolve.SizeLengthPercentageAutoExt
-                .maybeResolveO(style.minSize(), parentSize, tree::calc)
+        SizeOptF32 minSize = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
+                        style.minSize(), parentSize, tree::calc)
                 .maybeApplyAspectRatio(aspectRatio)
                 .maybeAddF(boxSizingAdjustment);
-        SizeOptF32 maxSize = MaybeResolve.SizeLengthPercentageAutoExt
-                .maybeResolveO(style.maxSize(), parentSize, tree::calc)
+        SizeOptF32 maxSize = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveO(
+                        style.maxSize(), parentSize, tree::calc)
                 .maybeApplyAspectRatio(aspectRatio)
                 .maybeAddF(boxSizingAdjustment);
         SizeOptF32 preferredSize = inputs.sizingMode() == SizingMode.INHERENT_SIZE
-                ? MaybeResolve.SizeDimensionExt
-                        .maybeResolveO(style.size(), parentSize, tree::calc)
+                ? MaybeResolve.SizeDimensionExt.maybeResolveO(style.size(), parentSize, tree::calc)
                         .maybeApplyAspectRatio(style.aspectRatio())
                         .maybeAddF(boxSizingAdjustment)
                 : SizeOptF32.NONE;
@@ -174,25 +169,25 @@ public final class Grid {
         AlignItems justifyItems = style.justifyItems();
         SizeOptF32 knownOrPreferred = knownDimensions.or(preferredSize);
         Size<AvailableSpace> constrainedAvailableSpace = new Size<>(
-                        OptF32.isSome(knownOrPreferred.width())
-                                ? new AvailableSpace.Definite(knownOrPreferred.width())
-                                : availableSpace.width(),
-                        OptF32.isSome(knownOrPreferred.height())
-                                ? new AvailableSpace.Definite(knownOrPreferred.height())
-                                : availableSpace.height())
-                ;
+                OptF32.isSome(knownOrPreferred.width())
+                        ? new AvailableSpace.Definite(knownOrPreferred.width())
+                        : availableSpace.width(),
+                OptF32.isSome(knownOrPreferred.height())
+                        ? new AvailableSpace.Definite(knownOrPreferred.height())
+                        : availableSpace.height());
         constrainedAvailableSpace = MaybeMath.maybeMaxF(
                 MaybeMath.maybeClampO(constrainedAvailableSpace, minSize, maxSize), paddingBorderSize);
 
         Size<AvailableSpace> availableGridSpace = new Size<>(
-                constrainedAvailableSpace.width().mapDefiniteValue(
-                        space -> space - contentBoxInset.horizontalAxisSum()),
-                constrainedAvailableSpace.height().mapDefiniteValue(
-                        space -> space - contentBoxInset.verticalAxisSum()));
+                constrainedAvailableSpace
+                        .width()
+                        .mapDefiniteValue(space -> space - contentBoxInset.horizontalAxisSum()),
+                constrainedAvailableSpace
+                        .height()
+                        .mapDefiniteValue(space -> space - contentBoxInset.verticalAxisSum()));
 
-        SizeOptF32 outerNodeSize = knownOrPreferred
-                .maybeClampO(minSize, maxSize)
-                .maybeMaxF(paddingBorderSize);
+        SizeOptF32 outerNodeSize =
+                knownOrPreferred.maybeClampO(minSize, maxSize).maybeMaxF(paddingBorderSize);
 
         // The track sizing algorithm operates on the grid container's content box, so the min/max sizes
         // (which are border-box sizes) need converting to content-box sizes before being passed to it
@@ -276,8 +271,7 @@ public final class Grid {
         // is ComputeSize (and thus the container's size is all that we're interested in)
         if (runMode == RunMode.COMPUTE_SIZE) {
             if (OptF32.isSome(outerNodeSize.width()) && OptF32.isSome(outerNodeSize.height())) {
-                return LayoutOutput.fromOuterSize(
-                        new SizeF32(outerNodeSize.width(), outerNodeSize.height()));
+                return LayoutOutput.fromOuterSize(new SizeF32(outerNodeSize.width(), outerNodeSize.height()));
             }
 
             // We can also short-circuit if the width is known and only the width has been requested.
@@ -298,10 +292,12 @@ public final class Grid {
                 .maybeSubF(contentBoxInset.sumAxes());
 
         // If the grid container has a definite size or max size in the relevant axis:
-        //   - then the number of repetitions is the largest possible positive integer that does not cause the grid to overflow the content
+        //   - then the number of repetitions is the largest possible positive integer that does not cause the grid to
+        // overflow the content
         //     box of its grid container.
         // Otherwise, if the grid container has a definite min size in the relevant axis:
-        //   - then the number of repetitions is the smallest possible positive integer that fulfills that minimum requirement
+        //   - then the number of repetitions is the smallest possible positive integer that fulfills that minimum
+        // requirement
         // Otherwise, the specified track list repeats only once.
         SizeOptF32 outerOrMax = outerNodeSize.or(maxSize);
         Size<AutoRepeatStrategy> autoRepeatFitStrategy = new Size<>(
@@ -314,20 +310,18 @@ public final class Grid {
 
         // Compute the number of rows and columns in the explicit grid *template*
         // (explicit tracks from grid_areas are computed separately below)
-        ExplicitGrid.ExplicitGridSize colExplicit =
-                ExplicitGrid.computeExplicitGridSizeInAxis(
-                        style,
-                        autoFitContainerSize.width(),
-                        autoRepeatFitStrategy.width(),
-                        tree::calc,
-                        AbsoluteAxis.HORIZONTAL);
-        ExplicitGrid.ExplicitGridSize rowExplicit =
-                ExplicitGrid.computeExplicitGridSizeInAxis(
-                        style,
-                        autoFitContainerSize.height(),
-                        autoRepeatFitStrategy.height(),
-                        tree::calc,
-                        AbsoluteAxis.VERTICAL);
+        ExplicitGrid.ExplicitGridSize colExplicit = ExplicitGrid.computeExplicitGridSizeInAxis(
+                style,
+                autoFitContainerSize.width(),
+                autoRepeatFitStrategy.width(),
+                tree::calc,
+                AbsoluteAxis.HORIZONTAL);
+        ExplicitGrid.ExplicitGridSize rowExplicit = ExplicitGrid.computeExplicitGridSizeInAxis(
+                style,
+                autoFitContainerSize.height(),
+                autoRepeatFitStrategy.height(),
+                tree::calc,
+                AbsoluteAxis.VERTICAL);
         int colAutoRepetitionCount = colExplicit.autoRepetitionCount();
         int rowAutoRepetitionCount = rowExplicit.autoRepetitionCount();
 
@@ -337,11 +331,9 @@ public final class Grid {
         // Clamp the explicit grid to MAX_GRID_TRACKS tracks in each axis
         // https://www.w3.org/TR/css-grid-1/#overlarge-grids
         int explicitColCount = Integer.min(
-                Integer.max(colExplicit.trackCount(), nameResolver.areaColumnCount()),
-                Coordinates.MAX_GRID_TRACKS);
+                Integer.max(colExplicit.trackCount(), nameResolver.areaColumnCount()), Coordinates.MAX_GRID_TRACKS);
         int explicitRowCount = Integer.min(
-                Integer.max(rowExplicit.trackCount(), nameResolver.areaRowCount()),
-                Coordinates.MAX_GRID_TRACKS);
+                Integer.max(rowExplicit.trackCount(), nameResolver.areaRowCount()), Coordinates.MAX_GRID_TRACKS);
 
         nameResolver.setExplicitColumnCount(explicitColCount);
         nameResolver.setExplicitRowCount(explicitRowCount);
@@ -350,14 +342,14 @@ public final class Grid {
         GridLineNames detailedColumnLineNames = nameResolver.detailedLineNames(AbsoluteAxis.HORIZONTAL);
         GridLineNames detailedRowLineNames = nameResolver.detailedLineNames(AbsoluteAxis.VERTICAL);
 
-        // 3. Create the grid items (in document order) and resolve the named lines in their `grid-row`/`grid-column` styles
+        // 3. Create the grid items (in document order) and resolve the named lines in their `grid-row`/`grid-column`
+        // styles
         // Absolutely positioned children do not take part in grid placement and do not create implicit tracks,
         // so they are excluded here. Each child's style is read and its named lines resolved exactly once; the
         // results drive both the grid size estimate and item placement below.
         int childCount = tree.childCount(node);
         List<GridItem> items = new ArrayList<>(childCount);
-        List<InBothAbsAxis<Line<GenericGridPlacement<OriginZeroLine>>>> placements =
-                new ArrayList<>(childCount);
+        List<InBothAbsAxis<Line<GenericGridPlacement<OriginZeroLine>>>> placements = new ArrayList<>(childCount);
         {
             int index = 0;
             LongIterator childIds = tree.childIds(node);
@@ -371,13 +363,10 @@ public final class Grid {
                 }
                 placements.add(new InBothAbsAxis<>(
                         LineNonNamedGridPlacementExt.intoOriginZero(
-                                nameResolver.resolveColumnNames(childStyle.gridColumn()),
-                                explicitColCount),
+                                nameResolver.resolveColumnNames(childStyle.gridColumn()), explicitColCount),
                         LineNonNamedGridPlacementExt.intoOriginZero(
-                                nameResolver.resolveRowNames(childStyle.gridRow()),
-                                explicitRowCount)));
-                items.add(GridItem.newWithStyleAndOrder(
-                        childNode, childStyle, alignItems, justifyItems, index));
+                                nameResolver.resolveRowNames(childStyle.gridRow()), explicitRowCount)));
+                items.add(GridItem.newWithStyleAndOrder(childNode, childStyle, alignItems, justifyItems, index));
                 index++;
             }
         }
@@ -392,8 +381,7 @@ public final class Grid {
 
         // 5. Grid Item Placement
         // Match items (children) to a definite grid position (row start/end and column start/end position)
-        CellOccupancyMatrix cellOccupancyMatrix =
-                CellOccupancyMatrix.withTrackCounts(estColCounts, estRowCounts);
+        CellOccupancyMatrix cellOccupancyMatrix = CellOccupancyMatrix.withTrackCounts(estColCounts, estRowCounts);
         // `items` is in document order from here on (placement only fills in each item's grid area). The track
         // sizing and baseline passes sort references to the items rather than the items themselves.
         Placement.placeGridItems(cellOccupancyMatrix, items, placements, style.gridAutoFlow());
@@ -457,8 +445,7 @@ public final class Grid {
                 columns,
                 rows,
                 items,
-                (track, parentSize, t) ->
-                        track.maxTrackSizingFunction.definiteValue(parentSize, t::calc),
+                (track, parentSize, t) -> track.maxTrackSizingFunction.definiteValue(parentSize, t::calc),
                 hasBaselineAlignedItem);
         float initialColumnSum = 0.0f;
         for (GridTrack track : columns) {
@@ -475,9 +462,7 @@ public final class Grid {
         if (runMode == RunMode.COMPUTE_SIZE && inputs.axis() == RequestedAxis.HORIZONTAL) {
             float width = F32.max(
                     F32.maybeClampO(
-                            initialColumnSum + contentBoxInset.horizontalAxisSum(),
-                            minSize.width(),
-                            maxSize.width()),
+                            initialColumnSum + contentBoxInset.horizontalAxisSum(), minSize.width(), maxSize.width()),
                     paddingBorderSize.width());
             return LayoutOutput.fromOuterSize(new SizeF32(width, 0.0f));
         }
@@ -541,12 +526,15 @@ public final class Grid {
             return LayoutOutput.fromOuterSize(containerBorderBox);
         }
 
-        // The container's size is now determined, so percentages resolve against its content box when re-running track sizing.
-        // This may be a no-op if the container's size was known upfront (in which case it already equals `inner_node_size`).
+        // The container's size is now determined, so percentages resolve against its content box when re-running track
+        // sizing.
+        // This may be a no-op if the container's size was known upfront (in which case it already equals
+        // `inner_node_size`).
         innerNodeSize = new SizeOptF32(containerContentBox.width(), containerContentBox.height());
 
         // Column sizing must be re-run (once) if:
-        //   - The grid container's width was initially indefinite and there are any columns with percentage track sizing functions
+        //   - The grid container's width was initially indefinite and there are any columns with percentage track
+        // sizing functions
         //   - Any grid item crossing an intrinsically sized track's min content contribution width has changed
         // TODO: Only rerun sizing for tracks that actually require it rather than for all tracks if any need it.
         boolean rerunColumnSizing;
@@ -582,10 +570,9 @@ public final class Grid {
                         innerNodeSize,
                         (track, basis) -> track.baseSize,
                         tree::calc);
-                SizeOptF32 availableSpace =
-                        gridAreaSize.with(AbstractAxis.INLINE, OptF32.NONE);
-                float newMinContentContribution = item.minContentContribution(
-                        AbstractAxis.INLINE, tree, gridAreaSize, availableSpace);
+                SizeOptF32 availableSpace = gridAreaSize.with(AbstractAxis.INLINE, OptF32.NONE);
+                float newMinContentContribution =
+                        item.minContentContribution(AbstractAxis.INLINE, tree, gridAreaSize, availableSpace);
 
                 boolean hasChanged = OptF32.isNone(item.minContentContributionCache.width())
                         || newMinContentContribution != item.minContentContributionCache.width();
@@ -595,8 +582,7 @@ public final class Grid {
                         item.minContentContributionCache.with(AbstractAxis.INLINE, newMinContentContribution);
                 item.maxContentContributionCache =
                         item.maxContentContributionCache.with(AbstractAxis.INLINE, OptF32.NONE);
-                item.minimumContributionCache =
-                        item.minimumContributionCache.with(AbstractAxis.INLINE, OptF32.NONE);
+                item.minimumContributionCache = item.minimumContributionCache.with(AbstractAxis.INLINE, OptF32.NONE);
 
                 intrinsicColumnContributionChanged |= hasChanged;
             }
@@ -609,14 +595,15 @@ public final class Grid {
                         item.minContentContributionCache.with(AbstractAxis.INLINE, OptF32.NONE);
                 item.maxContentContributionCache =
                         item.maxContentContributionCache.with(AbstractAxis.INLINE, OptF32.NONE);
-                item.minimumContributionCache =
-                        item.minimumContributionCache.with(AbstractAxis.INLINE, OptF32.NONE);
+                item.minimumContributionCache = item.minimumContributionCache.with(AbstractAxis.INLINE, OptF32.NONE);
             }
         }
 
         // Row sizing must be re-run (once) if:
-        //   - The grid container's height was initially indefinite and there are any rows with percentage track sizing functions
-        //   - Column sizing was re-run and any grid item crossing an intrinsically sized track's min content contribution height has changed
+        //   - The grid container's height was initially indefinite and there are any rows with percentage track sizing
+        // functions
+        //   - Column sizing was re-run and any grid item crossing an intrinsically sized track's min content
+        // contribution height has changed
         // TODO: Only rerun sizing for tracks that actually require it rather than for all tracks if any need it.
         boolean parentHeightIndefinite = OptF32.isNone(outerNodeSize.height());
         boolean rerunRowSizing = parentHeightIndefinite && hasPercentageRow;
@@ -630,8 +617,7 @@ public final class Grid {
                         item.minContentContributionCache.with(AbstractAxis.BLOCK, OptF32.NONE);
                 item.maxContentContributionCache =
                         item.maxContentContributionCache.with(AbstractAxis.BLOCK, OptF32.NONE);
-                item.minimumContributionCache =
-                        item.minimumContributionCache.with(AbstractAxis.BLOCK, OptF32.NONE);
+                item.minimumContributionCache = item.minimumContributionCache.with(AbstractAxis.BLOCK, OptF32.NONE);
             }
         }
 
@@ -667,21 +653,19 @@ public final class Grid {
                             innerNodeSize,
                             (track, basis) -> track.baseSize,
                             tree::calc);
-                    SizeOptF32 availableSpace =
-                            gridAreaSize.with(AbstractAxis.BLOCK, OptF32.NONE);
-                    float newMinContentContribution = item.minContentContribution(
-                            AbstractAxis.BLOCK, tree, gridAreaSize, availableSpace);
+                    SizeOptF32 availableSpace = gridAreaSize.with(AbstractAxis.BLOCK, OptF32.NONE);
+                    float newMinContentContribution =
+                            item.minContentContribution(AbstractAxis.BLOCK, tree, gridAreaSize, availableSpace);
 
                     boolean hasChanged = OptF32.isNone(item.minContentContributionCache.height())
                             || newMinContentContribution != item.minContentContributionCache.height();
 
                     item.gridAreaSizeCache = gridAreaSize;
-                    item.minContentContributionCache = item.minContentContributionCache.with(
-                            AbstractAxis.BLOCK, newMinContentContribution);
+                    item.minContentContributionCache =
+                            item.minContentContributionCache.with(AbstractAxis.BLOCK, newMinContentContribution);
                     item.maxContentContributionCache =
                             item.maxContentContributionCache.with(AbstractAxis.BLOCK, OptF32.NONE);
-                    item.minimumContributionCache =
-                            item.minimumContributionCache.with(AbstractAxis.BLOCK, OptF32.NONE);
+                    item.minimumContributionCache = item.minimumContributionCache.with(AbstractAxis.BLOCK, OptF32.NONE);
 
                     intrinsicRowContributionChanged |= hasChanged;
                 }
@@ -757,10 +741,8 @@ public final class Grid {
         // 8. Track Alignment
 
         // Align columns
-        float inlineSizeWithoutScrollbar =
-                F32.max(containerBorderBox.width() - paddingBorderSize.width(), 0.0f);
-        float inlineScrollbarGutterForAlignment =
-                F32.min(scrollbarGutter.x(), inlineSizeWithoutScrollbar);
+        float inlineSizeWithoutScrollbar = F32.max(containerBorderBox.width() - paddingBorderSize.width(), 0.0f);
+        float inlineScrollbarGutterForAlignment = F32.min(scrollbarGutter.x(), inlineSizeWithoutScrollbar);
         Alignment.alignTracks(
                 containerContentBox.get(AbstractAxis.INLINE),
                 new LineF32(
@@ -788,8 +770,7 @@ public final class Grid {
         // by the out-of-flow positioning pass (`compute_oof_layout`), which runs after this algorithm.
         OofCandidates oofCandidates = OofCandidates.none();
 
-        InBothAbsAxis<AlignItems> containerAlignmentStyles =
-                new InBothAbsAxis<>(justifyItems, alignItems);
+        InBothAbsAxis<AlignItems> containerAlignmentStyles = new InBothAbsAxis<>(justifyItems, alignItems);
 
         RectF32 paddingBoxInset = border.plus(new RectF32(
                 direction.isRtl() ? scrollbarGutter.x() : 0.0f,
@@ -798,8 +779,7 @@ public final class Grid {
                 scrollbarGutter.y()));
         ScrollableOverflowContainer overflowContainer = new ScrollableOverflowContainer(
                 isScrollContainer,
-                new SizeF32(
-                        containerBorderBox.width() - paddingBoxInset.horizontalAxisSum(), 0.0f),
+                new SizeF32(containerBorderBox.width() - paddingBoxInset.horizontalAxisSum(), 0.0f),
                 new PointBool(direction.isRtl(), false),
                 padding);
 
@@ -823,8 +803,7 @@ public final class Grid {
                     item.node,
                     index,
                     gridArea,
-                    new SizeF32(
-                            gridArea.right() - gridArea.left(), gridArea.bottom() - gridArea.top()),
+                    new SizeF32(gridArea.right() - gridArea.left(), gridArea.bottom() - gridArea.top()),
                     containerAlignmentStyles,
                     item.baselineShim,
                     direction,
@@ -873,13 +852,9 @@ public final class Grid {
             if (childStyle.position().isOutOfFlow()) {
                 Position position = childStyle.position();
                 Direction itemDirection = childStyle.direction();
-                AlignItems justifySelf = (childStyle.justifySelf() != null
-                                ? childStyle.justifySelf()
-                                : justifyItems)
+                AlignItems justifySelf = (childStyle.justifySelf() != null ? childStyle.justifySelf() : justifyItems)
                         .resolveSelfRelative(itemDirection, direction, true);
-                AlignItems alignSelf = (childStyle.alignSelf() != null
-                                ? childStyle.alignSelf()
-                                : alignItems)
+                AlignItems alignSelf = (childStyle.alignSelf() != null ? childStyle.alignSelf() : alignItems)
                         .resolveSelfRelative(itemDirection, direction, false);
 
                 // The static-position rectangle: the grid area determined by the grid-placement
@@ -901,17 +876,13 @@ public final class Grid {
                                 scrollbarGutter,
                                 containerBorderBox)
                         : new RectF32(
-                                border.left() + padding.left()
-                                        + (direction.isRtl() ? scrollbarGutter.x() : 0.0f),
+                                border.left() + padding.left() + (direction.isRtl() ? scrollbarGutter.x() : 0.0f),
                                 containerBorderBox.width()
                                         - border.right()
                                         - padding.right()
                                         - (direction.isRtl() ? 0.0f : scrollbarGutter.x()),
                                 border.top() + padding.top(),
-                                containerBorderBox.height()
-                                        - border.bottom()
-                                        - padding.bottom()
-                                        - scrollbarGutter.y());
+                                containerBorderBox.height() - border.bottom() - padding.bottom() - scrollbarGutter.y());
 
                 oofCandidates.push(new OofCandidate(
                         child,
@@ -919,13 +890,9 @@ public final class Grid {
                         position,
                         new Point<>(
                                 AxisStaticPosition.fromAlignment(
-                                        justifySelf,
-                                        new LineF32(area.left(), area.right()),
-                                        direction.isRtl()),
+                                        justifySelf, new LineF32(area.left(), area.right()), direction.isRtl()),
                                 AxisStaticPosition.fromAlignment(
-                                        alignSelf,
-                                        new LineF32(area.top(), area.bottom()),
-                                        false))));
+                                        alignSelf, new LineF32(area.top(), area.bottom()), false))));
 
                 order++;
             }
@@ -935,8 +902,8 @@ public final class Grid {
         PointF32 absolutePositionOffset = new PointF32(paddingBoxInset.left(), paddingBoxInset.top());
         // Store the detailed grid info before the out-of-flow positioning pass so that the pass can
         // resolve the grid areas of out-of-flow boxes whose containing block is this grid
-        Map<String, AreaLines> areas = nameResolver.populateDetailedLineResolvers(
-                detailedRowLineNames, detailedColumnLineNames);
+        Map<String, AreaLines> areas =
+                nameResolver.populateDetailedLineResolvers(detailedRowLineNames, detailedColumnLineNames);
         List<DetailedGridItemsInfo> detailedItems = new ArrayList<>(items.size());
         for (GridItem item : items) {
             detailedItems.add(DetailedGridItemsInfo.fromGridItem(item));
@@ -944,41 +911,35 @@ public final class Grid {
         tree.setDetailedGridInfo(
                 node,
                 new DetailedGridInfo(
-                        DetailedGridTracksInfo.fromGridTracksAndTrackCount(
-                                finalRowCounts, rows, detailedRowLineNames),
+                        DetailedGridTracksInfo.fromGridTracksAndTrackCount(finalRowCounts, rows, detailedRowLineNames),
                         DetailedGridTracksInfo.fromGridTracksAndTrackCount(
                                 finalColCounts, columns, detailedColumnLineNames),
                         detailedItems,
                         areas));
 
-        OofPositioningArea oofPositioningArea =
-                new OofPositioningArea(absolutePositionArea, absolutePositionOffset);
+        OofPositioningArea oofPositioningArea = new OofPositioningArea(absolutePositionArea, absolutePositionOffset);
 
         // If there are no in-flow items then return the container size and the overflow (no baseline)
         if (items.isEmpty()) {
             // (upstream cfg(feature = "content_size") block — kept unconditionally)
-            float clientWidth = F32.max(
-                    containerBorderBox.width() - border.horizontalAxisSum() - scrollbarGutter.x(),
-                    0.0f);
+            float clientWidth =
+                    F32.max(containerBorderBox.width() - border.horizontalAxisSum() - scrollbarGutter.x(), 0.0f);
             RectF32 overflowRect = isScrollContainer
                     ? itemOverflowRect.union(new RectF32(
                             direction.isRtl() ? F32.min(clientWidth - padding.left(), 0.0f) : 0.0f,
                             direction.isRtl() ? clientWidth : padding.right(),
                             0.0f,
                             padding.bottom()))
-                    : itemOverflowRect.union(new RectF32(
-                            0.0f, direction.isRtl() ? clientWidth : 0.0f, 0.0f, 0.0f));
+                    : itemOverflowRect.union(new RectF32(0.0f, direction.isRtl() ? clientWidth : 0.0f, 0.0f, 0.0f));
             return new LayoutOutput(
                     containerBorderBox,
-                    net.morphismmc.jaffy.compute.common.ScrollableOverflow
-                            .finalizeScrollableOverflow(
-                                    overflowRect,
-                                    containerBorderBox
-                                            .minus(border.sumAxes())
-                                            .minus(new SizeF32(
-                                                    scrollbarGutter.x(), scrollbarGutter.y())),
-                                    new PointBool(direction.isRtl(), false),
-                                    isScrollContainer),
+                    net.morphismmc.jaffy.compute.common.ScrollableOverflow.finalizeScrollableOverflow(
+                            overflowRect,
+                            containerBorderBox
+                                    .minus(border.sumAxes())
+                                    .minus(new SizeF32(scrollbarGutter.x(), scrollbarGutter.y())),
+                            new PointBool(direction.isRtl(), false),
+                            isScrollContainer),
                     Baselines.NONE,
                     net.morphismmc.jaffy.tree.layout.CollapsibleMarginSet.ZERO,
                     net.morphismmc.jaffy.tree.layout.CollapsibleMarginSet.ZERO,
@@ -1001,7 +962,8 @@ public final class Grid {
             }
 
             // Check if any items in *this row* participate in baseline alignment
-            // (items with an auto block-axis margin do not participate: https://www.w3.org/TR/css-align-3/#baseline-align-self)
+            // (items with an auto block-axis margin do not participate:
+            // https://www.w3.org/TR/css-align-3/#baseline-align-self)
             GridItem firstItem = null;
             for (GridItem item : items) {
                 if (item.rowIndexes.start() == firstRow) {
@@ -1019,23 +981,22 @@ public final class Grid {
                 }
             }
 
-            gridContainerBaseline = baselineItem.yPosition
-                    + OptF32.unwrapOr(baselineItem.baseline, baselineItem.height);
+            gridContainerBaseline =
+                    baselineItem.yPosition + OptF32.unwrapOr(baselineItem.baseline, baselineItem.height);
         }
 
         // A scroll container's own padding at the end of the content is part of its scrollable
         // overflow region, so it is included in the in-flow overflow rect. Boxes that are not
         // scroll containers do not extend their overflow region by their own padding.
-        float clientWidth = F32.max(
-                containerBorderBox.width() - border.horizontalAxisSum() - scrollbarGutter.x(), 0.0f);
+        float clientWidth =
+                F32.max(containerBorderBox.width() - border.horizontalAxisSum() - scrollbarGutter.x(), 0.0f);
         RectF32 overflowRect = isScrollContainer
                 ? itemOverflowRect.union(new RectF32(
                         direction.isRtl() ? F32.min(clientWidth - padding.left(), 0.0f) : 0.0f,
                         direction.isRtl() ? clientWidth : padding.right(),
                         0.0f,
                         padding.bottom()))
-                : itemOverflowRect.union(
-                        new RectF32(0.0f, direction.isRtl() ? clientWidth : 0.0f, 0.0f, 0.0f));
+                : itemOverflowRect.union(new RectF32(0.0f, direction.isRtl() ? clientWidth : 0.0f, 0.0f, 0.0f));
         net.morphismmc.jaffy.tree.layout.ScrollableOverflow scrollableOverflowRect =
                 net.morphismmc.jaffy.compute.common.ScrollableOverflow.finalizeScrollableOverflow(
                         overflowRect,
@@ -1069,8 +1030,7 @@ public final class Grid {
     }
 
     private static String debugSizeOptF32(SizeOptF32 size) {
-        return "Size { width: " + debugOptF32(size.width())
-                + ", height: " + debugOptF32(size.height()) + " }";
+        return "Size { width: " + debugOptF32(size.width()) + ", height: " + debugOptF32(size.height()) + " }";
     }
 
     /// Rust `{:?}` for `Option<f32>` — `Some(v)` / `None`
@@ -1100,24 +1060,16 @@ public final class Grid {
         // Convert grid-col-{start/end} into Option's of indexes into the columns vector
         // The Option is None if the style property is Auto and an unresolvable Span
         // (`Line<Option<usize>>` -> `LineOptI32`; `and_then` short-circuit on None)
-        LineOptI32 maybeColIndexes =
-                LineOriginZeroGridPlacementExt.resolveAbsolutelyPositionedGridTracks(
+        LineOptI32 maybeColIndexes = LineOriginZeroGridPlacementExt.resolveAbsolutelyPositionedGridTracks(
                         LineNonNamedGridPlacementExt.intoOriginZero(
-                                nameResolver.resolveColumnNames(childStyle.gridColumn()),
-                                finalColCounts.explicit()))
-                        .mapOptI32(line -> line == null
-                                ? OptI32.NONE
-                                : toIndex(line, finalColCounts));
+                                nameResolver.resolveColumnNames(childStyle.gridColumn()), finalColCounts.explicit()))
+                .mapOptI32(line -> line == null ? OptI32.NONE : toIndex(line, finalColCounts));
         // Convert grid-row-{start/end} into Option's of indexes into the row vector
         // The Option is None if the style property is Auto and an unresolvable Span
-        LineOptI32 maybeRowIndexes =
-                LineOriginZeroGridPlacementExt.resolveAbsolutelyPositionedGridTracks(
+        LineOptI32 maybeRowIndexes = LineOriginZeroGridPlacementExt.resolveAbsolutelyPositionedGridTracks(
                         LineNonNamedGridPlacementExt.intoOriginZero(
-                                nameResolver.resolveRowNames(childStyle.gridRow()),
-                                finalRowCounts.explicit()))
-                        .mapOptI32(line -> line == null
-                                ? OptI32.NONE
-                                : toIndex(line, finalRowCounts));
+                                nameResolver.resolveRowNames(childStyle.gridRow()), finalRowCounts.explicit()))
+                .mapOptI32(line -> line == null ? OptI32.NONE : toIndex(line, finalRowCounts));
 
         // In RTL the item's physical left edge derives from its logical end line and its
         // physical right edge from its logical start line.
@@ -1142,9 +1094,7 @@ public final class Grid {
         return new RectF32(
                 gridAreaLeft,
                 gridAreaRight,
-                maybeRowIndexes.start() != OptI32.NONE
-                        ? lineAsStartEdge(rows, maybeRowIndexes.start())
-                        : border.top(),
+                maybeRowIndexes.start() != OptI32.NONE ? lineAsStartEdge(rows, maybeRowIndexes.start()) : border.top(),
                 maybeRowIndexes.end() != OptI32.NONE
                         ? lineAsEndEdge(rows, maybeRowIndexes.end())
                         : containerBorderBox.height() - border.bottom() - scrollbarGutter.y());
@@ -1152,8 +1102,7 @@ public final class Grid {
 
     /// `maybe_grid_line.and_then(try_into_track_vec_index)` — `Option<usize>` ->
     /// `@Opt @Unsigned int` (`OptI32.NONE` encodes failure).
-    private static @Opt @Unsigned int toIndex(
-            OriginZeroLine line, TrackCounts counts) {
+    private static @Opt @Unsigned int toIndex(OriginZeroLine line, TrackCounts counts) {
         int idx = line.tryIntoTrackVecIndex(counts);
         return idx >= 0 ? idx : OptI32.NONE;
     }

@@ -6,12 +6,14 @@ package net.morphismmc.jaffy.style;
 
 /// Sets the layout used for the children of this node
 ///
-/// The default values depends on on which feature flags are enabled. The order of precedence is: Flex, Grid, Block, None.
+/// The default values depends on on which feature flags are enabled. The order of precedence is: Flex, Grid, Block,
+/// None.
 public enum Display {
 
     /// The children will follow the block layout algorithm (`block_layout`)
     BLOCK,
-    /// The children will follow the block layout algorithm and establish a new block formatting context (`block_layout`)
+    /// The children will follow the block layout algorithm and establish a new block formatting context
+    /// (`block_layout`)
     FLOW_ROOT,
     /// The children will follow the flexbox layout algorithm (`flexbox`)
     FLEX,

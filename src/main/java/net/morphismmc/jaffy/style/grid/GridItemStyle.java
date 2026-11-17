@@ -5,10 +5,11 @@ package net.morphismmc.jaffy.style.grid;
 
 import net.morphismmc.jaffy.geometry.AbsoluteAxis;
 import net.morphismmc.jaffy.geometry.Line;
-import org.jspecify.annotations.Nullable;
 import net.morphismmc.jaffy.style.CoreStyle;
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
+
+import org.jspecify.annotations.Nullable;
 
 /// The set of styles required for a CSS Grid item (child of a CSS Grid container)
 public interface GridItemStyle extends CoreStyle {

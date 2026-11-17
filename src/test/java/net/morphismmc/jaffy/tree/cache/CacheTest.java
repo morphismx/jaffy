@@ -7,9 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import org.junit.jupiter.api.Test;
 
 import net.morphismmc.jaffy.geometry.LineBool;
 import net.morphismmc.jaffy.geometry.Size;
@@ -17,13 +14,15 @@ import net.morphismmc.jaffy.geometry.SizeBool;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
 import net.morphismmc.jaffy.style.available_space.AvailableSpace;
-import net.morphismmc.just.math.OptF32;
 import net.morphismmc.jaffy.tree.layout.CollapsibleMarginSet;
 import net.morphismmc.jaffy.tree.layout.LayoutInput;
 import net.morphismmc.jaffy.tree.layout.LayoutOutput;
 import net.morphismmc.jaffy.tree.layout.RequestedAxis;
 import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
+import net.morphismmc.just.math.OptF32;
+
+import org.junit.jupiter.api.Test;
 
 class CacheTest {
 
@@ -132,16 +131,27 @@ class CacheTest {
 
         LayoutOutput base = output(1.0f);
         LayoutOutput collapseThrough = new LayoutOutput(
-                base.size(), base.scrollableOverflowRect(), base.baselines(),
-                base.topMargin(), base.bottomMargin(), true, base.oofCandidates(), base.oofPositioningArea());
+                base.size(),
+                base.scrollableOverflowRect(),
+                base.baselines(),
+                base.topMargin(),
+                base.bottomMargin(),
+                true,
+                base.oofCandidates(),
+                base.oofPositioningArea());
         cache.store(input(1.0f), collapseThrough);
         assertNull(cache.get(input(1.0f)));
 
         LayoutOutput out2 = output(2.0f);
         LayoutOutput carried = new LayoutOutput(
-                out2.size(), out2.scrollableOverflowRect(), out2.baselines(),
-                CollapsibleMarginSet.fromMargin(10.0f), out2.bottomMargin(), false,
-                out2.oofCandidates(), out2.oofPositioningArea());
+                out2.size(),
+                out2.scrollableOverflowRect(),
+                out2.baselines(),
+                CollapsibleMarginSet.fromMargin(10.0f),
+                out2.bottomMargin(),
+                false,
+                out2.oofCandidates(),
+                out2.oofPositioningArea());
         cache.store(input(2.0f), carried);
         assertNull(cache.get(input(2.0f)));
     }

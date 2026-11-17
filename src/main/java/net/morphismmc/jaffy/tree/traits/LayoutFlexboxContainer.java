@@ -7,7 +7,6 @@ package net.morphismmc.jaffy.tree.traits;
 
 import net.morphismmc.jaffy.style.Style;
 
-
 /// Extends {@link LayoutPartialTree} with getters for the styles required
 /// for Flexbox layout.
 public interface LayoutFlexboxContainer extends LayoutPartialTree {

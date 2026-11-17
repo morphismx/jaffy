@@ -3,8 +3,8 @@
 // `Range<i16>` -> nested `TrackRange` record (JDK has no int-range type).
 package net.morphismmc.jaffy.compute.grid.types;
 
-import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
+import net.morphismmc.jaffy.geometry.Line;
 
 /// Stores the number of tracks in a given dimension.
 /// Stores separately the number of tracks in the implicit and explicit grids

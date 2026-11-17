@@ -7,9 +7,9 @@ package net.morphismmc.jaffy.style.available_space;
 
 import java.util.function.Supplier;
 
-import net.morphismmc.just.math.F32;
 import net.morphismmc.just.function.FloatSupplier;
 import net.morphismmc.just.function.FloatUnaryOperator;
+import net.morphismmc.just.math.F32;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
 
@@ -83,7 +83,8 @@ public sealed interface AvailableSpace {
     /// `compute_free_space` given the passed used_space
     default float computeFreeSpace(float usedSpace) {
         return switch (this) {
-            case MaxContent m -> java.lang.Float.POSITIVE_INFINITY; // f32::INFINITY; java.lang.Float qualified — style.Float shadows
+            case MaxContent m ->
+                java.lang.Float.POSITIVE_INFINITY; // f32::INFINITY; java.lang.Float qualified — style.Float shadows
             case MinContent m -> 0.0f;
             case Definite d -> d.value - usedSpace;
         };

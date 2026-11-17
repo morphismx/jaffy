@@ -3,6 +3,7 @@
 package net.morphismmc.jaffy.style.grid;
 
 import java.util.List;
+
 import net.morphismmc.jaffy.geometry.MinMax;
 
 /// The `grid-auto-rows`/`grid-auto-columns` track list.

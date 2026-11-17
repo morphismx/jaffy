@@ -22,9 +22,8 @@ import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.geometry.SizeBool;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
-import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.style.Style;
-import org.jspecify.annotations.Nullable;
+import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.tree.layout.Layout;
 import net.morphismmc.jaffy.tree.layout.LayoutInput;
 import net.morphismmc.jaffy.tree.layout.LayoutOutput;
@@ -32,6 +31,7 @@ import net.morphismmc.jaffy.tree.layout.RequestedAxis;
 import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
 
+import org.jspecify.annotations.Nullable;
 
 /// Any type that implements {@link LayoutPartialTree} can be laid out using
 /// Taffy's algorithms.

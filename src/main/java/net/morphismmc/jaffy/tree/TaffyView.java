@@ -11,7 +11,6 @@
 // style types -> `Style`/`DetailedGridInfo` (GAP-017).
 package net.morphismmc.jaffy.tree;
 
-import it.unimi.dsi.fastutil.longs.LongIterator;
 import net.morphismmc.jaffy.Features;
 import net.morphismmc.jaffy.compute.Compute;
 import net.morphismmc.jaffy.compute.Oof;
@@ -35,8 +34,10 @@ import net.morphismmc.jaffy.tree.traits.LayoutGridContainer;
 import net.morphismmc.jaffy.tree.traits.LayoutPartialTree;
 import net.morphismmc.jaffy.tree.traits.RoundTree;
 import net.morphismmc.jaffy.util.DebugLogger;
+
 import org.jspecify.annotations.Nullable;
 
+import it.unimi.dsi.fastutil.longs.LongIterator;
 
 /// View over the Taffy tree that holds the tree itself along with a
 /// reference to the context and implements LayoutTree. This allows the
@@ -66,8 +67,7 @@ final class TaffyView<NodeContext>
     /// Unified implementation that both
     /// `LayoutPartialTree::compute_child_layout` and
     /// `LayoutBlockContainer::compute_block_child_layout` delegate to.
-    private LayoutOutput computeChildLayout(
-            long nodeId, LayoutInput inputs, @Nullable BlockContext blockCtx) {
+    private LayoutOutput computeChildLayout(long nodeId, LayoutInput inputs, @Nullable BlockContext blockCtx) {
         // If RunMode is PerformHiddenLayout then this indicates that an
         // ancestor node is `Display::None` and thus that we should lay out
         // this node using hidden layout regardless of it's own display style.
@@ -107,8 +107,7 @@ final class TaffyView<NodeContext>
                 output = Compute.computeHiddenLayout(tree, node);
             } else if (!hasChildren) {
                 NodeData data = tree.taffy.nodes.index(node);
-                @Nullable NodeContext nodeContext =
-                        data.hasContext ? tree.taffy.nodeContextData.getMut(node) : null;
+                @Nullable NodeContext nodeContext = data.hasContext ? tree.taffy.nodeContextData.getMut(node) : null;
                 output = tree.measureFunction.measure(in, node, nodeContext, data.style);
             } else {
                 output = switch (displayMode) {
@@ -228,8 +227,7 @@ final class TaffyView<NodeContext>
     }
 
     @Override
-    public LayoutOutput computeBlockChildLayout(
-            long nodeId, LayoutInput inputs, @Nullable BlockContext blockCtx) {
+    public LayoutOutput computeBlockChildLayout(long nodeId, LayoutInput inputs, @Nullable BlockContext blockCtx) {
         return computeChildLayout(nodeId, inputs, blockCtx);
     }
 

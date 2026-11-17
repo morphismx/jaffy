@@ -6,12 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
 import net.morphismmc.jaffy.style.alignment.AlignContent;
 import net.morphismmc.jaffy.style.alignment.AlignContentKeyword;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.alignment.AlignItemsKeyword;
 import net.morphismmc.jaffy.style.alignment.AlignmentSafety;
+
+import org.junit.jupiter.api.Test;
 
 class AlignmentTest {
 
@@ -76,7 +77,9 @@ class AlignmentTest {
         assertEquals(AlignItems.END, AlignItems.SELF_START.resolveSelfRelative(Direction.RTL, Direction.LTR, true));
         assertEquals(AlignItems.START, AlignItems.SELF_END.resolveSelfRelative(Direction.RTL, Direction.LTR, true));
         // Safety modifier is preserved
-        assertEquals(AlignItems.SAFE_END, AlignItems.SAFE_SELF_START.resolveSelfRelative(Direction.LTR, Direction.RTL, true));
+        assertEquals(
+                AlignItems.SAFE_END,
+                AlignItems.SAFE_SELF_START.resolveSelfRelative(Direction.LTR, Direction.RTL, true));
         // Other keywords are unchanged
         assertEquals(AlignItems.START, AlignItems.START.resolveSelfRelative(Direction.LTR, Direction.RTL, true));
         assertEquals(AlignItems.FLEX_END, AlignItems.FLEX_END.resolveSelfRelative(Direction.LTR, Direction.RTL, true));

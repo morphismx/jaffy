@@ -7,7 +7,6 @@ import net.morphismmc.jaffy.geometry.FloatInsets;
 import net.morphismmc.jaffy.style.float_.FloatDirection;
 import net.morphismmc.just.math.F32;
 
-
 /// Helper type for placing a single floated box
 ///
 /// Given a pinned starting y position, this type helps determine if there is any x position
@@ -41,7 +40,8 @@ final class FloatFitter {
     /// The inset from the edge of the BFC (on the side the box is floated towards) that the
     /// box would be placed at given the currently accounted for insets
     float placedInset(FloatDirection direction) {
-        return F32.max(FloatInsetsFloatDirectionExt.get(floatInsets, direction),
+        return F32.max(
+                FloatInsetsFloatDirectionExt.get(floatInsets, direction),
                 FloatInsetsFloatDirectionExt.get(cbInsets, direction));
     }
 

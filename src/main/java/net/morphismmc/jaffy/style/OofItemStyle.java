@@ -5,10 +5,11 @@
 package net.morphismmc.jaffy.style;
 
 import net.morphismmc.jaffy.geometry.Line;
-import org.jspecify.annotations.Nullable;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.grid.GridPlacement;
 import net.morphismmc.jaffy.style.grid.LineGridPlacementExt;
+
+import org.jspecify.annotations.Nullable;
 
 /// The styles of an out-of-flow (`position: absolute` / `position: fixed`) box that are read by
 /// its containing block's out-of-flow positioning pass

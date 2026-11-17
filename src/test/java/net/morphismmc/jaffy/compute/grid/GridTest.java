@@ -4,28 +4,21 @@
 package net.morphismmc.jaffy.compute.grid;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import java.util.Map;
 
-import it.unimi.dsi.fastutil.longs.LongIterator;
-import it.unimi.dsi.fastutil.longs.LongIterators;
-import org.junit.jupiter.api.Test;
-
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts.TrackRange;
-import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
 import net.morphismmc.jaffy.compute.grid.types.grid_item.GridItem;
 import net.morphismmc.jaffy.compute.grid.types.grid_track.GridTrack;
-import net.morphismmc.jaffy.compute.grid.types.named.AreaLines;
 import net.morphismmc.jaffy.compute.grid.types.named.GridLineNames;
 import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.jaffy.geometry.LineBool;
 import net.morphismmc.jaffy.geometry.LineF32;
-import net.morphismmc.jaffy.geometry.MinMax;
 import net.morphismmc.jaffy.geometry.RectF32;
 import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.geometry.SizeBool;
@@ -37,14 +30,11 @@ import net.morphismmc.jaffy.style.StyleHelpers.SizeAvailableSpaceExt;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.dimension.Dimension;
 import net.morphismmc.jaffy.style.dimension.LengthPercentage;
-import net.morphismmc.jaffy.style.grid.GenericGridPlacement;
 import net.morphismmc.jaffy.style.grid.GridAreaAxis;
 import net.morphismmc.jaffy.style.grid.GridPlacement;
-import net.morphismmc.jaffy.style.grid.GridTemplateRepetition;
 import net.morphismmc.jaffy.style.grid.GridTemplateComponent;
-import net.morphismmc.jaffy.style.grid.GenericGridTemplateComponent;
-import net.morphismmc.jaffy.style.grid.MinTrackSizingFunction;
 import net.morphismmc.jaffy.style.grid.MaxTrackSizingFunction;
+import net.morphismmc.jaffy.style.grid.MinTrackSizingFunction;
 import net.morphismmc.jaffy.style.grid.TrackSizingFunction;
 import net.morphismmc.jaffy.tree.layout.Layout;
 import net.morphismmc.jaffy.tree.layout.LayoutInput;
@@ -54,6 +44,11 @@ import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
 import net.morphismmc.jaffy.tree.traits.LayoutGridContainer;
 import net.morphismmc.just.math.OptF32;
+
+import org.junit.jupiter.api.Test;
+
+import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.longs.LongIterators;
 
 class GridTest {
 
@@ -116,8 +111,8 @@ class GridTest {
                 gutter(50), // line 3
                 track(50, 10), // track 4
                 gutter(60));
-        DetailedGridTracksInfo info = DetailedGridTracksInfo.fromGridTracksAndTrackCount(
-                counts(0, 5, 0), tracks, new GridLineNames());
+        DetailedGridTracksInfo info =
+                DetailedGridTracksInfo.fromGridTracksAndTrackCount(counts(0, 5, 0), tracks, new GridLineNames());
 
         assertEquals(5, info.positions.size());
         assertEquals(new LineF32(0, 20), info.positions.get(0));
@@ -141,8 +136,8 @@ class GridTest {
         assertEquals(7.5f, info.emptyAxisLine, 1e-6);
 
         // A completely empty track vector has no line either
-        DetailedGridTracksInfo empty = DetailedGridTracksInfo.fromGridTracksAndTrackCount(
-                counts(0, 0, 0), List.of(), new GridLineNames());
+        DetailedGridTracksInfo empty =
+                DetailedGridTracksInfo.fromGridTracksAndTrackCount(counts(0, 0, 0), List.of(), new GridLineNames());
         assertTrue(OptF32.isNone(empty.emptyAxisLine));
     }
 
@@ -156,8 +151,8 @@ class GridTest {
                 gutter(10),
                 collapsedTrack(10),
                 gutter(10));
-        DetailedGridTracksInfo info = DetailedGridTracksInfo.fromGridTracksAndTrackCount(
-                counts(0, 3, 0), tracks, new GridLineNames());
+        DetailedGridTracksInfo info =
+                DetailedGridTracksInfo.fromGridTracksAndTrackCount(counts(0, 3, 0), tracks, new GridLineNames());
         assertEquals(List.of(new TrackRange(0, 1), new TrackRange(2, 3)), info.collapsedTracks);
     }
 
@@ -171,9 +166,12 @@ class GridTest {
         DetailedGridTracksInfo info = DetailedGridTracksInfo.fromGridTracksAndTrackCount(
                 counts(2, 1, 0),
                 List.of(
-                        gutter(0), track(0, 5), // negative implicit track
-                        gutter(5), track(5, 5), // negative implicit track
-                        gutter(10), track(10, 20), // explicit track
+                        gutter(0),
+                        track(0, 5), // negative implicit track
+                        gutter(5),
+                        track(5, 5), // negative implicit track
+                        gutter(10),
+                        track(10, 20), // explicit track
                         gutter(30)),
                 names);
         // line 0/1 are implicit -> no names; line 2 -> explicit line 0
@@ -190,9 +188,12 @@ class GridTest {
         DetailedGridTracksInfo info = DetailedGridTracksInfo.fromGridTracksAndTrackCount(
                 counts(1, 1, 1),
                 List.of(
-                        gutter(0), track(0, 10), // negative implicit
-                        gutter(10), track(10, 20), // explicit
-                        gutter(30), track(30, 5), // positive implicit
+                        gutter(0),
+                        track(0, 10), // negative implicit
+                        gutter(10),
+                        track(10, 20), // explicit
+                        gutter(30),
+                        track(30, 5), // positive implicit
                         gutter(35)),
                 names);
         List<List<String>> iterated = new java.util.ArrayList<>();
@@ -220,10 +221,7 @@ class GridTest {
     void trackListSerializesSizesAndNames() {
         GridLineNames names = names("a b", "", "z");
         DetailedGridTracksInfo info = DetailedGridTracksInfo.fromGridTracksAndTrackCount(
-                counts(0, 2, 0),
-                List.of(
-                        gutter(0), track(0, 20), gutter(20), track(20, 30), gutter(50)),
-                names);
+                counts(0, 2, 0), List.of(gutter(0), track(0, 20), gutter(20), track(20, 30), gutter(50)), names);
         // line 0 -> [a b], track 20px; line 1 -> empty group; track 30px; line 2 -> [z]
         assertEquals("[a b] 20px 30px [z]", info.toTrackListString(1.0f));
         // zoom divides the sizes
@@ -251,7 +249,11 @@ class GridTest {
         // grid-column: 1 / 3 spans both tracks (LTR, not reversed)
         LineF32 line = info.resolveAbsoluteGridAxis(
                 new Line<>(GridPlacement.fromLineIndex(1), GridPlacement.fromLineIndex(3)),
-                Map.of(), GridAreaAxis.COLUMN, 5f, 60f, false);
+                Map.of(),
+                GridAreaAxis.COLUMN,
+                5f,
+                60f,
+                false);
         assertEquals(0f, line.start(), 1e-6);
         assertEquals(50f, line.end(), 1e-6);
     }
@@ -262,7 +264,11 @@ class GridTest {
         // Line 4 exceeds the grid (max line 2): treated as auto both ends
         LineF32 line = info.resolveAbsoluteGridAxis(
                 new Line<>(GridPlacement.fromLineIndex(4), GridPlacement.fromLineIndex(5)),
-                Map.of(), GridAreaAxis.COLUMN, 5f, 60f, false);
+                Map.of(),
+                GridAreaAxis.COLUMN,
+                5f,
+                60f,
+                false);
         assertEquals(5f, line.start(), 1e-6);
         assertEquals(60f, line.end(), 1e-6);
     }
@@ -271,8 +277,7 @@ class GridTest {
     void autoPlacementResolvesToPaddingEdges() {
         DetailedGridTracksInfo info = twoTrackInfo();
         LineF32 line = info.resolveAbsoluteGridAxis(
-                new Line<>(GridPlacement.AUTO, GridPlacement.AUTO),
-                Map.of(), GridAreaAxis.COLUMN, 5f, 60f, false);
+                new Line<>(GridPlacement.AUTO, GridPlacement.AUTO), Map.of(), GridAreaAxis.COLUMN, 5f, 60f, false);
         assertEquals(5f, line.start(), 1e-6);
         assertEquals(60f, line.end(), 1e-6);
     }
@@ -284,7 +289,11 @@ class GridTest {
         // physical end of the track after it; edges are normalized start<=end.
         LineF32 line = info.resolveAbsoluteGridAxis(
                 new Line<>(GridPlacement.fromLineIndex(1), GridPlacement.fromLineIndex(3)),
-                Map.of(), GridAreaAxis.COLUMN, 5f, 60f, true);
+                Map.of(),
+                GridAreaAxis.COLUMN,
+                5f,
+                60f,
+                true);
         // start edge -> absoluteTrackEdge(0, is_start=true, is_reversed=true):
         //   isStart != isReversed -> false -> track.end = positions[0].end = 20
         // end edge -> line=1 -> absoluteTrackEdge(1,false,true): isStart != isReversed
@@ -297,21 +306,20 @@ class GridTest {
     @Test
     void collapsedRunAnchorsZeroSizedArea() {
         // One collapsed run covering positions 0..2 plus one real track
-        List<GridTrack> tracks = List.of(
-                gutter(0),
-                collapsedTrack(10),
-                collapsedTrack(10),
-                gutter(10),
-                track(10, 40),
-                gutter(50));
-        DetailedGridTracksInfo info = DetailedGridTracksInfo.fromGridTracksAndTrackCount(
-                counts(0, 3, 0), tracks, new GridLineNames());
+        List<GridTrack> tracks =
+                List.of(gutter(0), collapsedTrack(10), collapsedTrack(10), gutter(10), track(10, 40), gutter(50));
+        DetailedGridTracksInfo info =
+                DetailedGridTracksInfo.fromGridTracksAndTrackCount(counts(0, 3, 0), tracks, new GridLineNames());
         // positions = [(10,10), (10,10), (10,50)], collapsed [0..2)
         // Line 1 (inside collapsed run) as start edge -> adjacent = range.end=2 ->
         // positions[2]; is_start && !reversed -> track.start = 10
         LineF32 line = info.resolveAbsoluteGridAxis(
                 new Line<>(GridPlacement.fromLineIndex(2), GridPlacement.fromLineIndex(3)),
-                Map.of(), GridAreaAxis.COLUMN, 0f, 50f, false);
+                Map.of(),
+                GridAreaAxis.COLUMN,
+                0f,
+                50f,
+                false);
         // start: line 1 -> idx 2 -> positions.get(2)? idx=2 < len=3 ->
         //   absoluteTrackEdge(2, true, false): range 0..2 doesn't contain 2 ->
         //   positions[2], isStart -> start = 10
@@ -328,12 +336,9 @@ class GridTest {
     void itemGridAreaComputesBoundingRect() {
         DetailedGridTracksInfo columns = twoTrackInfo();
         DetailedGridTracksInfo rows = DetailedGridTracksInfo.fromGridTracksAndTrackCount(
-                counts(0, 1, 0),
-                List.of(gutter(5), track(5, 20), gutter(25)),
-                new GridLineNames());
+                counts(0, 1, 0), List.of(gutter(5), track(5, 20), gutter(25)), new GridLineNames());
         DetailedGridItemsInfo item = new DetailedGridItemsInfo(1, 2, 1, 3);
-        DetailedGridInfo info =
-                new DetailedGridInfo(rows, columns, List.of(item), Map.of());
+        DetailedGridInfo info = new DetailedGridInfo(rows, columns, List.of(item), Map.of());
 
         DetailedGridInfo.ItemGridArea area = info.itemGridArea(0);
         assertNotNull(area);
@@ -351,9 +356,7 @@ class GridTest {
     void resolveAbsoluteGridAreaDispatchesBothAxes() {
         DetailedGridTracksInfo columns = twoTrackInfo();
         DetailedGridTracksInfo rows = DetailedGridTracksInfo.fromGridTracksAndTrackCount(
-                counts(0, 1, 0),
-                List.of(gutter(5), track(5, 20), gutter(25)),
-                new GridLineNames());
+                counts(0, 1, 0), List.of(gutter(5), track(5, 20), gutter(25)), new GridLineNames());
         DetailedGridInfo info = infoWith(rows, columns);
 
         RectF32 area = info.resolveAbsoluteGridArea(
@@ -372,8 +375,7 @@ class GridTest {
 
     @Test
     void fromGridItemConvertsTrackIndexesToOneIndexedLines() {
-        GridItem item = GridItem.newWithStyleAndOrder(
-                3L, Style.DEFAULT, AlignItems.NORMAL, AlignItems.NORMAL, 0);
+        GridItem item = GridItem.newWithStyleAndOrder(3L, Style.DEFAULT, AlignItems.NORMAL, AlignItems.NORMAL, 0);
         item.rowIndexes = new Line<>(0, 2);
         item.columnIndexes = new Line<>(2, 6);
         DetailedGridItemsInfo info = DetailedGridItemsInfo.fromGridItem(item);
@@ -465,8 +467,8 @@ class GridTest {
 
     @Test
     void computeGridLayoutEmptyGridReturnsContainerSize() {
-        StubTree tree = new StubTree(sizeStyle(100, 80), new long[] {}, Style.DEFAULT,
-                LayoutOutput.fromOuterSize(new SizeF32(10, 20)));
+        StubTree tree = new StubTree(
+                sizeStyle(100, 80), new long[] {}, Style.DEFAULT, LayoutOutput.fromOuterSize(new SizeF32(10, 20)));
         LayoutOutput output = Grid.computeGridLayout(tree, 0L, performLayoutInput());
         assertEquals(new SizeF32(100, 80), output.size());
         // No items -> no baseline
@@ -480,8 +482,8 @@ class GridTest {
     @Test
     void computeGridLayoutSizesImplicitGridFromChild() {
         // One default-styled child; implicit 1x1 grid; container indefinite.
-        StubTree tree = new StubTree(Style.DEFAULT, new long[] {1L}, Style.DEFAULT,
-                LayoutOutput.fromOuterSize(new SizeF32(10, 20)));
+        StubTree tree = new StubTree(
+                Style.DEFAULT, new long[] {1L}, Style.DEFAULT, LayoutOutput.fromOuterSize(new SizeF32(10, 20)));
         LayoutOutput output = Grid.computeGridLayout(tree, 0L, performLayoutInput());
         assertEquals(new SizeF32(10, 20), output.size());
         assertNotNull(tree.detailedInfo);
@@ -495,10 +497,10 @@ class GridTest {
     void computeGridLayoutHonoursComputeSizeHorizontalShortCircuit() {
         // Explicit fixed column template: column sizing alone determines the width;
         // the horizontal short-circuit returns before row sizing with height 0.
-        Style container = Style.DEFAULT.withGridTemplateColumns(List.of(
-                GridTemplateComponent.single(TrackSizingFunction.fromLength(30))));
-        StubTree tree = new StubTree(container, new long[] {1L}, Style.DEFAULT,
-                LayoutOutput.fromOuterSize(new SizeF32(10, 20)));
+        Style container = Style.DEFAULT.withGridTemplateColumns(
+                List.of(GridTemplateComponent.single(TrackSizingFunction.fromLength(30))));
+        StubTree tree = new StubTree(
+                container, new long[] {1L}, Style.DEFAULT, LayoutOutput.fromOuterSize(new SizeF32(10, 20)));
         LayoutOutput output = Grid.computeGridLayout(
                 tree,
                 0L,

@@ -10,10 +10,7 @@
 // writes rebuild the record.
 package net.morphismmc.jaffy.compute;
 
-import it.unimi.dsi.fastutil.longs.LongArrayList;
 import net.morphismmc.jaffy.Features;
-import net.morphismmc.jaffy.compute.block.BlockContext;
-import net.morphismmc.jaffy.compute.common.ScrollableOverflow;
 import net.morphismmc.jaffy.compute.Oof.OofBoxLayout;
 import net.morphismmc.jaffy.geometry.LineBool;
 import net.morphismmc.jaffy.geometry.LineF32;
@@ -26,7 +23,6 @@ import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.geometry.SizeBool;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
-import net.morphismmc.just.fmt.RustFmt;
 import net.morphismmc.jaffy.style.BoxSizing;
 import net.morphismmc.jaffy.style.ContainingBlockClaims;
 import net.morphismmc.jaffy.style.Direction;
@@ -57,11 +53,14 @@ import net.morphismmc.jaffy.util.MaybeResolve.RectLengthPercentageAutoExt;
 import net.morphismmc.jaffy.util.MaybeResolve.RectLengthPercentageExt;
 import net.morphismmc.jaffy.util.MaybeResolve.SizeDimensionExt;
 import net.morphismmc.jaffy.util.MaybeResolve.SizeLengthPercentageAutoExt;
+import net.morphismmc.jaffy.util.Sys;
+import net.morphismmc.just.fmt.RustFmt;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
-import net.morphismmc.jaffy.util.Sys;
+
 import org.jspecify.annotations.Nullable;
 
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 
 /// Low-level access to the layout algorithms themselves.
 public final class Compute {
@@ -98,10 +97,9 @@ public final class Compute {
         Direction direction = style.direction();
 
         SizeOptF32 icbSize = SizeAvailableSpaceExt.intoOptions(availableSpace);
-        @Nullable SizeF32 oofRootArea =
-                position.isOutOfFlow()
-                                && OptF32.isSome(icbSize.width())
-                                && OptF32.isSome(icbSize.height())
+        @Nullable
+        SizeF32 oofRootArea =
+                position.isOutOfFlow() && OptF32.isSome(icbSize.width()) && OptF32.isSome(icbSize.height())
                         ? new SizeF32(icbSize.width(), icbSize.height())
                         : null;
 
@@ -163,8 +161,8 @@ public final class Compute {
                             layout.scrollbarSize().width(),
                             0.0f,
                             layout.scrollbarSize().height()));
-            SizeF32 rootPaddingBoxSize = layout.size()
-                    .minus(new SizeF32(areaInset.horizontalAxisSum(), areaInset.verticalAxisSum()));
+            SizeF32 rootPaddingBoxSize =
+                    layout.size().minus(new SizeF32(areaInset.horizontalAxisSum(), areaInset.verticalAxisSum()));
             float areaWidth;
             float areaX;
             if (OptF32.isSome(icbSize.width())) {
@@ -177,7 +175,8 @@ public final class Compute {
             float areaHeight;
             float areaY;
             if (OptF32.isSome(icbSize.height())) {
-                areaHeight = Sys.f32Max(icbSize.height() - layout.scrollbarSize().height(), 0.0f);
+                areaHeight =
+                        Sys.f32Max(icbSize.height() - layout.scrollbarSize().height(), 0.0f);
                 areaY = -layout.location().y();
             } else {
                 areaHeight = rootPaddingBoxSize.height();
@@ -236,24 +235,19 @@ public final class Compute {
             if (style.isBlock()) {
                 // Pull these out earlier to avoid borrowing issues
                 @Opt float aspectRatio = style.aspectRatio();
-                RectF32 padding =
-                        RectLengthPercentageExt.resolveOrZeroO(style.padding(), parentSize.width(), calc);
-                RectF32 border =
-                        RectLengthPercentageExt.resolveOrZeroO(style.border(), parentSize.width(), calc);
+                RectF32 padding = RectLengthPercentageExt.resolveOrZeroO(style.padding(), parentSize.width(), calc);
+                RectF32 border = RectLengthPercentageExt.resolveOrZeroO(style.border(), parentSize.width(), calc);
                 SizeF32 paddingBorderSize = padding.plus(border).sumAxes();
                 SizeF32 boxSizingAdjustment =
                         style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSize : SizeF32.ZERO;
 
-                SizeOptF32 minSize = SizeLengthPercentageAutoExt.maybeResolveO(
-                                style.minSize(), parentSize, calc)
+                SizeOptF32 minSize = SizeLengthPercentageAutoExt.maybeResolveO(style.minSize(), parentSize, calc)
                         .maybeApplyAspectRatio(aspectRatio)
                         .maybeAddF(boxSizingAdjustment);
-                SizeOptF32 maxSize = SizeLengthPercentageAutoExt.maybeResolveO(
-                                style.maxSize(), parentSize, calc)
+                SizeOptF32 maxSize = SizeLengthPercentageAutoExt.maybeResolveO(style.maxSize(), parentSize, calc)
                         .maybeApplyAspectRatio(aspectRatio)
                         .maybeAddF(boxSizingAdjustment);
-                SizeOptF32 clampedStyleSize = SizeDimensionExt.maybeResolveO(
-                                style.size(), parentSize, calc)
+                SizeOptF32 clampedStyleSize = SizeDimensionExt.maybeResolveO(style.size(), parentSize, calc)
                         .maybeApplyAspectRatio(aspectRatio)
                         .maybeAddF(boxSizingAdjustment)
                         .maybeClampO(minSize, maxSize);
@@ -262,9 +256,7 @@ public final class Compute {
                 // then this determines the size in that axis
                 SizeOptF32 minMaxDefiniteSize = minSize.zipMap(
                         maxSize,
-                        (min, max) -> OptF32.isSome(min) && OptF32.isSome(max) && max <= min
-                                ? min
-                                : OptF32.NONE);
+                        (min, max) -> OptF32.isSome(min) && OptF32.isSome(max) && max <= min ? min : OptF32.NONE);
 
                 // Block nodes automatically stretch fit their width to fit
                 // available space if available space is definite
@@ -416,8 +408,7 @@ public final class Compute {
 
     /// Recursive function to apply rounding to all descendants
     /// (`round_layout_inner`).
-    private static void roundLayoutInner(
-            RoundTree tree, long nodeId, float cumulativeX, float cumulativeY) {
+    private static void roundLayoutInner(RoundTree tree, long nodeId, float cumulativeX, float cumulativeY) {
         Layout unrounded = tree.getUnroundedLayout(nodeId);
 
         float parentX = cumulativeX;
@@ -427,9 +418,7 @@ public final class Compute {
 
         Layout layout = new Layout(
                 unrounded.order(),
-                new PointF32(
-                        Sys.round(cx) - Sys.round(parentX),
-                        Sys.round(cy) - Sys.round(parentY)),
+                new PointF32(Sys.round(cx) - Sys.round(parentX), Sys.round(cy) - Sys.round(parentY)),
                 new SizeF32(
                         Sys.round(cx + unrounded.size().width()) - Sys.round(cx),
                         Sys.round(cy + unrounded.size().height()) - Sys.round(cy)),
@@ -440,17 +429,25 @@ public final class Compute {
                 new RectF32(
                         Sys.round(cx + unrounded.border().left()) - Sys.round(cx),
                         Sys.round(cx + unrounded.size().width())
-                                - Sys.round(cx + unrounded.size().width() - unrounded.border().right()),
+                                - Sys.round(cx
+                                        + unrounded.size().width()
+                                        - unrounded.border().right()),
                         Sys.round(cy + unrounded.border().top()) - Sys.round(cy),
                         Sys.round(cy + unrounded.size().height())
-                                - Sys.round(cy + unrounded.size().height() - unrounded.border().bottom())),
+                                - Sys.round(cy
+                                        + unrounded.size().height()
+                                        - unrounded.border().bottom())),
                 new RectF32(
                         Sys.round(cx + unrounded.padding().left()) - Sys.round(cx),
                         Sys.round(cx + unrounded.size().width())
-                                - Sys.round(cx + unrounded.size().width() - unrounded.padding().right()),
+                                - Sys.round(cx
+                                        + unrounded.size().width()
+                                        - unrounded.padding().right()),
                         Sys.round(cy + unrounded.padding().top()) - Sys.round(cy),
                         Sys.round(cy + unrounded.size().height())
-                                - Sys.round(cy + unrounded.size().height() - unrounded.padding().bottom())),
+                                - Sys.round(cy
+                                        + unrounded.size().height()
+                                        - unrounded.padding().bottom())),
                 unrounded.margin());
 
         tree.setFinalLayout(nodeId, layout);
@@ -506,8 +503,7 @@ public final class Compute {
     /// Creates a layout for this node and its children, recursively. Each
     /// hidden node has zero size and is placed at the origin
     /// (`compute_hidden_layout`).
-    public static <Tree extends LayoutPartialTree & CacheTree> LayoutOutput computeHiddenLayout(
-            Tree tree, long node) {
+    public static <Tree extends LayoutPartialTree & CacheTree> LayoutOutput computeHiddenLayout(Tree tree, long node) {
         // Clear cache and set zeroed-out layout for the node
         tree.cacheClear(node);
         tree.setUnroundedLayout(node, Layout.withOrder(0));
@@ -566,7 +562,8 @@ public final class Compute {
 
     /// Rust `{:?}` for `Size<AvailableSpace>`
     private static String debugSizeAvailableSpace(Size<AvailableSpace> size) {
-        return "Size { width: " + debugAvailableSpace(size.width()) + ", height: " + debugAvailableSpace(size.height()) + " }";
+        return "Size { width: " + debugAvailableSpace(size.width()) + ", height: " + debugAvailableSpace(size.height())
+                + " }";
     }
 
     /// Rust `{:?}` for `AvailableSpace`

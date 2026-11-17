@@ -6,9 +6,8 @@ package net.morphismmc.jaffy.compute.grid.types.grid_item;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import it.unimi.dsi.fastutil.longs.LongIterators;
-import it.unimi.dsi.fastutil.longs.LongIterator;
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
 import net.morphismmc.jaffy.compute.grid.types.grid_track.GridTrack;
@@ -31,7 +30,11 @@ import net.morphismmc.jaffy.tree.layout.LayoutInput;
 import net.morphismmc.jaffy.tree.layout.LayoutOutput;
 import net.morphismmc.jaffy.tree.traits.LayoutPartialTree;
 import net.morphismmc.just.math.OptF32;
+
 import org.junit.jupiter.api.Test;
+
+import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.longs.LongIterators;
 
 class GridItemTest {
 
@@ -78,17 +81,16 @@ class GridItemTest {
     }
 
     private static GridTrack fixedTrack(float baseSize) {
-        GridTrack track =
-                GridTrack.newGridTrack(MinTrackSizingFunction.length(baseSize), MaxTrackSizingFunction.length(baseSize));
+        GridTrack track = GridTrack.newGridTrack(
+                MinTrackSizingFunction.length(baseSize), MaxTrackSizingFunction.length(baseSize));
         track.baseSize = baseSize;
         return track;
     }
 
     @Test
     void newWithStyleAndOrderPopulatesFields() {
-        Style style = Style.DEFAULT
-                .withItemIsReplaced(true)
-                .withSize(new Size<>(Dimension.length(30.0f), Dimension.auto()));
+        Style style =
+                Style.DEFAULT.withItemIsReplaced(true).withSize(new Size<>(Dimension.length(30.0f), Dimension.auto()));
         GridItem item = GridItem.newWithStyleAndOrder(7L, style, AlignItems.CENTER, AlignItems.END, 3);
         assertEquals(7L, item.node);
         assertEquals(3, item.sourceOrder);
@@ -243,8 +245,7 @@ class GridItemTest {
         StubTree tree = new StubTree();
         assertEquals(
                 50.0f,
-                item.minContentContribution(
-                        AbstractAxis.INLINE, tree, new SizeOptF32(100.0f, 50.0f), SizeOptF32.NONE));
+                item.minContentContribution(AbstractAxis.INLINE, tree, new SizeOptF32(100.0f, 50.0f), SizeOptF32.NONE));
     }
 
     @Test
@@ -255,8 +256,8 @@ class GridItemTest {
         GridItem item = item(style);
         StubTree tree = new StubTree();
         // height = width / aspect_ratio -> 30
-        float contribution = item.minContentContribution(
-                AbstractAxis.BLOCK, tree, new SizeOptF32(100.0f, 50.0f), SizeOptF32.NONE);
+        float contribution =
+                item.minContentContribution(AbstractAxis.BLOCK, tree, new SizeOptF32(100.0f, 50.0f), SizeOptF32.NONE);
         assertEquals(30.0f, contribution);
         assertEquals(0, tree.calls);
     }
@@ -267,8 +268,7 @@ class GridItemTest {
         // item covers lines 0..2 in both axes: tracks vec entries 1..4 horizontal, 1..4 vertical
         item.columnIndexes = new Line<>(0, 4);
         item.rowIndexes = new Line<>(0, 4);
-        List<GridTrack> columns =
-                List.of(fixedTrack(0), fixedTrack(10), fixedTrack(20), fixedTrack(30), fixedTrack(0));
+        List<GridTrack> columns = List.of(fixedTrack(0), fixedTrack(10), fixedTrack(20), fixedTrack(30), fixedTrack(0));
         List<GridTrack> rows = List.of(fixedTrack(0), fixedTrack(5), fixedTrack(5), fixedTrack(5), fixedTrack(0));
         SizeOptF32 size = item.gridAreaSize(
                 AbstractAxis.INLINE,
@@ -429,8 +429,7 @@ class GridItemTest {
         item.justifySelf = AlignItems.START;
         item.columnIndexes = new Line<>(0, 4); // spans three entries
         StubTree tree = new StubTree();
-        GridTrack frTrack =
-                GridTrack.newGridTrack(MinTrackSizingFunction.AUTO, MaxTrackSizingFunction.fr(1.0f));
+        GridTrack frTrack = GridTrack.newGridTrack(MinTrackSizingFunction.AUTO, MaxTrackSizingFunction.fr(1.0f));
         float result = item.minimumContribution(
                 tree,
                 AbstractAxis.INLINE,
@@ -456,12 +455,9 @@ class GridItemTest {
                 GridTrack.newGridTrack(MinTrackSizingFunction.AUTO, MaxTrackSizingFunction.length(20)),
                 GridTrack.newGridTrack(MinTrackSizingFunction.AUTO, MaxTrackSizingFunction.length(30)),
                 fixedTrack(0));
+        assertEquals(60.0f, item.spannedTrackLimit(AbstractAxis.INLINE, tracks, OptF32.NONE, (calc, basis) -> 0.0f));
         assertEquals(
-                60.0f,
-                item.spannedTrackLimit(AbstractAxis.INLINE, tracks, OptF32.NONE, (calc, basis) -> 0.0f));
-        assertEquals(
-                60.0f,
-                item.spannedFixedTrackLimit(AbstractAxis.INLINE, tracks, OptF32.NONE, (calc, basis) -> 0.0f));
+                60.0f, item.spannedFixedTrackLimit(AbstractAxis.INLINE, tracks, OptF32.NONE, (calc, basis) -> 0.0f));
     }
 
     @Test
@@ -474,8 +470,8 @@ class GridItemTest {
                 GridTrack.newGridTrack(MinTrackSizingFunction.AUTO, MaxTrackSizingFunction.AUTO),
                 fixedTrack(0),
                 fixedTrack(0));
-        assertTrue(OptF32.isNone(
-                item.spannedTrackLimit(AbstractAxis.INLINE, tracks, OptF32.NONE, (calc, basis) -> 0.0f)));
+        assertTrue(
+                OptF32.isNone(item.spannedTrackLimit(AbstractAxis.INLINE, tracks, OptF32.NONE, (calc, basis) -> 0.0f)));
         assertTrue(OptF32.isNone(
                 item.spannedFixedTrackLimit(AbstractAxis.INLINE, tracks, OptF32.NONE, (calc, basis) -> 0.0f)));
     }
@@ -489,9 +485,7 @@ class GridItemTest {
                 GridTrack.newGridTrack(MinTrackSizingFunction.AUTO, MaxTrackSizingFunction.fitContentPx(40.0f)),
                 fixedTrack(0));
         // fit-content(40px): definite_limit = 40 but definite_value = None
-        assertEquals(
-                40.0f,
-                item.spannedTrackLimit(AbstractAxis.INLINE, tracks, OptF32.NONE, (calc, basis) -> 0.0f));
+        assertEquals(40.0f, item.spannedTrackLimit(AbstractAxis.INLINE, tracks, OptF32.NONE, (calc, basis) -> 0.0f));
         assertTrue(OptF32.isNone(
                 item.spannedFixedTrackLimit(AbstractAxis.INLINE, tracks, OptF32.NONE, (calc, basis) -> 0.0f)));
     }

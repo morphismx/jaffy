@@ -8,12 +8,12 @@
 package net.morphismmc.jaffy.compute.grid.types.cell_occupancy;
 
 import java.util.ArrayList;
-import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptI16;
-import org.jspecify.annotations.Nullable;
 
+import org.jspecify.annotations.Nullable;
 
 /// The occupied cells of a single track, stored as a sorted list of disjoint intervals in
 /// OriginZero line coordinates. Gaps between intervals are unoccupied. Touching intervals
@@ -22,7 +22,8 @@ final class TrackIntervals {
     /// The sorted, disjoint list of occupied intervals within the track
     final ArrayList<OccupiedInterval> intervals;
     /// The furthest end line of an auto-placed item starting in this secondary-axis track
-    @Nullable OriginZeroLine autoPlacementCursor;
+    @Nullable
+    OriginZeroLine autoPlacementCursor;
 
     /// `Default::default()`
     TrackIntervals() {
@@ -79,7 +80,8 @@ final class TrackIntervals {
         }
 
         // The painted range, merged with the preceding interval if it touches and has the same state
-        if (!result.isEmpty() && result.get(result.size() - 1).state == state
+        if (!result.isEmpty()
+                && result.get(result.size() - 1).state == state
                 && result.get(result.size() - 1).end == start) {
             result.get(result.size() - 1).end = end;
         } else {
@@ -96,7 +98,8 @@ final class TrackIntervals {
             } else {
                 continue;
             }
-            if (!result.isEmpty() && result.get(result.size() - 1).state == trimmed.state
+            if (!result.isEmpty()
+                    && result.get(result.size() - 1).state == trimmed.state
                     && result.get(result.size() - 1).end == trimmed.start) {
                 result.get(result.size() - 1).end = trimmed.end;
             } else {
@@ -114,7 +117,8 @@ final class TrackIntervals {
     /// before the returned extent also collides with the interval), or `null` if the range is
     /// entirely unoccupied.
     /// `Option<i16>` -> @Opt int (widened carrier, OptI16.NONE)
-    @Opt int collisionExtent(int rangeStart, int rangeEnd) {
+    @Opt
+    int collisionExtent(int rangeStart, int rangeEnd) {
         for (int i = intervals.size() - 1; i >= 0; i--) {
             OccupiedInterval interval = intervals.get(i);
             if (interval.end <= rangeStart) {
@@ -149,7 +153,9 @@ final class TrackIntervals {
         }
         sb.append("], auto_placement_cursor: ");
         if (autoPlacementCursor != null) {
-            sb.append("Some(OriginZeroLine(").append(autoPlacementCursor.value()).append("))");
+            sb.append("Some(OriginZeroLine(")
+                    .append(autoPlacementCursor.value())
+                    .append("))");
         } else {
             sb.append("None");
         }

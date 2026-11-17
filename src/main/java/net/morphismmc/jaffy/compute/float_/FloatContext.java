@@ -17,17 +17,16 @@ import net.morphismmc.jaffy.Features;
 import net.morphismmc.jaffy.geometry.FloatInsets;
 import net.morphismmc.jaffy.geometry.PointF32;
 import net.morphismmc.jaffy.geometry.SizeF32;
-import net.morphismmc.just.fmt.RustFmt;
 import net.morphismmc.jaffy.style.Direction;
 import net.morphismmc.jaffy.style.float_.Clear;
 import net.morphismmc.jaffy.style.float_.FloatDirection;
 import net.morphismmc.jaffy.util.DebugLogger;
+import net.morphismmc.just.fmt.RustFmt;
 import net.morphismmc.just.math.F32;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
 import net.morphismmc.just.math.OptI32;
 import net.morphismmc.just.math.Unsigned;
-
 
 /// A context for placing floated boxes
 public final class FloatContext {
@@ -52,12 +51,12 @@ public final class FloatContext {
     ///
     /// Note that a float which is not constrained by other floats *may* overflow its
     /// containing block's trail edge (rules 1 and 7).
-    static boolean floatFitsHorizontally(float width, FloatDirection direction, float bfcWidth,
-            FloatInsets floatInsets, FloatInsets cbInsets) {
+    static boolean floatFitsHorizontally(
+            float width, FloatDirection direction, float bfcWidth, FloatInsets floatInsets, FloatInsets cbInsets) {
         FloatDirection lead = direction;
         FloatDirection trail = direction.opposite();
-        float xInset = F32.max(FloatInsetsFloatDirectionExt.get(floatInsets, lead),
-                FloatInsetsFloatDirectionExt.get(cbInsets, lead));
+        float xInset = F32.max(
+                FloatInsetsFloatDirectionExt.get(floatInsets, lead), FloatInsetsFloatDirectionExt.get(cbInsets, lead));
         boolean fitsOppositeFloats = FloatInsetsFloatDirectionExt.get(floatInsets, trail) == 0.0f
                 || xInset + width <= bfcWidth - FloatInsetsFloatDirectionExt.get(floatInsets, trail) + FIT_TOLERANCE;
         boolean fitsContainingBlock = FloatInsetsFloatDirectionExt.get(floatInsets, lead) == 0.0f
@@ -97,7 +96,7 @@ public final class FloatContext {
         this.segments = new ArrayList<>();
         this.lastPlacedFloatStarts = new int[2];
         this.lastPlacedFloatEnds = new int[2];
-        this.clearBottoms = new float[]{OptF32.NONE, OptF32.NONE};
+        this.clearBottoms = new float[] {OptF32.NONE, OptF32.NONE};
         this.floatCeiling = OptF32.NONE;
     }
 
@@ -166,8 +165,13 @@ public final class FloatContext {
 
     /// Position a floated box with the context, returning the (x, y) coordinates.
     /// `id` is stored with the placed box and is not otherwise interpreted.
-    public PointF32 placeFloatedBox(long id, SizeF32 floatedBox, float minY,
-            FloatInsets containingBlockInsets, FloatDirection direction, Clear clear) {
+    public PointF32 placeFloatedBox(
+            long id,
+            SizeF32 floatedBox,
+            float minY,
+            FloatInsets containingBlockInsets,
+            FloatDirection direction,
+            Clear clear) {
         hasFloats = true;
 
         PlacedFloatedBox placedFloatedBox =
@@ -188,8 +192,13 @@ public final class FloatContext {
     }
 
     /// Inner implementation of float placement, split into a separate function so that it can early-return
-    private PlacedFloatedBox placeFloatedBoxInner(long id, SizeF32 floatedBox, float minY,
-            FloatInsets containingBlockInsets, FloatDirection direction, Clear clear) {
+    private PlacedFloatedBox placeFloatedBoxInner(
+            long id,
+            SizeF32 floatedBox,
+            float minY,
+            FloatInsets containingBlockInsets,
+            FloatDirection direction,
+            Clear clear) {
         int slot = direction.ordinal();
 
         // Floats (including zero-sized floats) that occupy no segment still constrain the
@@ -226,8 +235,12 @@ public final class FloatContext {
 
         // Loop over remaining segments, trying to place the float in a position
         // that has space to accomodate it.
-        @Opt @Unsigned int start = OptI32.NONE;
-        @Opt @Unsigned int end = OptI32.NONE;
+        @Opt
+        @Unsigned
+        int start = OptI32.NONE;
+        @Opt
+        @Unsigned
+        int end = OptI32.NONE;
         float placedInset;
         outer:
         while (true) {
@@ -310,8 +323,7 @@ public final class FloatContext {
             // it. The first float itself may be above the top of the block formatting context
             // (`y < 0`): its containing block (CSS2 float rule 4) may be pulled up by a negative
             // margin.
-            float lastYEnd = segments.isEmpty() ? Float.NEGATIVE_INFINITY
-                    : segments.get(segments.size() - 1).yEnd;
+            float lastYEnd = segments.isEmpty() ? Float.NEGATIVE_INFINITY : segments.get(segments.size() - 1).yEnd;
             if (startY > lastYEnd) {
                 segments.add(new Segment(lastYEnd, startY, FloatInsets.ZERO, new boolean[2]));
             }
@@ -319,8 +331,8 @@ public final class FloatContext {
             float startYv = F32.max(lastYEnd, startY);
 
             FloatInsets insets = containingBlockInsets;
-            insets = FloatInsetsFloatDirectionExt.set(insets, direction,
-                    FloatInsetsFloatDirectionExt.get(insets, direction) + floatedBox.width());
+            insets = FloatInsetsFloatDirectionExt.set(
+                    insets, direction, FloatInsetsFloatDirectionExt.get(insets, direction) + floatedBox.width());
             boolean[] hasFloat = new boolean[2];
             hasFloat[slot] = true;
             segments.add(new Segment(startYv, startYv + floatedBox.height(), insets, hasFloat));
@@ -329,8 +341,12 @@ public final class FloatContext {
             int startIdx2 = segments.size() - 1;
             updateLastPlacedFloat(direction, startIdx2, startIdx2 + 1);
 
-            return new PlacedFloatedBox(id, floatedBox.width(), floatedBox.height(),
-                    FloatInsetsFloatDirectionExt.get(containingBlockInsets, direction), startYv);
+            return new PlacedFloatedBox(
+                    id,
+                    floatedBox.width(),
+                    floatedBox.height(),
+                    FloatInsetsFloatDirectionExt.get(containingBlockInsets, direction),
+                    startYv);
         }
 
         // Else unwrap the index of the segment that the start of the floating box is placed in
@@ -426,8 +442,7 @@ public final class FloatContext {
             case BOTH -> {
                 float l = clearBottoms[0];
                 float r = clearBottoms[1];
-                yield OptF32.isSome(l) && OptF32.isSome(r) ? F32.max(l, r)
-                        : OptF32.isSome(l) ? l : r;
+                yield OptF32.isSome(l) && OptF32.isSome(r) ? F32.max(l, r) : OptF32.isSome(l) ? l : r;
             }
             case NONE -> OptF32.NONE;
         };
@@ -439,11 +454,14 @@ public final class FloatContext {
     /// box is shortened by every float its vertical extent intersects). The slot's `height` is
     /// how far down from its top edge its width stays valid: content taller than that may be
     /// beside further floats.
-    public ContentSlot findContentSlot(float minY, float height, FloatInsets containingBlockInsets,
-            Clear clear, @Opt @Unsigned int after) {
+    public ContentSlot findContentSlot(
+            float minY, float height, FloatInsets containingBlockInsets, Clear clear, @Opt @Unsigned int after) {
         // Subtract each inset separately (here and below): `- insets.sum()` rounds differently for large values
         if (!hasActiveFloats(minY)) {
-            return new ContentSlot(OptI32.NONE, containingBlockInsets.left(), minY,
+            return new ContentSlot(
+                    OptI32.NONE,
+                    containingBlockInsets.left(),
+                    minY,
                     availableWidth - containingBlockInsets.left() - containingBlockInsets.right(),
                     Float.POSITIVE_INFINITY);
         }
@@ -454,7 +472,9 @@ public final class FloatContext {
 
         // The min starting segment index
         int atLeast = OptI32.isSome(after) ? after + 1 : 0;
-        @Opt @Unsigned int clearedSeg = clearedSegment(clear);
+        @Opt
+        @Unsigned
+        int clearedSeg = clearedSegment(clear);
         int hwm = Integer.max(atLeast, clearedSeg != OptI32.NONE ? clearedSeg + 1 : 0);
 
         int startIdx = segments.size();
@@ -483,10 +503,13 @@ public final class FloatContext {
                 }
             }
 
-            return new ContentSlot(startIdx, insets.left(), y,
-                    availableWidth - insets.left() - insets.right(), slotHeight);
+            return new ContentSlot(
+                    startIdx, insets.left(), y, availableWidth - insets.left() - insets.right(), slotHeight);
         }
-        return new ContentSlot(OptI32.NONE, containingBlockInsets.left(), minYv,
+        return new ContentSlot(
+                OptI32.NONE,
+                containingBlockInsets.left(),
+                minYv,
                 availableWidth - containingBlockInsets.left() - containingBlockInsets.right(),
                 Float.POSITIVE_INFINITY);
     }
@@ -515,13 +538,19 @@ public final class FloatContext {
     /// The box must not overlap floats beside any part of `minHeight` (a lower bound on the
     /// height of its border box) below its top edge: e.g. a box pulled up above a float by a
     /// negative top margin may only stay there if it also fits beside that float.
-    public BfcSlot findBfcSlot(float minY, float minHeight, FloatInsets containingBlockInsets,
-            FloatInsets margins, Direction direction, Clear clear, @Opt @Unsigned int after) {
+    public BfcSlot findBfcSlot(
+            float minY,
+            float minHeight,
+            FloatInsets containingBlockInsets,
+            FloatInsets margins,
+            Direction direction,
+            Clear clear,
+            @Opt @Unsigned int after) {
         FloatInsets marginInsets = containingBlockInsets.plus(margins);
         float noFloatWidth = availableWidth - marginInsets.left() - marginInsets.right();
         if (!hasActiveFloats(minY)) {
-            return new BfcSlot(OptI32.NONE, marginInsets.left(), minY, noFloatWidth, noFloatWidth,
-                    Float.POSITIVE_INFINITY);
+            return new BfcSlot(
+                    OptI32.NONE, marginInsets.left(), minY, noFloatWidth, noFloatWidth, Float.POSITIVE_INFINITY);
         }
 
         // Clearance clears past the bottom of floats on the relevant side, including
@@ -530,7 +559,9 @@ public final class FloatContext {
 
         // The min starting segment index
         int atLeast = OptI32.isSome(after) ? after + 1 : 0;
-        @Opt @Unsigned int clearedSeg = clearedSegment(clear);
+        @Opt
+        @Unsigned
+        int clearedSeg = clearedSegment(clear);
         int hwm = Integer.max(atLeast, clearedSeg != OptI32.NONE ? clearedSeg + 1 : 0);
 
         int startIdx = segments.size();
@@ -571,32 +602,40 @@ public final class FloatContext {
             boolean hasLeadFloat = hasFloat[lead.ordinal()];
             boolean hasTrailFloat = hasFloat[trail.ordinal()];
             float fitLead = hasLeadFloat
-                    ? F32.max(FloatInsetsFloatDirectionExt.get(insets, lead),
+                    ? F32.max(
+                            FloatInsetsFloatDirectionExt.get(insets, lead),
                             FloatInsetsFloatDirectionExt.get(marginInsets, lead))
                     : FloatInsetsFloatDirectionExt.get(marginInsets, lead);
             float fitTrail = hasTrailFloat
-                    ? F32.max(FloatInsetsFloatDirectionExt.get(insets, trail),
+                    ? F32.max(
+                            FloatInsetsFloatDirectionExt.get(insets, trail),
                             FloatInsetsFloatDirectionExt.get(containingBlockInsets, trail))
                     // A positive trailing margin may overflow the containing block edge (it does
                     // not affect fit), but a negative one widens the space for the border box
-                    : F32.min(FloatInsetsFloatDirectionExt.get(marginInsets, trail),
+                    : F32.min(
+                            FloatInsetsFloatDirectionExt.get(marginInsets, trail),
                             FloatInsetsFloatDirectionExt.get(containingBlockInsets, trail));
             float stretchTrail = hasTrailFloat
-                    ? F32.max(FloatInsetsFloatDirectionExt.get(insets, trail),
+                    ? F32.max(
+                            FloatInsetsFloatDirectionExt.get(insets, trail),
                             FloatInsetsFloatDirectionExt.get(marginInsets, trail))
                     : FloatInsetsFloatDirectionExt.get(marginInsets, trail);
             FloatInsets fitInsets = FloatInsetsFloatDirectionExt.set(
                     FloatInsetsFloatDirectionExt.set(FloatInsets.ZERO, lead, fitLead), trail, fitTrail);
             FloatInsets stretchInsets = FloatInsetsFloatDirectionExt.set(
                     FloatInsetsFloatDirectionExt.set(FloatInsets.ZERO, lead, fitLead), trail, stretchTrail);
-            return new BfcSlot(startIdx, fitInsets.left(), y,
+            return new BfcSlot(
+                    startIdx,
+                    fitInsets.left(),
+                    y,
                     availableWidth - fitInsets.left() - fitInsets.right(),
-                    availableWidth - stretchInsets.left() - stretchInsets.right(), slotHeight);
+                    availableWidth - stretchInsets.left() - stretchInsets.right(),
+                    slotHeight);
         }
         // Below all floats
         float yBelow = F32.max(segments.get(segments.size() - 1).yEnd, minYv);
-        return new BfcSlot(OptI32.NONE, marginInsets.left(), yBelow, noFloatWidth, noFloatWidth,
-                Float.POSITIVE_INFINITY);
+        return new BfcSlot(
+                OptI32.NONE, marginInsets.left(), yBelow, noFloatWidth, noFloatWidth, Float.POSITIVE_INFINITY);
     }
 
     /// `Clone` — deep-copies the segment list (each `Segment` cloned) (GAP-005)

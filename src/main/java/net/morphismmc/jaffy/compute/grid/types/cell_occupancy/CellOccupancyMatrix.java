@@ -12,14 +12,15 @@ package net.morphismmc.jaffy.compute.grid.types.cell_occupancy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
 import net.morphismmc.jaffy.geometry.AbsoluteAxis;
 import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptI16;
-import org.jspecify.annotations.Nullable;
 
+import org.jspecify.annotations.Nullable;
 
 /// A dynamically sized matrix (2d grid) which tracks the occupancy of each grid cell during auto-placement.
 /// It also keeps tabs on how many tracks there are and which tracks are implicit and which are explicit.
@@ -36,15 +37,19 @@ public final class CellOccupancyMatrix {
     /// For each column track: the occupied intervals within that column (in row coordinates)
     private final ArrayList<TrackIntervals> columnIntervals;
 
-    private CellOccupancyMatrix(TrackCounts columns, TrackCounts rows,
-            ArrayList<TrackIntervals> rowIntervals, ArrayList<TrackIntervals> columnIntervals) {
+    private CellOccupancyMatrix(
+            TrackCounts columns,
+            TrackCounts rows,
+            ArrayList<TrackIntervals> rowIntervals,
+            ArrayList<TrackIntervals> columnIntervals) {
         this.columns = columns;
         this.rows = rows;
         this.rowIntervals = rowIntervals;
         this.columnIntervals = columnIntervals;
     }
 
-    /// Create a CellOccupancyMatrix given a set of provisional track counts. The grid can expand as needed to fit more tracks,
+    /// Create a CellOccupancyMatrix given a set of provisional track counts. The grid can expand as needed to fit more
+    /// tracks,
     /// the provisional track counts represent a best effort attempt to avoid the extra allocations this requires.
     public static CellOccupancyMatrix withTrackCounts(TrackCounts columns, TrackCounts rows) {
         ArrayList<TrackIntervals> rowIntervals = new ArrayList<>(rows.len());
@@ -72,10 +77,14 @@ public final class CellOccupancyMatrix {
     /// spans (in OriginZero coordinates) fit within the tracked tracks
     private void expandToFitRange(Line<OriginZeroLine> rowSpan, Line<OriginZeroLine> colSpan) {
         // Calculate number of rows and columns missing to accommodate ranges (if any)
-        int reqNegativeRows = Integer.max(-rows.negativeImplicit() - rowSpan.start().value(), 0);
-        int reqPositiveRows = Integer.max(rowSpan.end().value() - rows.implicitEndLine().value(), 0);
-        int reqNegativeCols = Integer.max(-columns.negativeImplicit() - colSpan.start().value(), 0);
-        int reqPositiveCols = Integer.max(colSpan.end().value() - columns.implicitEndLine().value(), 0);
+        int reqNegativeRows =
+                Integer.max(-rows.negativeImplicit() - rowSpan.start().value(), 0);
+        int reqPositiveRows =
+                Integer.max(rowSpan.end().value() - rows.implicitEndLine().value(), 0);
+        int reqNegativeCols =
+                Integer.max(-columns.negativeImplicit() - colSpan.start().value(), 0);
+        int reqPositiveCols =
+                Integer.max(colSpan.end().value() - columns.implicitEndLine().value(), 0);
 
         // Add empty tracks to the front and/or back of the per-track interval lists.
         // Interval contents are stored in OriginZero coordinates, so they do not need to shift.
@@ -104,15 +113,21 @@ public final class CellOccupancyMatrix {
             }
         }
 
-        rows = new TrackCounts(rows.negativeImplicit() + reqNegativeRows, rows.explicit(),
-                rows.positiveImplicit() + reqPositiveRows);
-        columns = new TrackCounts(columns.negativeImplicit() + reqNegativeCols, columns.explicit(),
+        rows = new TrackCounts(
+                rows.negativeImplicit() + reqNegativeRows, rows.explicit(), rows.positiveImplicit() + reqPositiveRows);
+        columns = new TrackCounts(
+                columns.negativeImplicit() + reqNegativeCols,
+                columns.explicit(),
                 columns.positiveImplicit() + reqPositiveCols);
     }
 
-    /// Mark an area of the matrix as occupied, expanding the allocated space as necessary to accommodate the passed area.
-    public void markAreaAs(AbsoluteAxis primaryAxis, Line<OriginZeroLine> primarySpan,
-            Line<OriginZeroLine> secondarySpan, CellOccupancyState value) {
+    /// Mark an area of the matrix as occupied, expanding the allocated space as necessary to accommodate the passed
+    /// area.
+    public void markAreaAs(
+            AbsoluteAxis primaryAxis,
+            Line<OriginZeroLine> primarySpan,
+            Line<OriginZeroLine> secondarySpan,
+            CellOccupancyState value) {
         Line<OriginZeroLine> rowSpan;
         Line<OriginZeroLine> columnSpan;
         switch (primaryAxis) {
@@ -138,18 +153,22 @@ public final class CellOccupancyMatrix {
         TrackCounts.TrackRange rowRange = rows.ozLineRangeToTrackRange(rowSpan);
         TrackCounts.TrackRange colRange = columns.ozLineRangeToTrackRange(columnSpan);
         for (int rowIndex = rowRange.start(); rowIndex < rowRange.end(); rowIndex++) {
-            rowIntervals.get(rowIndex).paint(columnSpan.start().value(), columnSpan.end().value(), value);
+            rowIntervals
+                    .get(rowIndex)
+                    .paint(columnSpan.start().value(), columnSpan.end().value(), value);
         }
         for (int columnIndex = colRange.start(); columnIndex < colRange.end(); columnIndex++) {
-            columnIntervals.get(columnIndex).paint(rowSpan.start().value(), rowSpan.end().value(), value);
+            columnIntervals
+                    .get(columnIndex)
+                    .paint(rowSpan.start().value(), rowSpan.end().value(), value);
         }
     }
 
     /// Determines whether a grid area specified by the bounding grid lines in OriginZero coordinates
     /// is entirely unnocupied. Returns true if all grid cells within the grid area are unnocupied, else false.
     /// `#[cfg(test)]` upstream — exists only for the test module.
-    public boolean lineAreaIsUnoccupied(AbsoluteAxis primaryAxis, Line<OriginZeroLine> primarySpan,
-            Line<OriginZeroLine> secondarySpan) {
+    public boolean lineAreaIsUnoccupied(
+            AbsoluteAxis primaryAxis, Line<OriginZeroLine> primarySpan, Line<OriginZeroLine> secondarySpan) {
         return lineAreaCollisionJump(primaryAxis, primarySpan, secondarySpan) == null;
     }
 
@@ -159,8 +178,8 @@ public final class CellOccupancyMatrix {
     /// `primary_axis`) that is not guaranteed to collide with the occupied cells found in the
     /// area. This allows the auto-placement search cursor to jump past collisions rather than
     /// advancing one track at a time.
-    public @Nullable OriginZeroLine lineAreaCollisionJump(AbsoluteAxis primaryAxis,
-            Line<OriginZeroLine> primarySpan, Line<OriginZeroLine> secondarySpan) {
+    public @Nullable OriginZeroLine lineAreaCollisionJump(
+            AbsoluteAxis primaryAxis, Line<OriginZeroLine> primarySpan, Line<OriginZeroLine> secondarySpan) {
         List<TrackIntervals> trackLists = trackLists(primaryAxis.otherAxis());
         TrackCounts secondaryCounts = trackCounts(primaryAxis.otherAxis());
         TrackCounts.TrackRange secondaryRange = secondaryCounts.ozLineRangeToTrackRange(secondarySpan);
@@ -206,13 +225,17 @@ public final class CellOccupancyMatrix {
     /// Determines whether the specified row contains any items
     public boolean rowIsOccupied(int rowIndex) {
         List<TrackIntervals> trackLists = trackLists(AbsoluteAxis.VERTICAL);
-        return rowIndex >= 0 && rowIndex < trackLists.size() && !trackLists.get(rowIndex).isEmpty();
+        return rowIndex >= 0
+                && rowIndex < trackLists.size()
+                && !trackLists.get(rowIndex).isEmpty();
     }
 
     /// Determines whether the specified column contains any items
     public boolean columnIsOccupied(int columnIndex) {
         List<TrackIntervals> trackLists = trackLists(AbsoluteAxis.HORIZONTAL);
-        return columnIndex >= 0 && columnIndex < trackLists.size() && !trackLists.get(columnIndex).isEmpty();
+        return columnIndex >= 0
+                && columnIndex < trackLists.size()
+                && !trackLists.get(columnIndex).isEmpty();
     }
 
     /// Returns the track counts of this CellOccunpancyMatrix in the relevant axis
@@ -238,28 +261,36 @@ public final class CellOccupancyMatrix {
 
     /// Advances the sparse placement cursor to at least `primary_end`.
     /// The secondary-axis track must already exist in the matrix.
-    private void advanceAutoPlacementCursor(AbsoluteAxis primaryAxis, OriginZeroLine secondaryStart,
-            OriginZeroLine primaryEnd) {
+    private void advanceAutoPlacementCursor(
+            AbsoluteAxis primaryAxis, OriginZeroLine secondaryStart, OriginZeroLine primaryEnd) {
         int trackIndex = trackCounts(primaryAxis.otherAxis()).ozLineToNextTrack(secondaryStart);
         ArrayList<TrackIntervals> tracks = primaryAxis == AbsoluteAxis.HORIZONTAL ? rowIntervals : columnIntervals;
         TrackIntervals track = tracks.get(trackIndex);
         // `*cursor = max(*cursor, Some(primary_end))` — Option's Ord: None < Some(_)
-        track.autoPlacementCursor = track.autoPlacementCursor == null
-                || track.autoPlacementCursor.value() < primaryEnd.value()
-                ? primaryEnd
-                : track.autoPlacementCursor;
+        track.autoPlacementCursor =
+                track.autoPlacementCursor == null || track.autoPlacementCursor.value() < primaryEnd.value()
+                        ? primaryEnd
+                        : track.autoPlacementCursor;
     }
 
     /// `Debug` impl that represents the matrix in a compact 2d text format
     @Override
     public String toString() {
         StringBuilder f = new StringBuilder();
-        f.append("Rows: neg_implicit=").append(rows.negativeImplicit())
-                .append(" explicit=").append(rows.explicit())
-                .append(" pos_implicit=").append(rows.positiveImplicit()).append('\n');
-        f.append("Cols: neg_implicit=").append(columns.negativeImplicit())
-                .append(" explicit=").append(columns.explicit())
-                .append(" pos_implicit=").append(columns.positiveImplicit()).append('\n');
+        f.append("Rows: neg_implicit=")
+                .append(rows.negativeImplicit())
+                .append(" explicit=")
+                .append(rows.explicit())
+                .append(" pos_implicit=")
+                .append(rows.positiveImplicit())
+                .append('\n');
+        f.append("Cols: neg_implicit=")
+                .append(columns.negativeImplicit())
+                .append(" explicit=")
+                .append(columns.explicit())
+                .append(" pos_implicit=")
+                .append(columns.positiveImplicit())
+                .append('\n');
         if (rows.len() > 100 || columns.len() > 100) {
             f.append("State: (not printed: more than 100 tracks)\n");
             return f.toString();

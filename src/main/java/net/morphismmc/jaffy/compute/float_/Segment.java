@@ -6,9 +6,8 @@ package net.morphismmc.jaffy.compute.float_;
 
 import net.morphismmc.jaffy.geometry.FloatInsets;
 import net.morphismmc.jaffy.geometry.SizeF32;
-import net.morphismmc.just.fmt.RustFmt;
 import net.morphismmc.jaffy.style.float_.FloatDirection;
-
+import net.morphismmc.just.fmt.RustFmt;
 
 /// A non-overlapping horizontal segment of the Block Formatting Context container
 final class Segment {
@@ -40,7 +39,7 @@ final class Segment {
     /// Widen this segment's float insets and occupied sides to cover `other`'s
     void union(Segment other) {
         insets = insets.max(other.insets);
-        hasFloat = new boolean[]{hasFloat[0] || other.hasFloat[0], hasFloat[1] || other.hasFloat[1]};
+        hasFloat = new boolean[] {hasFloat[0] || other.hasFloat[0], hasFloat[1] || other.hasFloat[1]};
     }
 
     /// Whether this segment is narrower than `other` on either side: a larger inset, or a float

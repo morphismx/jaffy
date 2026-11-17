@@ -15,9 +15,6 @@ package net.morphismmc.jaffy.gson;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -25,6 +22,7 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Stream;
+
 import net.morphismmc.jaffy.geometry.FloatInsets;
 import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.jaffy.geometry.LineBool;
@@ -82,8 +80,13 @@ import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.layout.ScrollableOverflow;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
 import net.morphismmc.just.math.OptF32;
+
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 
 class GoldenSerdeTest {
 
@@ -132,33 +135,40 @@ class GoldenSerdeTest {
             case "point_f32" -> new Case(PointF32.class, new PointF32(-3.5f, 2.0f), null);
             case "size_opt_f32" -> new Case(SizeOptF32.class, new SizeOptF32(3.0f, OptF32.NONE), null);
             // AvailableSpace is Serialize-only upstream.
-            case "size_avail" -> new Case(
-                    TypeToken.getParameterized(Size.class, AvailableSpace.class).getType(),
-                    new Size<>(new AvailableSpace.Definite(10.5f), new AvailableSpace.MaxContent()),
-                    READ_REJECTS);
-            case "point_overflow" -> new Case(
-                    TypeToken.getParameterized(Point.class, Overflow.class).getType(),
-                    new Point<>(Overflow.HIDDEN, Overflow.SCROLL),
-                    null);
+            case "size_avail" ->
+                new Case(
+                        TypeToken.getParameterized(Size.class, AvailableSpace.class)
+                                .getType(),
+                        new Size<>(new AvailableSpace.Definite(10.5f), new AvailableSpace.MaxContent()),
+                        READ_REJECTS);
+            case "point_overflow" ->
+                new Case(
+                        TypeToken.getParameterized(Point.class, Overflow.class).getType(),
+                        new Point<>(Overflow.HIDDEN, Overflow.SCROLL),
+                        null);
             case "float_insets" -> new Case(FloatInsets.class, new FloatInsets(1.5f, -2.25f), null);
-            case "rect_lpa" -> new Case(
-                    TypeToken.getParameterized(Rect.class, LengthPercentageAuto.class).getType(),
-                    new Rect<>(
-                            LengthPercentageAuto.length(1.0f),
-                            LengthPercentageAuto.auto(),
-                            LengthPercentageAuto.percent(0.5f),
-                            LengthPercentageAuto.length(-3.0f)),
-                    null);
-            case "size_dim" -> new Case(
-                    TypeToken.getParameterized(Size.class, Dimension.class).getType(),
-                    new Size<>(Dimension.length(10.0f), Dimension.percent(0.5f)),
-                    null);
-            case "minmax_tsf" -> new Case(
-                    TypeToken.getParameterized(
-                                    MinMax.class, MinTrackSizingFunction.class, MaxTrackSizingFunction.class)
-                            .getType(),
-                    new MinMax<>(MinTrackSizingFunction.minContent(), MaxTrackSizingFunction.fr(1.5f)),
-                    null);
+            case "rect_lpa" ->
+                new Case(
+                        TypeToken.getParameterized(Rect.class, LengthPercentageAuto.class)
+                                .getType(),
+                        new Rect<>(
+                                LengthPercentageAuto.length(1.0f),
+                                LengthPercentageAuto.auto(),
+                                LengthPercentageAuto.percent(0.5f),
+                                LengthPercentageAuto.length(-3.0f)),
+                        null);
+            case "size_dim" ->
+                new Case(
+                        TypeToken.getParameterized(Size.class, Dimension.class).getType(),
+                        new Size<>(Dimension.length(10.0f), Dimension.percent(0.5f)),
+                        null);
+            case "minmax_tsf" ->
+                new Case(
+                        TypeToken.getParameterized(
+                                        MinMax.class, MinTrackSizingFunction.class, MaxTrackSizingFunction.class)
+                                .getType(),
+                        new MinMax<>(MinTrackSizingFunction.minContent(), MaxTrackSizingFunction.fr(1.5f)),
+                        null);
 
             // ---- CompactLength family ----
             case "lp_length" -> new Case(LengthPercentage.class, LengthPercentage.length(22.0f), null);
@@ -177,343 +187,377 @@ class GoldenSerdeTest {
             case "dim_stretch" -> new Case(Dimension.class, Dimension.stretch(), null);
             case "min_tsf_auto" -> new Case(MinTrackSizingFunction.class, MinTrackSizingFunction.auto(), null);
             case "min_tsf_length" -> new Case(MinTrackSizingFunction.class, MinTrackSizingFunction.length(4.0f), null);
-            case "min_tsf_min_content" -> new Case(
-                    MinTrackSizingFunction.class, MinTrackSizingFunction.minContent(), null);
+            case "min_tsf_min_content" ->
+                new Case(MinTrackSizingFunction.class, MinTrackSizingFunction.minContent(), null);
             case "max_tsf_fr" -> new Case(MaxTrackSizingFunction.class, MaxTrackSizingFunction.fr(3.0f), null);
-            case "max_tsf_max_content" -> new Case(
-                    MaxTrackSizingFunction.class, MaxTrackSizingFunction.maxContent(), null);
-            case "max_tsf_fit_content_percent" -> new Case(
-                    MaxTrackSizingFunction.class, MaxTrackSizingFunction.fitContentPercent(0.5f), null);
-            case "tsf_minmax" -> new Case(
-                    TypeToken.getParameterized(
-                                    MinMax.class, MinTrackSizingFunction.class, MaxTrackSizingFunction.class)
-                            .getType(),
-                    new MinMax<>(MinTrackSizingFunction.minContent(), MaxTrackSizingFunction.fr(2.0f)),
-                    null);
+            case "max_tsf_max_content" ->
+                new Case(MaxTrackSizingFunction.class, MaxTrackSizingFunction.maxContent(), null);
+            case "max_tsf_fit_content_percent" ->
+                new Case(MaxTrackSizingFunction.class, MaxTrackSizingFunction.fitContentPercent(0.5f), null);
+            case "tsf_minmax" ->
+                new Case(
+                        TypeToken.getParameterized(
+                                        MinMax.class, MinTrackSizingFunction.class, MaxTrackSizingFunction.class)
+                                .getType(),
+                        new MinMax<>(MinTrackSizingFunction.minContent(), MaxTrackSizingFunction.fr(2.0f)),
+                        null);
 
             // ---- alignment ----
             // Unsafe on Stretch and Safe on Normal are stripped by the writer
             // (upstream match arms); the read-back value uses Default safety.
-            case "align_items_all" -> new Case(
-                    listOf(AlignItems.class),
-                    List.of(
-                            AlignItems.NORMAL,
-                            AlignItems.START,
-                            AlignItems.END,
-                            AlignItems.FLEX_START,
-                            AlignItems.FLEX_END,
-                            AlignItems.CENTER,
-                            AlignItems.BASELINE,
-                            AlignItems.STRETCH,
-                            AlignItems.SAFE_START,
-                            AlignItems.SAFE_END,
-                            AlignItems.SAFE_FLEX_START,
-                            AlignItems.SAFE_FLEX_END,
-                            AlignItems.SAFE_CENTER,
-                            AlignItems.SELF_START,
-                            AlignItems.SELF_END,
-                            AlignItems.SAFE_SELF_START,
-                            AlignItems.SAFE_SELF_END,
-                            AlignItems.START.withSafety(AlignmentSafety.UNSAFE),
-                            AlignItems.CENTER.withSafety(AlignmentSafety.UNSAFE),
-                            AlignItems.STRETCH.withSafety(AlignmentSafety.UNSAFE),
-                            AlignItems.NORMAL.withSafety(AlignmentSafety.SAFE)),
-                    List.of(
-                            AlignItems.NORMAL,
-                            AlignItems.START,
-                            AlignItems.END,
-                            AlignItems.FLEX_START,
-                            AlignItems.FLEX_END,
-                            AlignItems.CENTER,
-                            AlignItems.BASELINE,
-                            AlignItems.STRETCH,
-                            AlignItems.SAFE_START,
-                            AlignItems.SAFE_END,
-                            AlignItems.SAFE_FLEX_START,
-                            AlignItems.SAFE_FLEX_END,
-                            AlignItems.SAFE_CENTER,
-                            AlignItems.SELF_START,
-                            AlignItems.SELF_END,
-                            AlignItems.SAFE_SELF_START,
-                            AlignItems.SAFE_SELF_END,
-                            AlignItems.START.withSafety(AlignmentSafety.UNSAFE),
-                            AlignItems.CENTER.withSafety(AlignmentSafety.UNSAFE),
-                            AlignItems.STRETCH,
-                            AlignItems.NORMAL));
-            case "align_content_all" -> new Case(
-                    listOf(AlignContent.class),
-                    List.of(
-                            AlignContent.NORMAL,
-                            AlignContent.START,
-                            AlignContent.END,
-                            AlignContent.FLEX_START,
-                            AlignContent.FLEX_END,
-                            AlignContent.CENTER,
-                            AlignContent.STRETCH,
-                            AlignContent.SPACE_BETWEEN,
-                            AlignContent.SPACE_EVENLY,
-                            AlignContent.SPACE_AROUND,
-                            AlignContent.SAFE_START,
-                            AlignContent.SAFE_END,
-                            AlignContent.SAFE_FLEX_START,
-                            AlignContent.SAFE_FLEX_END,
-                            AlignContent.SAFE_CENTER,
-                            AlignContent.END.withSafety(AlignmentSafety.UNSAFE),
-                            AlignContent.FLEX_END.withSafety(AlignmentSafety.UNSAFE),
-                            AlignContent.SPACE_AROUND.withSafety(AlignmentSafety.SAFE)),
-                    List.of(
-                            AlignContent.NORMAL,
-                            AlignContent.START,
-                            AlignContent.END,
-                            AlignContent.FLEX_START,
-                            AlignContent.FLEX_END,
-                            AlignContent.CENTER,
-                            AlignContent.STRETCH,
-                            AlignContent.SPACE_BETWEEN,
-                            AlignContent.SPACE_EVENLY,
-                            AlignContent.SPACE_AROUND,
-                            AlignContent.SAFE_START,
-                            AlignContent.SAFE_END,
-                            AlignContent.SAFE_FLEX_START,
-                            AlignContent.SAFE_FLEX_END,
-                            AlignContent.SAFE_CENTER,
-                            AlignContent.END.withSafety(AlignmentSafety.UNSAFE),
-                            AlignContent.FLEX_END.withSafety(AlignmentSafety.UNSAFE),
-                            AlignContent.SPACE_AROUND));
-            case "align_items_kw_all" -> new Case(
-                    listOf(AlignItemsKeyword.class),
-                    List.of(
-                            AlignItemsKeyword.NORMAL,
-                            AlignItemsKeyword.START,
-                            AlignItemsKeyword.END,
-                            AlignItemsKeyword.FLEX_START,
-                            AlignItemsKeyword.FLEX_END,
-                            AlignItemsKeyword.CENTER,
-                            AlignItemsKeyword.BASELINE,
-                            AlignItemsKeyword.STRETCH,
-                            AlignItemsKeyword.SELF_START,
-                            AlignItemsKeyword.SELF_END),
-                    null);
-            case "align_content_kw_all" -> new Case(
-                    listOf(AlignContentKeyword.class),
-                    List.of(
-                            AlignContentKeyword.NORMAL,
-                            AlignContentKeyword.START,
-                            AlignContentKeyword.END,
-                            AlignContentKeyword.FLEX_START,
-                            AlignContentKeyword.FLEX_END,
-                            AlignContentKeyword.CENTER,
-                            AlignContentKeyword.STRETCH,
-                            AlignContentKeyword.SPACE_BETWEEN,
-                            AlignContentKeyword.SPACE_EVENLY,
-                            AlignContentKeyword.SPACE_AROUND),
-                    null);
-            case "safety_all" -> new Case(
-                    listOf(AlignmentSafety.class),
-                    List.of(AlignmentSafety.DEFAULT, AlignmentSafety.SAFE, AlignmentSafety.UNSAFE),
-                    null);
+            case "align_items_all" ->
+                new Case(
+                        listOf(AlignItems.class),
+                        List.of(
+                                AlignItems.NORMAL,
+                                AlignItems.START,
+                                AlignItems.END,
+                                AlignItems.FLEX_START,
+                                AlignItems.FLEX_END,
+                                AlignItems.CENTER,
+                                AlignItems.BASELINE,
+                                AlignItems.STRETCH,
+                                AlignItems.SAFE_START,
+                                AlignItems.SAFE_END,
+                                AlignItems.SAFE_FLEX_START,
+                                AlignItems.SAFE_FLEX_END,
+                                AlignItems.SAFE_CENTER,
+                                AlignItems.SELF_START,
+                                AlignItems.SELF_END,
+                                AlignItems.SAFE_SELF_START,
+                                AlignItems.SAFE_SELF_END,
+                                AlignItems.START.withSafety(AlignmentSafety.UNSAFE),
+                                AlignItems.CENTER.withSafety(AlignmentSafety.UNSAFE),
+                                AlignItems.STRETCH.withSafety(AlignmentSafety.UNSAFE),
+                                AlignItems.NORMAL.withSafety(AlignmentSafety.SAFE)),
+                        List.of(
+                                AlignItems.NORMAL,
+                                AlignItems.START,
+                                AlignItems.END,
+                                AlignItems.FLEX_START,
+                                AlignItems.FLEX_END,
+                                AlignItems.CENTER,
+                                AlignItems.BASELINE,
+                                AlignItems.STRETCH,
+                                AlignItems.SAFE_START,
+                                AlignItems.SAFE_END,
+                                AlignItems.SAFE_FLEX_START,
+                                AlignItems.SAFE_FLEX_END,
+                                AlignItems.SAFE_CENTER,
+                                AlignItems.SELF_START,
+                                AlignItems.SELF_END,
+                                AlignItems.SAFE_SELF_START,
+                                AlignItems.SAFE_SELF_END,
+                                AlignItems.START.withSafety(AlignmentSafety.UNSAFE),
+                                AlignItems.CENTER.withSafety(AlignmentSafety.UNSAFE),
+                                AlignItems.STRETCH,
+                                AlignItems.NORMAL));
+            case "align_content_all" ->
+                new Case(
+                        listOf(AlignContent.class),
+                        List.of(
+                                AlignContent.NORMAL,
+                                AlignContent.START,
+                                AlignContent.END,
+                                AlignContent.FLEX_START,
+                                AlignContent.FLEX_END,
+                                AlignContent.CENTER,
+                                AlignContent.STRETCH,
+                                AlignContent.SPACE_BETWEEN,
+                                AlignContent.SPACE_EVENLY,
+                                AlignContent.SPACE_AROUND,
+                                AlignContent.SAFE_START,
+                                AlignContent.SAFE_END,
+                                AlignContent.SAFE_FLEX_START,
+                                AlignContent.SAFE_FLEX_END,
+                                AlignContent.SAFE_CENTER,
+                                AlignContent.END.withSafety(AlignmentSafety.UNSAFE),
+                                AlignContent.FLEX_END.withSafety(AlignmentSafety.UNSAFE),
+                                AlignContent.SPACE_AROUND.withSafety(AlignmentSafety.SAFE)),
+                        List.of(
+                                AlignContent.NORMAL,
+                                AlignContent.START,
+                                AlignContent.END,
+                                AlignContent.FLEX_START,
+                                AlignContent.FLEX_END,
+                                AlignContent.CENTER,
+                                AlignContent.STRETCH,
+                                AlignContent.SPACE_BETWEEN,
+                                AlignContent.SPACE_EVENLY,
+                                AlignContent.SPACE_AROUND,
+                                AlignContent.SAFE_START,
+                                AlignContent.SAFE_END,
+                                AlignContent.SAFE_FLEX_START,
+                                AlignContent.SAFE_FLEX_END,
+                                AlignContent.SAFE_CENTER,
+                                AlignContent.END.withSafety(AlignmentSafety.UNSAFE),
+                                AlignContent.FLEX_END.withSafety(AlignmentSafety.UNSAFE),
+                                AlignContent.SPACE_AROUND));
+            case "align_items_kw_all" ->
+                new Case(
+                        listOf(AlignItemsKeyword.class),
+                        List.of(
+                                AlignItemsKeyword.NORMAL,
+                                AlignItemsKeyword.START,
+                                AlignItemsKeyword.END,
+                                AlignItemsKeyword.FLEX_START,
+                                AlignItemsKeyword.FLEX_END,
+                                AlignItemsKeyword.CENTER,
+                                AlignItemsKeyword.BASELINE,
+                                AlignItemsKeyword.STRETCH,
+                                AlignItemsKeyword.SELF_START,
+                                AlignItemsKeyword.SELF_END),
+                        null);
+            case "align_content_kw_all" ->
+                new Case(
+                        listOf(AlignContentKeyword.class),
+                        List.of(
+                                AlignContentKeyword.NORMAL,
+                                AlignContentKeyword.START,
+                                AlignContentKeyword.END,
+                                AlignContentKeyword.FLEX_START,
+                                AlignContentKeyword.FLEX_END,
+                                AlignContentKeyword.CENTER,
+                                AlignContentKeyword.STRETCH,
+                                AlignContentKeyword.SPACE_BETWEEN,
+                                AlignContentKeyword.SPACE_EVENLY,
+                                AlignContentKeyword.SPACE_AROUND),
+                        null);
+            case "safety_all" ->
+                new Case(
+                        listOf(AlignmentSafety.class),
+                        List.of(AlignmentSafety.DEFAULT, AlignmentSafety.SAFE, AlignmentSafety.UNSAFE),
+                        null);
 
             // ---- simple unit enums ----
-            case "display_all" -> new Case(
-                    listOf(Display.class),
-                    List.of(Display.BLOCK, Display.FLOW_ROOT, Display.FLEX, Display.GRID, Display.NONE),
-                    null);
-            case "position_all" -> new Case(
-                    listOf(Position.class),
-                    List.of(Position.STATIC, Position.RELATIVE, Position.ABSOLUTE, Position.FIXED),
-                    null);
-            case "box_sizing_all" -> new Case(
-                    listOf(BoxSizing.class), List.of(BoxSizing.CONTENT_BOX, BoxSizing.BORDER_BOX), null);
-            case "direction_all" -> new Case(
-                    listOf(Direction.class), List.of(Direction.LTR, Direction.RTL), null);
-            case "overflow_all" -> new Case(
-                    listOf(Overflow.class),
-                    List.of(Overflow.VISIBLE, Overflow.CLIP, Overflow.HIDDEN, Overflow.SCROLL),
-                    null);
-            case "text_align_all" -> new Case(
-                    listOf(TextAlign.class),
-                    List.of(TextAlign.AUTO, TextAlign.LEGACY_LEFT, TextAlign.LEGACY_RIGHT, TextAlign.LEGACY_CENTER),
-                    null);
-            case "flex_direction_all" -> new Case(
-                    listOf(FlexDirection.class),
-                    List.of(
-                            FlexDirection.ROW,
-                            FlexDirection.ROW_REVERSE,
-                            FlexDirection.COLUMN,
-                            FlexDirection.COLUMN_REVERSE),
-                    null);
-            case "flex_wrap_all" -> new Case(
-                    listOf(FlexWrap.class),
-                    List.of(
-                            FlexWrap.NO_WRAP,
-                            FlexWrap.WRAP,
-                            FlexWrap.WRAP_REVERSE,
-                            FlexWrap.BALANCE,
-                            FlexWrap.BALANCE_REVERSE),
-                    null);
-            case "float_all" -> new Case(
-                    listOf(Float.class), List.of(Float.NONE, Float.LEFT, Float.RIGHT), null);
-            case "clear_all" -> new Case(
-                    listOf(Clear.class), List.of(Clear.NONE, Clear.LEFT, Clear.RIGHT, Clear.BOTH), null);
-            case "grid_auto_flow_all" -> new Case(
-                    listOf(GridAutoFlow.class),
-                    List.of(
-                            GridAutoFlow.ROW,
-                            GridAutoFlow.COLUMN,
-                            GridAutoFlow.ROW_DENSE,
-                            GridAutoFlow.COLUMN_DENSE),
-                    null);
+            case "display_all" ->
+                new Case(
+                        listOf(Display.class),
+                        List.of(Display.BLOCK, Display.FLOW_ROOT, Display.FLEX, Display.GRID, Display.NONE),
+                        null);
+            case "position_all" ->
+                new Case(
+                        listOf(Position.class),
+                        List.of(Position.STATIC, Position.RELATIVE, Position.ABSOLUTE, Position.FIXED),
+                        null);
+            case "box_sizing_all" ->
+                new Case(listOf(BoxSizing.class), List.of(BoxSizing.CONTENT_BOX, BoxSizing.BORDER_BOX), null);
+            case "direction_all" -> new Case(listOf(Direction.class), List.of(Direction.LTR, Direction.RTL), null);
+            case "overflow_all" ->
+                new Case(
+                        listOf(Overflow.class),
+                        List.of(Overflow.VISIBLE, Overflow.CLIP, Overflow.HIDDEN, Overflow.SCROLL),
+                        null);
+            case "text_align_all" ->
+                new Case(
+                        listOf(TextAlign.class),
+                        List.of(TextAlign.AUTO, TextAlign.LEGACY_LEFT, TextAlign.LEGACY_RIGHT, TextAlign.LEGACY_CENTER),
+                        null);
+            case "flex_direction_all" ->
+                new Case(
+                        listOf(FlexDirection.class),
+                        List.of(
+                                FlexDirection.ROW,
+                                FlexDirection.ROW_REVERSE,
+                                FlexDirection.COLUMN,
+                                FlexDirection.COLUMN_REVERSE),
+                        null);
+            case "flex_wrap_all" ->
+                new Case(
+                        listOf(FlexWrap.class),
+                        List.of(
+                                FlexWrap.NO_WRAP,
+                                FlexWrap.WRAP,
+                                FlexWrap.WRAP_REVERSE,
+                                FlexWrap.BALANCE,
+                                FlexWrap.BALANCE_REVERSE),
+                        null);
+            case "float_all" -> new Case(listOf(Float.class), List.of(Float.NONE, Float.LEFT, Float.RIGHT), null);
+            case "clear_all" ->
+                new Case(listOf(Clear.class), List.of(Clear.NONE, Clear.LEFT, Clear.RIGHT, Clear.BOTH), null);
+            case "grid_auto_flow_all" ->
+                new Case(
+                        listOf(GridAutoFlow.class),
+                        List.of(
+                                GridAutoFlow.ROW,
+                                GridAutoFlow.COLUMN,
+                                GridAutoFlow.ROW_DENSE,
+                                GridAutoFlow.COLUMN_DENSE),
+                        null);
             case "contain" -> new Case(Contain.class, Contain.LAYOUT.union(Contain.PAINT), null);
             case "contain_none" -> new Case(Contain.class, Contain.NONE, null);
-            case "avail_space_all" -> new Case(
-                    listOf(AvailableSpace.class),
-                    List.of(
-                            new AvailableSpace.Definite(1.5f),
-                            new AvailableSpace.MinContent(),
-                            new AvailableSpace.MaxContent()),
-                    READ_REJECTS);
+            case "avail_space_all" ->
+                new Case(
+                        listOf(AvailableSpace.class),
+                        List.of(
+                                new AvailableSpace.Definite(1.5f),
+                                new AvailableSpace.MinContent(),
+                                new AvailableSpace.MaxContent()),
+                        READ_REJECTS);
             // Serialize-only upstream (tree/layout.rs has no Deserialize).
-            case "run_mode_all" -> new Case(
-                    listOf(RunMode.class),
-                    List.of(RunMode.PERFORM_LAYOUT, RunMode.COMPUTE_SIZE, RunMode.PERFORM_HIDDEN_LAYOUT),
-                    READ_REJECTS);
-            case "sizing_mode_all" -> new Case(
-                    listOf(SizingMode.class), List.of(SizingMode.CONTENT_SIZE, SizingMode.INHERENT_SIZE), READ_REJECTS);
-            case "requested_axis_all" -> new Case(
-                    listOf(RequestedAxis.class),
-                    List.of(RequestedAxis.HORIZONTAL, RequestedAxis.VERTICAL, RequestedAxis.BOTH),
-                    READ_REJECTS);
+            case "run_mode_all" ->
+                new Case(
+                        listOf(RunMode.class),
+                        List.of(RunMode.PERFORM_LAYOUT, RunMode.COMPUTE_SIZE, RunMode.PERFORM_HIDDEN_LAYOUT),
+                        READ_REJECTS);
+            case "sizing_mode_all" ->
+                new Case(
+                        listOf(SizingMode.class),
+                        List.of(SizingMode.CONTENT_SIZE, SizingMode.INHERENT_SIZE),
+                        READ_REJECTS);
+            case "requested_axis_all" ->
+                new Case(
+                        listOf(RequestedAxis.class),
+                        List.of(RequestedAxis.HORIZONTAL, RequestedAxis.VERTICAL, RequestedAxis.BOTH),
+                        READ_REJECTS);
 
             // ---- grid types ----
-            case "grid_placement_all" -> new Case(
-                    listOf(GridPlacement.class),
-                    List.of(
-                            GridPlacement.AUTO,
-                            GridPlacement.fromLineIndex(3),
-                            new GridPlacement.NamedLine("main-start", 2),
-                            GridPlacement.fromSpan(4),
-                            new GridPlacement.NamedSpan("sidebar", 2)),
-                    null);
-            case "line_grid_placement" -> new Case(
-                    TypeToken.getParameterized(Line.class, GridPlacement.class).getType(),
-                    new Line<>(GridPlacement.fromLineIndex(-1), GridPlacement.AUTO),
-                    null);
-            case "repetition_count_all" -> new Case(
-                    listOf(RepetitionCount.class),
-                    List.of(new RepetitionCount.AutoFill(), new RepetitionCount.AutoFit(), new RepetitionCount.Count(8)),
-                    null);
-            case "grid_template_rep" -> new Case(
-                    GridTemplateRepetition.class,
-                    new GridTemplateRepetition(
-                            new RepetitionCount.Count(3),
-                            List.of(
-                                    new MinMax<>(MinTrackSizingFunction.minContent(), MaxTrackSizingFunction.fr(1.0f)),
-                                    new MinMax<>(
-                                            MinTrackSizingFunction.length(4.0f),
-                                            MaxTrackSizingFunction.maxContent())),
-                            List.of(List.of("a", "b"), List.of(), List.of("c"))),
-                    null);
-            case "grid_template_component_all" -> new Case(
-                    listOf(GenericGridTemplateComponent.class),
-                    List.of(
-                            new GenericGridTemplateComponent.Single<>(
-                                    new MinMax<>(MinTrackSizingFunction.minContent(), MaxTrackSizingFunction.fr(2.0f))),
-                            new GenericGridTemplateComponent.Repeat<>(new GridTemplateRepetition(
-                                    new RepetitionCount.AutoFill(),
-                                    List.of(new MinMax<>(MinTrackSizingFunction.auto(), MaxTrackSizingFunction.fr(1.0f))),
-                                    List.of(List.of("x"))))),
-                    null);
-            case "grid_template_area" -> new Case(
-                    GridTemplateArea.class, new GridTemplateArea("header", 1, 3, 2, 5), null);
-            case "grid_template_areas" -> new Case(
-                    GridTemplateAreas.class,
-                    new GridTemplateAreas(
-                            List.of(
-                                    new GridTemplateArea("a", 1, 2, 1, 2),
-                                    new GridTemplateArea("b", 2, 4, 2, 6)),
-                            4,
-                            6),
-                    null);
-            case "named_grid_line" -> new Case(
-                    NamedGridLine.class, new NamedGridLine("content-start", 3), null);
+            case "grid_placement_all" ->
+                new Case(
+                        listOf(GridPlacement.class),
+                        List.of(
+                                GridPlacement.AUTO,
+                                GridPlacement.fromLineIndex(3),
+                                new GridPlacement.NamedLine("main-start", 2),
+                                GridPlacement.fromSpan(4),
+                                new GridPlacement.NamedSpan("sidebar", 2)),
+                        null);
+            case "line_grid_placement" ->
+                new Case(
+                        TypeToken.getParameterized(Line.class, GridPlacement.class)
+                                .getType(),
+                        new Line<>(GridPlacement.fromLineIndex(-1), GridPlacement.AUTO),
+                        null);
+            case "repetition_count_all" ->
+                new Case(
+                        listOf(RepetitionCount.class),
+                        List.of(
+                                new RepetitionCount.AutoFill(),
+                                new RepetitionCount.AutoFit(),
+                                new RepetitionCount.Count(8)),
+                        null);
+            case "grid_template_rep" ->
+                new Case(
+                        GridTemplateRepetition.class,
+                        new GridTemplateRepetition(
+                                new RepetitionCount.Count(3),
+                                List.of(
+                                        new MinMax<>(
+                                                MinTrackSizingFunction.minContent(), MaxTrackSizingFunction.fr(1.0f)),
+                                        new MinMax<>(
+                                                MinTrackSizingFunction.length(4.0f),
+                                                MaxTrackSizingFunction.maxContent())),
+                                List.of(List.of("a", "b"), List.of(), List.of("c"))),
+                        null);
+            case "grid_template_component_all" ->
+                new Case(
+                        listOf(GenericGridTemplateComponent.class),
+                        List.of(
+                                new GenericGridTemplateComponent.Single<>(new MinMax<>(
+                                        MinTrackSizingFunction.minContent(), MaxTrackSizingFunction.fr(2.0f))),
+                                new GenericGridTemplateComponent.Repeat<>(new GridTemplateRepetition(
+                                        new RepetitionCount.AutoFill(),
+                                        List.of(new MinMax<>(
+                                                MinTrackSizingFunction.auto(), MaxTrackSizingFunction.fr(1.0f))),
+                                        List.of(List.of("x"))))),
+                        null);
+            case "grid_template_area" ->
+                new Case(GridTemplateArea.class, new GridTemplateArea("header", 1, 3, 2, 5), null);
+            case "grid_template_areas" ->
+                new Case(
+                        GridTemplateAreas.class,
+                        new GridTemplateAreas(
+                                List.of(new GridTemplateArea("a", 1, 2, 1, 2), new GridTemplateArea("b", 2, 4, 2, 6)),
+                                4,
+                                6),
+                        null);
+            case "named_grid_line" -> new Case(NamedGridLine.class, new NamedGridLine("content-start", 3), null);
 
             // ---- style ----
             case "style_default" -> new Case(Style.class, Style.DEFAULT, null);
             case "style_loaded" -> new Case(Style.class, styleLoaded(), null);
             // Non-finite f32 fields write null; reading null into a plain f32
             // fails upstream too ("invalid type: null").
-            case "style_nan" -> new Case(
-                    Style.class,
-                    Style.DEFAULT
-                            .withScrollbarWidth(java.lang.Float.NaN)
-                            .withFlexGrow(java.lang.Float.POSITIVE_INFINITY)
-                            .withFlexShrink(java.lang.Float.NEGATIVE_INFINITY)
-                            .withAspectRatio(java.lang.Float.NaN),
-                    READ_REJECTS);
+            case "style_nan" ->
+                new Case(
+                        Style.class,
+                        Style.DEFAULT
+                                .withScrollbarWidth(java.lang.Float.NaN)
+                                .withFlexGrow(java.lang.Float.POSITIVE_INFINITY)
+                                .withFlexShrink(java.lang.Float.NEGATIVE_INFINITY)
+                                .withAspectRatio(java.lang.Float.NaN),
+                        READ_REJECTS);
             case "style_display_flex" -> new Case(Style.class, Style.DEFAULT.withDisplay(Display.FLEX), null);
 
             // ---- layout (Serialize only) ----
-            case "scrollable_overflow" -> new Case(
-                    ScrollableOverflow.class,
-                    ScrollableOverflow.of(new RectF32(-10, 20, 0, 0), new PointBool(true, true)),
-                    READ_REJECTS);
-            case "collapsible_margin" -> new Case(
-                    CollapsibleMarginSet.class,
-                    CollapsibleMarginSet.fromMargin(1.5f).collapseWithMargin(-0.5f),
-                    READ_REJECTS);
+            case "scrollable_overflow" ->
+                new Case(
+                        ScrollableOverflow.class,
+                        ScrollableOverflow.of(new RectF32(-10, 20, 0, 0), new PointBool(true, true)),
+                        READ_REJECTS);
+            case "collapsible_margin" ->
+                new Case(
+                        CollapsibleMarginSet.class,
+                        CollapsibleMarginSet.fromMargin(1.5f).collapseWithMargin(-0.5f),
+                        READ_REJECTS);
             case "baselines" -> new Case(Baselines.class, new Baselines(3.0f, OptF32.NONE), READ_REJECTS);
-            case "oof_positioning_area" -> new Case(
-                    OofPositioningArea.class,
-                    new OofPositioningArea(new SizeF32(6, 7), new PointF32(1, 2)),
-                    READ_REJECTS);
-            case "layout" -> new Case(
-                    Layout.class,
-                    new Layout(
-                            3,
-                            new PointF32(1.5f, -2.0f),
-                            new SizeF32(10.0f, 20.0f),
-                            ScrollableOverflow.of(new RectF32(-1, 2, 0, 5), new PointBool(true, false)),
-                            new SizeF32(0.0f, 12.0f),
-                            new RectF32(1, 1, 2, 2),
-                            new RectF32(0.5f, 0.5f, 0.5f, 0.5f),
-                            RectF32.ZERO),
-                    READ_REJECTS);
-            case "layout_input" -> new Case(
-                    LayoutInput.class,
-                    new LayoutInput(
-                            RunMode.PERFORM_HIDDEN_LAYOUT,
-                            SizingMode.INHERENT_SIZE,
-                            RequestedAxis.BOTH,
-                            SizeOptF32.NONE,
-                            SizeBool.TRUE,
-                            SizeOptF32.NONE,
-                            new Size<>(new AvailableSpace.MaxContent(), new AvailableSpace.MaxContent()),
-                            LineBool.FALSE),
-                    READ_REJECTS);
-            case "layout_output" -> new Case(
-                    LayoutOutput.class,
-                    new LayoutOutput(
-                            new SizeF32(4.0f, 5.0f),
-                            ScrollableOverflow.of(new RectF32(-5, 10, -2, 8), new PointBool(true, false)),
-                            new Baselines(3.0f, OptF32.NONE),
-                            CollapsibleMarginSet.fromMargin(1.5f).collapseWithMargin(-0.5f),
-                            CollapsibleMarginSet.ZERO,
-                            true,
-                            OofCandidates.none(),
-                            new OofPositioningArea(new SizeF32(6, 7), new PointF32(1, 2))),
-                    READ_REJECTS);
-            case "layout_output_no_oof_area" -> new Case(
-                    LayoutOutput.class,
-                    new LayoutOutput(
-                            SizeF32.ZERO,
-                            ScrollableOverflow.ZERO,
-                            Baselines.NONE,
-                            CollapsibleMarginSet.ZERO,
-                            CollapsibleMarginSet.ZERO,
-                            false,
-                            OofCandidates.none(),
-                            null),
-                    READ_REJECTS);
+            case "oof_positioning_area" ->
+                new Case(
+                        OofPositioningArea.class,
+                        new OofPositioningArea(new SizeF32(6, 7), new PointF32(1, 2)),
+                        READ_REJECTS);
+            case "layout" ->
+                new Case(
+                        Layout.class,
+                        new Layout(
+                                3,
+                                new PointF32(1.5f, -2.0f),
+                                new SizeF32(10.0f, 20.0f),
+                                ScrollableOverflow.of(new RectF32(-1, 2, 0, 5), new PointBool(true, false)),
+                                new SizeF32(0.0f, 12.0f),
+                                new RectF32(1, 1, 2, 2),
+                                new RectF32(0.5f, 0.5f, 0.5f, 0.5f),
+                                RectF32.ZERO),
+                        READ_REJECTS);
+            case "layout_input" ->
+                new Case(
+                        LayoutInput.class,
+                        new LayoutInput(
+                                RunMode.PERFORM_HIDDEN_LAYOUT,
+                                SizingMode.INHERENT_SIZE,
+                                RequestedAxis.BOTH,
+                                SizeOptF32.NONE,
+                                SizeBool.TRUE,
+                                SizeOptF32.NONE,
+                                new Size<>(new AvailableSpace.MaxContent(), new AvailableSpace.MaxContent()),
+                                LineBool.FALSE),
+                        READ_REJECTS);
+            case "layout_output" ->
+                new Case(
+                        LayoutOutput.class,
+                        new LayoutOutput(
+                                new SizeF32(4.0f, 5.0f),
+                                ScrollableOverflow.of(new RectF32(-5, 10, -2, 8), new PointBool(true, false)),
+                                new Baselines(3.0f, OptF32.NONE),
+                                CollapsibleMarginSet.fromMargin(1.5f).collapseWithMargin(-0.5f),
+                                CollapsibleMarginSet.ZERO,
+                                true,
+                                OofCandidates.none(),
+                                new OofPositioningArea(new SizeF32(6, 7), new PointF32(1, 2))),
+                        READ_REJECTS);
+            case "layout_output_no_oof_area" ->
+                new Case(
+                        LayoutOutput.class,
+                        new LayoutOutput(
+                                SizeF32.ZERO,
+                                ScrollableOverflow.ZERO,
+                                Baselines.NONE,
+                                CollapsibleMarginSet.ZERO,
+                                CollapsibleMarginSet.ZERO,
+                                false,
+                                OofCandidates.none(),
+                                null),
+                        READ_REJECTS);
             default -> throw new IllegalArgumentException("no Java mirror for golden case " + name);
         };
     }
@@ -573,19 +617,14 @@ class GoldenSerdeTest {
                 .withFlexShrink(0.0f)
                 .withGridTemplateRows(List.of(new GenericGridTemplateComponent.Single<>(
                         new MinMax<>(MinTrackSizingFunction.minContent(), MaxTrackSizingFunction.fr(1.0f)))))
-                .withGridTemplateColumns(List.of(new GenericGridTemplateComponent.Repeat<>(
-                        new GridTemplateRepetition(
-                                new RepetitionCount.Count(2),
-                                List.of(new MinMax<>(
-                                        MinTrackSizingFunction.length(5.0f),
-                                        MaxTrackSizingFunction.maxContent())),
-                                List.of(List.of("col"))))))
-                .withGridAutoRows(List.of(
-                        new MinMax<>(MinTrackSizingFunction.auto(), MaxTrackSizingFunction.fr(1.0f))))
+                .withGridTemplateColumns(List.of(new GenericGridTemplateComponent.Repeat<>(new GridTemplateRepetition(
+                        new RepetitionCount.Count(2),
+                        List.of(new MinMax<>(MinTrackSizingFunction.length(5.0f), MaxTrackSizingFunction.maxContent())),
+                        List.of(List.of("col"))))))
+                .withGridAutoRows(List.of(new MinMax<>(MinTrackSizingFunction.auto(), MaxTrackSizingFunction.fr(1.0f))))
                 .withGridAutoColumns(List.of())
                 .withGridAutoFlow(GridAutoFlow.COLUMN_DENSE)
-                .withGridTemplateAreas(new GridTemplateAreas(
-                        List.of(new GridTemplateArea("main", 1, 2, 1, 3)), 2, 3))
+                .withGridTemplateAreas(new GridTemplateAreas(List.of(new GridTemplateArea("main", 1, 2, 1, 3)), 2, 3))
                 .withGridTemplateColumnNames(List.of(List.of("a", "b"), List.of()))
                 .withGridTemplateRowNames(List.of(List.of()))
                 .withGridRow(new Line<>(GridPlacement.fromLineIndex(3), GridPlacement.fromSpan(2)))

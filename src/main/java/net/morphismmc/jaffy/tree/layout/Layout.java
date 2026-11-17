@@ -106,7 +106,8 @@ public record Layout(
         }
         return F32.max(
                 0.0f,
-                scrollableOverflowRect.right() + F32.min(scrollbarSize.width(), size.width())
+                scrollableOverflowRect.right()
+                        + F32.min(scrollbarSize.width(), size.width())
                         - size.width()
                         + border.left()
                         + border.right());
@@ -120,7 +121,8 @@ public record Layout(
         }
         return F32.max(
                 0.0f,
-                scrollableOverflowRect.bottom() + F32.min(scrollbarSize.height(), size.height())
+                scrollableOverflowRect.bottom()
+                        + F32.min(scrollbarSize.height(), size.height())
                         - size.height()
                         + border.top()
                         + border.bottom());

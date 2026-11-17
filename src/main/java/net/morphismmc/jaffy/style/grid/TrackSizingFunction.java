@@ -63,8 +63,7 @@ public final class TrackSizingFunction {
 
     /// `FromPercent::from_percent`
     public static MinMax<MinTrackSizingFunction, MaxTrackSizingFunction> fromPercent(double percent) {
-        return new MinMax<>(
-                MinTrackSizingFunction.fromPercent(percent), MaxTrackSizingFunction.fromPercent(percent));
+        return new MinMax<>(MinTrackSizingFunction.fromPercent(percent), MaxTrackSizingFunction.fromPercent(percent));
     }
 
     /// `FromFr::from_fr`

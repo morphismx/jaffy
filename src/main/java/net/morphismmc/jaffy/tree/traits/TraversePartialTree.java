@@ -7,7 +7,6 @@ package net.morphismmc.jaffy.tree.traits;
 
 import it.unimi.dsi.fastutil.longs.LongIterator;
 
-
 /// Taffy's abstraction for downward tree traversal.
 ///
 /// However, this trait does *not* require access to any nodes other than a

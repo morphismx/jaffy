@@ -5,7 +5,6 @@
 // `Float.floatToRawIntBits` accordingly (non-canonical NaN payloads differ).
 package net.morphismmc.jaffy.tree.layout;
 
-import net.morphismmc.jaffy.geometry.Point;
 import net.morphismmc.jaffy.geometry.PointBool;
 import net.morphismmc.jaffy.geometry.RectF32;
 
@@ -83,8 +82,7 @@ public final class ScrollableOverflow {
 
     /// Swap the physical axes, preserving origin directions and signed zeroes.
     public ScrollableOverflow transpose() {
-        return new ScrollableOverflow(
-                new RectF32(packed.top(), packed.bottom(), packed.left(), packed.right()));
+        return new ScrollableOverflow(new RectF32(packed.top(), packed.bottom(), packed.left(), packed.right()));
     }
 
     /// `PartialEq` — compares `to_bits` on all four components, so sign

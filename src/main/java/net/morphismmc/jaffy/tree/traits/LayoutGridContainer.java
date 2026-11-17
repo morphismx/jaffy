@@ -10,7 +10,6 @@ import net.morphismmc.jaffy.compute.grid.DetailedGridInfo;
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.util.DebugLogger;
 
-
 /// Extends {@link LayoutPartialTree} with getters for the styles required
 /// for CSS Grid layout.
 public interface LayoutGridContainer extends LayoutPartialTree {

@@ -4,12 +4,13 @@
 // serde/parse impls are feature-gated: deferred.
 package net.morphismmc.jaffy.style.dimension;
 
+import net.morphismmc.jaffy.style.CompactBits;
+import net.morphismmc.jaffy.style.CompactLength;
 import net.morphismmc.jaffy.util.CalcResolver;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
+
 import org.jspecify.annotations.Nullable;
-import net.morphismmc.jaffy.style.CompactBits;
-import net.morphismmc.jaffy.style.CompactLength;
 
 public sealed interface Dimension {
 
@@ -104,7 +105,8 @@ public sealed interface Dimension {
     float value();
 
     /// `self.0.calc_value()` — calc() pointer for `calc()`/`fit-content(calc())` (also `pub`)
-    @Nullable Object calcValue();
+    @Nullable
+    Object calcValue();
 
     default boolean isPlainCalc() {
         return CompactBits.isPlainCalc(calcTag());

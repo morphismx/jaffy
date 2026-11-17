@@ -70,8 +70,7 @@ class FlexboxTest {
         return true;
     }
 
-    private static Balance.LineSizes makeLineSizes(
-            float[] itemSizes, float lineLimit, float gapBetweenItems) {
+    private static Balance.LineSizes makeLineSizes(float[] itemSizes, float lineLimit, float gapBetweenItems) {
         double gap = Balance.toSize(gapBetweenItems);
         double limit = lineLimit;
         List<Balance.SumEntry> sums = new ArrayList<>(itemSizes.length);
@@ -92,8 +91,7 @@ class FlexboxTest {
         int itemCount = itemSizes.length;
         Balance.LineSizes sizes = makeLineSizes(itemSizes, lineLimit, gapBetweenItems);
 
-        int lineCount =
-                iMax(greedyLineCount(sizes), iMin(iMax(minLineCount, 1), itemCount));
+        int lineCount = iMax(greedyLineCount(sizes), iMin(iMax(minLineCount, 1), itemCount));
 
         // `min_errors[(lines - 1) * item_count + start]` is the minimum total
         // score of any valid division of items `start..` into exactly `lines`
@@ -136,13 +134,8 @@ class FlexboxTest {
             int end = itemCount - 1 - linesAfter;
             while (true) {
                 if (sizes.lineCost(start, end) != Balance.INFEASIBLE
-                        && (linesAfter == 0
-                                || zeroBoundaryValid(
-                                        sizes, minErrors, linesAfter + 1, start, end))) {
-                    double remainingError =
-                            linesAfter == 0
-                                    ? 0.0
-                                    : minErrors[(linesAfter - 1) * itemCount + end + 1];
+                        && (linesAfter == 0 || zeroBoundaryValid(sizes, minErrors, linesAfter + 1, start, end))) {
+                    double remainingError = linesAfter == 0 ? 0.0 : minErrors[(linesAfter - 1) * itemCount + end + 1];
                     if (sizes.lineCost(start, end) + remainingError == target) {
                         break;
                     }
@@ -163,18 +156,13 @@ class FlexboxTest {
         // makes the score worse: [70, 0] / [20] has line sizes 80 / 20 (score
         // 6800), while [70] / [0, 20] would have line sizes 70 / 30 (score
         // 5800)
-        int[] counts =
-                Balance.balancedLineItemCounts(new float[] {70.0f, 0.0f, 20.0f}, 100.0f, 10.0f, 1);
+        int[] counts = Balance.balancedLineItemCounts(new float[] {70.0f, 0.0f, 20.0f}, 100.0f, 10.0f, 1);
         assertArrayEquals(new int[] {2, 1}, counts);
         // The zero item is not glued to a single overflowing item's line
-        counts =
-                Balance.balancedLineItemCounts(
-                        new float[] {150.0f, 0.0f, 30.0f}, 100.0f, 0.0f, 1);
+        counts = Balance.balancedLineItemCounts(new float[] {150.0f, 0.0f, 30.0f}, 100.0f, 0.0f, 1);
         assertArrayEquals(new int[] {1, 2}, counts);
         // Zero items are glued as far as the requested line count allows
-        counts =
-                Balance.balancedLineItemCounts(
-                        new float[] {70.0f, 0.0f, 0.0f}, 100.0f, 0.0f, 2);
+        counts = Balance.balancedLineItemCounts(new float[] {70.0f, 0.0f, 0.0f}, 100.0f, 0.0f, 2);
         assertArrayEquals(new int[] {2, 1}, counts);
     }
 
@@ -183,54 +171,44 @@ class FlexboxTest {
         // A simple xorshift PRNG so the test is deterministic and
         // dependency-free
         long[] state = {0x243F6A8885A308D3L};
-        java.util.function.IntUnaryOperator rand =
-                bound -> {
-                    state[0] ^= state[0] << 13;
-                    state[0] ^= state[0] >>> 7;
-                    state[0] ^= state[0] << 17;
-                    return (int) (((state[0] >>> 32) & 0xFFFFFFFFL) % bound);
-                };
+        java.util.function.IntUnaryOperator rand = bound -> {
+            state[0] ^= state[0] << 13;
+            state[0] ^= state[0] >>> 7;
+            state[0] ^= state[0] << 17;
+            return (int) (((state[0] >>> 32) & 0xFFFFFFFFL) % bound);
+        };
 
         for (int testCase = 0; testCase < 5000; testCase++) {
             // Mostly small item counts (quantized sizes maximize ties,
             // exercising the tie-break rules), with some larger ones
             // exercising the recursion
-            int itemCount =
-                    testCase % 20 == 0 ? rand.applyAsInt(60) + 1 : rand.applyAsInt(15) + 1;
+            int itemCount = testCase % 20 == 0 ? rand.applyAsInt(60) + 1 : rand.applyAsInt(15) + 1;
             float[] itemSizes = new float[itemCount];
             for (int i = 0; i < itemCount; i++) {
                 int r = rand.applyAsInt(8);
                 // Frequent zero items exercise the zero-sized-item rule
-                itemSizes[i] =
-                        r <= 1 ? 0.0f : r == 2 ? -10.0f : rand.applyAsInt(8) * 25.0f;
+                itemSizes[i] = r <= 1 ? 0.0f : r == 2 ? -10.0f : rand.applyAsInt(8) * 25.0f;
             }
-            float lineLimit =
-                    rand.applyAsInt(5) == 0
-                            ? Float.POSITIVE_INFINITY
-                            : rand.applyAsInt(10) * 30.0f;
+            float lineLimit = rand.applyAsInt(5) == 0 ? Float.POSITIVE_INFINITY : rand.applyAsInt(10) * 30.0f;
             float gapBetweenItems = rand.applyAsInt(4) * 5.0f;
             int minLineCount = rand.applyAsInt(itemCount + 2);
 
-            int[] expected =
-                    naiveLineItemCounts(itemSizes, lineLimit, gapBetweenItems, minLineCount);
-            int[] actual =
-                    Balance.balancedLineItemCounts(
-                            itemSizes, lineLimit, gapBetweenItems, minLineCount);
+            int[] expected = naiveLineItemCounts(itemSizes, lineLimit, gapBetweenItems, minLineCount);
+            int[] actual = Balance.balancedLineItemCounts(itemSizes, lineLimit, gapBetweenItems, minLineCount);
             final int tc = testCase;
             assertArrayEquals(
                     expected,
                     actual,
-                    () ->
-                            "case "
-                                    + tc
-                                    + ": item_sizes="
-                                    + Arrays.toString(itemSizes)
-                                    + " line_limit="
-                                    + lineLimit
-                                    + " gap_between_items="
-                                    + gapBetweenItems
-                                    + " min_line_count="
-                                    + minLineCount);
+                    () -> "case "
+                            + tc
+                            + ": item_sizes="
+                            + Arrays.toString(itemSizes)
+                            + " line_limit="
+                            + lineLimit
+                            + " gap_between_items="
+                            + gapBetweenItems
+                            + " min_line_count="
+                            + minLineCount);
         }
     }
 }

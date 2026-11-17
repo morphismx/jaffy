@@ -10,11 +10,12 @@
 // serde impls and `from_serialized`/`serialized` are serde-gated: deferred.
 package net.morphismmc.jaffy.style;
 
+import net.morphismmc.jaffy.style.dimension.LengthPercentage;
 import net.morphismmc.jaffy.util.CalcResolver;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
+
 import org.jspecify.annotations.Nullable;
-import net.morphismmc.jaffy.style.dimension.LengthPercentage;
 
 public sealed interface CompactLength {
 
@@ -158,7 +159,8 @@ public sealed interface CompactLength {
     float value();
 
     /// Get the calc pointer of the `CompactLength` (`Object` handle)
-    @Nullable Object calcValue();
+    @Nullable
+    Object calcValue();
 
     // ---- Predicates ----
 

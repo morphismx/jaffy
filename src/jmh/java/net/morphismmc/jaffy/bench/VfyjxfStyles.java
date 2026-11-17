@@ -80,12 +80,9 @@ public final class VfyjxfStyles {
     public static dev.vfyjxf.taffy.style.TaffyStyle flexStyle(Rng rng) {
         dev.vfyjxf.taffy.style.TaffyStyle s = new dev.vfyjxf.taffy.style.TaffyStyle();
         s.display = dev.vfyjxf.taffy.style.TaffyDisplay.FLEX;
-        s.flexDirection = rng.nextBool()
-                ? dev.vfyjxf.taffy.style.FlexDirection.ROW
-                : dev.vfyjxf.taffy.style.FlexDirection.COLUMN;
-        s.flexWrap = rng.nextBool()
-                ? dev.vfyjxf.taffy.style.FlexWrap.WRAP
-                : dev.vfyjxf.taffy.style.FlexWrap.NO_WRAP;
+        s.flexDirection =
+                rng.nextBool() ? dev.vfyjxf.taffy.style.FlexDirection.ROW : dev.vfyjxf.taffy.style.FlexDirection.COLUMN;
+        s.flexWrap = rng.nextBool() ? dev.vfyjxf.taffy.style.FlexWrap.WRAP : dev.vfyjxf.taffy.style.FlexWrap.NO_WRAP;
         return s;
     }
 
@@ -102,23 +99,21 @@ public final class VfyjxfStyles {
     public static dev.vfyjxf.taffy.style.TaffyStyle containerStyle(String containers, int depth) {
         dev.vfyjxf.taffy.style.TaffyStyle s = new dev.vfyjxf.taffy.style.TaffyStyle();
         s.display = switch (containers) {
-            case "mixed" -> switch (depth % 3) {
-                case 0 -> dev.vfyjxf.taffy.style.TaffyDisplay.FLEX;
-                case 1 -> dev.vfyjxf.taffy.style.TaffyDisplay.BLOCK;
-                default -> dev.vfyjxf.taffy.style.TaffyDisplay.GRID;
-            };
+            case "mixed" ->
+                switch (depth % 3) {
+                    case 0 -> dev.vfyjxf.taffy.style.TaffyDisplay.FLEX;
+                    case 1 -> dev.vfyjxf.taffy.style.TaffyDisplay.BLOCK;
+                    default -> dev.vfyjxf.taffy.style.TaffyDisplay.GRID;
+                };
             case "block" -> dev.vfyjxf.taffy.style.TaffyDisplay.BLOCK;
             case "grid" -> dev.vfyjxf.taffy.style.TaffyDisplay.GRID;
             default -> dev.vfyjxf.taffy.style.TaffyDisplay.FLEX;
         };
-        s.flexDirection = depth % 2 == 0
-                ? dev.vfyjxf.taffy.style.FlexDirection.COLUMN
-                : dev.vfyjxf.taffy.style.FlexDirection.ROW;
+        s.flexDirection =
+                depth % 2 == 0 ? dev.vfyjxf.taffy.style.FlexDirection.COLUMN : dev.vfyjxf.taffy.style.FlexDirection.ROW;
         s.gridTemplateColumns = new ArrayList<>(List.of(
-                dev.vfyjxf.taffy.style.TrackSizingFunction.auto(),
-                dev.vfyjxf.taffy.style.TrackSizingFunction.auto()));
-        s.padding = dev.vfyjxf.taffy.geometry.TaffyRect.all(
-                dev.vfyjxf.taffy.style.LengthPercentage.length(1.0f));
+                dev.vfyjxf.taffy.style.TrackSizingFunction.auto(), dev.vfyjxf.taffy.style.TrackSizingFunction.auto()));
+        s.padding = dev.vfyjxf.taffy.geometry.TaffyRect.all(dev.vfyjxf.taffy.style.LengthPercentage.length(1.0f));
         return s;
     }
 
@@ -136,8 +131,7 @@ public final class VfyjxfStyles {
     public static dev.vfyjxf.taffy.style.TaffyStyle deepAuto() {
         dev.vfyjxf.taffy.style.TaffyStyle s = new dev.vfyjxf.taffy.style.TaffyStyle();
         s.flexGrow = 1.0f;
-        s.margin = dev.vfyjxf.taffy.geometry.TaffyRect.all(
-                dev.vfyjxf.taffy.style.LengthPercentageAuto.length(10.0f));
+        s.margin = dev.vfyjxf.taffy.geometry.TaffyRect.all(dev.vfyjxf.taffy.style.LengthPercentageAuto.length(10.0f));
         return s;
     }
 
@@ -146,8 +140,7 @@ public final class VfyjxfStyles {
         dev.vfyjxf.taffy.style.TaffyStyle s = new dev.vfyjxf.taffy.style.TaffyStyle();
         s.flexDirection = dev.vfyjxf.taffy.style.FlexDirection.ROW;
         s.flexGrow = 1.0f;
-        s.margin = dev.vfyjxf.taffy.geometry.TaffyRect.all(
-                dev.vfyjxf.taffy.style.LengthPercentageAuto.length(10.0f));
+        s.margin = dev.vfyjxf.taffy.geometry.TaffyRect.all(dev.vfyjxf.taffy.style.LengthPercentageAuto.length(10.0f));
         return s;
     }
 

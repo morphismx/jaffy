@@ -13,7 +13,6 @@ import net.morphismmc.just.math.F32;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
 
-
 /// Internal sizing information for a single grid track (row/column)
 /// Gutters between tracks are sized similarly to actual tracks, so they
 /// are also represented by this struct
@@ -61,7 +60,9 @@ public final class GridTrack {
     public float fitContentLimit;
 
     /// GridTrack constructor with all configuration parameters for the other constructors exposed
-    private GridTrack(GridTrackKind kind, MinTrackSizingFunction minTrackSizingFunction,
+    private GridTrack(
+            GridTrackKind kind,
+            MinTrackSizingFunction minTrackSizingFunction,
             MaxTrackSizingFunction maxTrackSizingFunction) {
         this.kind = kind;
         this.isCollapsed = false;
@@ -79,15 +80,15 @@ public final class GridTrack {
     }
 
     /// Create new GridTrack representing an actual track (not a gutter)
-    public static GridTrack newGridTrack(MinTrackSizingFunction minTrackSizingFunction,
-            MaxTrackSizingFunction maxTrackSizingFunction) {
+    public static GridTrack newGridTrack(
+            MinTrackSizingFunction minTrackSizingFunction, MaxTrackSizingFunction maxTrackSizingFunction) {
         return new GridTrack(GridTrackKind.TRACK, minTrackSizingFunction, maxTrackSizingFunction);
     }
 
     /// Create a new GridTrack representing a gutter
     public static GridTrack gutter(LengthPercentage size) {
-        return new GridTrack(GridTrackKind.GUTTER, MinTrackSizingFunction.from(size),
-                MaxTrackSizingFunction.from(size));
+        return new GridTrack(
+                GridTrackKind.GUTTER, MinTrackSizingFunction.from(size), MaxTrackSizingFunction.from(size));
     }
 
     /// Mark a GridTrack as collapsed. Also sets both of the track's sizing functions
@@ -119,8 +120,7 @@ public final class GridTrack {
     /// indefinite, as do tracks which are not `fit-content()`.
     public void resolveFitContentLimit(@Opt float axisInnerNodeSize, CalcResolver calcResolver) {
         fitContentLimit = OptF32.unwrapOr(
-                maxTrackSizingFunction.fitContentLimit(axisInnerNodeSize, calcResolver),
-                Float.POSITIVE_INFINITY);
+                maxTrackSizingFunction.fitContentLimit(axisInnerNodeSize, calcResolver), Float.POSITIVE_INFINITY);
     }
 
     /// Returns the resolved `fit-content()` limit of the track (infinity if the track is not `fit-content()`)

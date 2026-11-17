@@ -7,16 +7,17 @@ package net.morphismmc.jaffy.style;
 import net.morphismmc.jaffy.geometry.Point;
 import net.morphismmc.jaffy.geometry.Rect;
 import net.morphismmc.jaffy.geometry.Size;
-import net.morphismmc.just.math.Opt;
-import net.morphismmc.just.math.OptF32;
 import net.morphismmc.jaffy.style.dimension.Dimension;
 import net.morphismmc.jaffy.style.dimension.LengthPercentage;
 import net.morphismmc.jaffy.style.dimension.LengthPercentageAuto;
+import net.morphismmc.just.math.Opt;
 
 /// The core set of styles that are shared between all CSS layout nodes
 ///
-/// Note that all methods come with a default implementation which simply returns the default value for that style property
-/// but this is a just a convenience to save on boilerplate for styles that your implementation doesn't support. You will need
+/// Note that all methods come with a default implementation which simply returns the default value for that style
+/// property
+/// but this is a just a convenience to save on boilerplate for styles that your implementation doesn't support. You
+/// will need
 /// to override the default implementation for each style property that your style type actually supports.
 public interface CoreStyle {
 

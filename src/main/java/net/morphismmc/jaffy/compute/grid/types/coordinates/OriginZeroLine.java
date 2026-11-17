@@ -2,6 +2,7 @@
 // `OriginZeroLine` i16 newtype + its Add/Sub/AddAssign impls.
 // `pub(crate)` in Rust (kept public for cross-package compute access).
 package net.morphismmc.jaffy.compute.grid.types.coordinates;
+
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
 
 /// Represents a grid line position in "OriginZero" coordinates
@@ -47,10 +48,9 @@ public record OriginZeroLine(int value) implements GridCoordinate {
     /// Create an `OriginZeroLine`, clamping the line into the limited grid
     /// `[-MAX_GRID_TRACKS, MAX_GRID_TRACKS]`. (`pub(crate)` in Rust.)
     public static OriginZeroLine clamped(int line) {
-        int clamped =
-                line < Coordinates.MIN_OZ_LINE
-                        ? Coordinates.MIN_OZ_LINE
-                        : line > Coordinates.MAX_OZ_LINE ? Coordinates.MAX_OZ_LINE : line;
+        int clamped = line < Coordinates.MIN_OZ_LINE
+                ? Coordinates.MIN_OZ_LINE
+                : line > Coordinates.MAX_OZ_LINE ? Coordinates.MAX_OZ_LINE : line;
         return new OriginZeroLine(clamped);
     }
 

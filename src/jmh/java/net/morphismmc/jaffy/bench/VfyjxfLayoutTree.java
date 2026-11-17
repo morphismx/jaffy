@@ -30,8 +30,7 @@ public final class VfyjxfLayoutTree {
     }
 
     /// `compute_layout(root, space)` convenience
-    public void computeLayout(
-            dev.vfyjxf.taffy.geometry.TaffySize<dev.vfyjxf.taffy.style.AvailableSpace> space) {
+    public void computeLayout(dev.vfyjxf.taffy.geometry.TaffySize<dev.vfyjxf.taffy.style.AvailableSpace> space) {
         tree.computeLayout(root, space);
     }
 }
