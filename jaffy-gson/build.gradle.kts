@@ -1,5 +1,7 @@
 plugins {
     `java-library`
+    id("com.diffplug.spotless") version "8.10.2"
+    id("dev.openjavaformat.java-format") version "21.0.2"
 }
 
 group = "net.morphismmc"
@@ -36,4 +38,11 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+spotless {
+    java {
+        target("src/**/*.java")
+        importOrderFile(rootProject.file("spotless.importorder"))
+    }
 }

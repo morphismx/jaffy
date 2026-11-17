@@ -2,6 +2,8 @@ plugins {
     `java-library`
     // JMH benchmarks: `gradlew jmh`. Sources under src/jmh/java.
     id("me.champeau.jmh") version "0.7.4"
+    id("com.diffplug.spotless") version "8.10.2"
+    id("dev.openjavaformat.java-format") version "21.0.2"
 }
 
 group = "net.morphismmc"
@@ -175,3 +177,12 @@ val staticCheck = tasks.register("staticCheck") {
 }
 
 tasks.named("check") { dependsOn(staticCheck) }
+
+// google-java-format via Spotless (same setup as RetroDFU). The upstream/
+// submodule lives outside src/ and is never targeted.
+spotless {
+    java {
+        target("src/**/*.java")
+        importOrderFile("spotless.importorder")
+    }
+}
