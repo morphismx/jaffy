@@ -1,4 +1,4 @@
-/// Upstream: `src/tree/cache.rs`
+// JAFFY-UPSTREAM: src/tree/cache.rs
 @NullMarked
 package net.morphismmc.jaffy.tree.cache;
 

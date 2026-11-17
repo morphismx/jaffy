@@ -1,4 +1,4 @@
-/// Upstream: `src/style/dimension.rs`
+// JAFFY-UPSTREAM: src/style/dimension.rs
 @NullMarked
 package net.morphismmc.jaffy.style.dimension;
 

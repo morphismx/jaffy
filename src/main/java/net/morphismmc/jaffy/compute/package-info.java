@@ -1,4 +1,5 @@
-/// Upstream: `src/compute/` (`mod.rs` + submodules)
+// JAFFY-UPSTREAM: src/compute/
+// JAFFY-NOTE: mod.rs + submodules
 /// Compute functions for leaf nodes and CSS layout algorithms.
 @NullMarked
 package net.morphismmc.jaffy.compute;

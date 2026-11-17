@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/lib.rs — crate-root documentation.
+// JAFFY-UPSTREAM: src/lib.rs
+// JAFFY-NOTE: crate-root documentation.
 //
 // The `pub mod` declarations and `pub use` re-exports have no Java
 // counterpart (packages + imports are the Java shape); the feature-flag

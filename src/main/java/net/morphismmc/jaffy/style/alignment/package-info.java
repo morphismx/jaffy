@@ -1,4 +1,4 @@
-/// Upstream: `src/style/alignment.rs`
+// JAFFY-UPSTREAM: src/style/alignment.rs
 @NullMarked
 package net.morphismmc.jaffy.style.alignment;
 

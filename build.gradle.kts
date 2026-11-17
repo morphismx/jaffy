@@ -170,12 +170,12 @@ val staticCheck = tasks.register("staticCheck") {
         sources.files.forEach { check(it, it.relativeTo(projectDir).path) }
         testSources.files.forEach { check(it, it.relativeTo(projectDir).path) }
 
-        // JAFFY provenance headers (AGENTS.md 注释约定): every non-package-info
-        // source must carry exactly one machine-readable `// JAFFY-UPSTREAM:` line.
+        // JAFFY provenance headers (AGENTS.md 注释约定): every source —
+        // package-info included — must carry exactly one `// JAFFY-UPSTREAM:` line.
         val jaffyLine = Regex("""^// JAFFY-(\w+):\s*(.*?)\s*$""")
         val upstreamDir = layout.projectDirectory.dir("upstream").asFile
         val headerSources = sources + testSources + fileTree("src/jmh/java") { include("**/*.java") }
-        headerSources.files.filter { it.name != "package-info.java" }.forEach { f ->
+        headerSources.files.forEach { f ->
             val rel = f.relativeTo(projectDir).path
             val tags = f.readLines().take(15).mapNotNull { jaffyLine.find(it) }
                 .map { it.groupValues[1] to it.groupValues[2] }
@@ -215,7 +215,7 @@ tasks.register("jaffyFilemap") {
     outputs.file(out)
     doLast {
         val keyed = Regex("""^// JAFFY-(\w+):\s*(.*?)\s*$""")
-        val rows = headerSources.files.filter { it.name != "package-info.java" }
+        val rows = headerSources.files
             .sortedBy { it.path }.map { f ->
                 var upstream = ""; val from = mutableListOf<String>(); val notes = mutableListOf<String>()
                 f.readLines().take(15).forEach { line ->

@@ -1,4 +1,4 @@
-/// Upstream: `src/compute/grid/types/coordinates.rs`
+// JAFFY-UPSTREAM: src/compute/grid/types/coordinates.rs
 @NullMarked
 package net.morphismmc.jaffy.compute.grid.types.coordinates;
 

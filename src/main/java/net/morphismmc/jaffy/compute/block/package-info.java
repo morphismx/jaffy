@@ -1,4 +1,6 @@
-/// JAFFY: port of upstream `src/compute/block.rs` — CSS Block layout.
+// JAFFY-UPSTREAM: src/compute/block.rs
+
+/// CSS Block layout.
 ///
 /// Split per the porting rule "one Rust file -> one Java package": the public
 /// items of `block.rs` (`compute_block_layout`,

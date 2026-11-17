@@ -1,4 +1,6 @@
-/// The flexbox layout algorithm (upstream `src/compute/flexbox.rs`).
+// JAFFY-UPSTREAM: src/compute/flexbox.rs
+
+/// The flexbox layout algorithm.
 /// `Flexbox` holds the `pub` entry point (`compute_flexbox_layout`); the
 /// non-`pub` Rust items (`FlexItem`, `FlexLine`, `AlgoConstants`,
 /// `mod balance`) are package-private top-level classes here.

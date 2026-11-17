@@ -1,4 +1,4 @@
-/// Upstream: `src/compute/grid/`
+// JAFFY-UPSTREAM: src/compute/grid/
 @NullMarked
 package net.morphismmc.jaffy.compute.grid;
 
