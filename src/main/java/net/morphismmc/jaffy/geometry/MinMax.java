@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `MinMax<Min, Max>` struct.
+// JAFFY-UPSTREAM: src/geometry.rs
+// JAFFY-NOTE: `MinMax<Min, Max>` struct
 package net.morphismmc.jaffy.geometry;
 
 import java.util.function.BiPredicate;

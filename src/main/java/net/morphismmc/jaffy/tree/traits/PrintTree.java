@@ -1,9 +1,10 @@
-// JAFFY: port of upstream src/tree/traits.rs — `PrintTree` trait.
+// JAFFY-UPSTREAM: src/tree/traits.rs
+// JAFFY-NOTE: `PrintTree` trait
 //
 // `&'static str` -> `String`.
 package net.morphismmc.jaffy.tree.traits;
-import net.morphismmc.jaffy.tree.layout.Layout;
 
+import net.morphismmc.jaffy.tree.layout.Layout;
 
 /// Trait used by the `print_tree` method which prints a debug representation.
 ///

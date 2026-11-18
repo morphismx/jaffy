@@ -1,4 +1,5 @@
-// JAFFY: Java-side support type (no upstream counterpart).
+// JAFFY-UPSTREAM: none
+// JAFFY-NOTE: Java-side support type (no upstream counterpart)
 // Corresponds to: Cargo feature flags of upstream/Cargo.toml — GAP-007.
 //
 // Rust `#[cfg(feature = "...")]` compile-time switches, fixed to upstream's

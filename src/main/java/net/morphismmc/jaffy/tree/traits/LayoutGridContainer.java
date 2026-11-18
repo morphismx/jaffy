@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `LayoutGridContainer` trait
+// JAFFY-UPSTREAM: src/tree/traits.rs
+// JAFFY-NOTE: `LayoutGridContainer` trait
 // (`grid` feature).
 //
 // GATs `GridContainerStyle<'a>`/`GridItemStyle<'a>` -> `Style` (GAP-017);
@@ -9,7 +10,6 @@ import net.morphismmc.jaffy.Features;
 import net.morphismmc.jaffy.compute.grid.DetailedGridInfo;
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.util.DebugLogger;
-
 
 /// Extends {@link LayoutPartialTree} with getters for the styles required
 /// for CSS Grid layout.

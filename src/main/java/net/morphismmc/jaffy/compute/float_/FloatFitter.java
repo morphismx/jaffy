@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/float.rs — `FloatFitter` (module-private).
+// JAFFY-UPSTREAM: src/compute/float.rs
+// JAFFY-NOTE: `FloatFitter` (module-private)
 //
 // `slot_height` is `f64` upstream (`as f64` widening) -> `double` (GAP-008).
 package net.morphismmc.jaffy.compute.float_;
@@ -6,7 +7,6 @@ package net.morphismmc.jaffy.compute.float_;
 import net.morphismmc.jaffy.geometry.FloatInsets;
 import net.morphismmc.jaffy.style.float_.FloatDirection;
 import net.morphismmc.just.math.F32;
-
 
 /// Helper type for placing a single floated box
 ///
@@ -41,7 +41,8 @@ final class FloatFitter {
     /// The inset from the edge of the BFC (on the side the box is floated towards) that the
     /// box would be placed at given the currently accounted for insets
     float placedInset(FloatDirection direction) {
-        return F32.max(FloatInsetsFloatDirectionExt.get(floatInsets, direction),
+        return F32.max(
+                FloatInsetsFloatDirectionExt.get(floatInsets, direction),
                 FloatInsetsFloatDirectionExt.get(cbInsets, direction));
     }
 

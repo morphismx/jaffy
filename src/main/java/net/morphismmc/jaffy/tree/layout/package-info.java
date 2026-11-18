@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.tree.layout
- */
+// JAFFY-UPSTREAM: src/tree/layout.rs
 @NullMarked
 package net.morphismmc.jaffy.tree.layout;
 

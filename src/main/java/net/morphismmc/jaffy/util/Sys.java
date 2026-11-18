@@ -1,4 +1,4 @@
-// JAFFY: upstream/src/util/sys.rs -> net.morphismmc.jaffy.util.Sys
+// JAFFY-UPSTREAM: src/util/sys.rs
 //
 // Rust item correspondence:
 //   mod std / mod alloc                -> merged; jaffy always targets the std set (Features.STD, GAP-007)
@@ -23,6 +23,7 @@ package net.morphismmc.jaffy.util;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.morphismmc.just.math.F32;
 
 public final class Sys {

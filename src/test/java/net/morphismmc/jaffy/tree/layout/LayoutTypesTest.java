@@ -1,4 +1,5 @@
-// JAFFY: tests for src/tree/layout.rs — the upstream `scrollable_overflow_tests`
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: tests for  — the upstream `scrollable_overflow_tests`
 // module is ported verbatim; the rest covers CollapsibleMarginSet, LayoutInput,
 // Baselines, AxisStaticPosition, OofCandidates, LayoutOutput and Layout.
 package net.morphismmc.jaffy.tree.layout;
@@ -9,8 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
-
 import net.morphismmc.jaffy.geometry.LineBool;
 import net.morphismmc.jaffy.geometry.LineF32;
 import net.morphismmc.jaffy.geometry.Point;
@@ -19,14 +18,12 @@ import net.morphismmc.jaffy.geometry.PointF32;
 import net.morphismmc.jaffy.geometry.RectF32;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
+import net.morphismmc.jaffy.style.Position;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.alignment.AlignmentSafety;
-import net.morphismmc.jaffy.style.Position;
 import net.morphismmc.just.math.OptF32;
-import net.morphismmc.jaffy.geometry.SizeBool;
-import net.morphismmc.jaffy.style.StyleHelpers;
-import net.morphismmc.jaffy.style.available_space.AvailableSpace;
-import net.morphismmc.jaffy.style.available_space.SizeAvailableSpaceExt;
+
+import org.junit.jupiter.api.Test;
 
 class LayoutTypesTest {
 
@@ -42,14 +39,11 @@ class LayoutTypesTest {
                 for (boolean y : new boolean[] {false, true}) {
                     ScrollableOverflow overflow = ScrollableOverflow.of(rect, new PointBool(x, y));
                     RectF32 restored = overflow.rect();
-                    assertEquals(
-                            Float.floatToRawIntBits(overflow.left()), Float.floatToRawIntBits(restored.left()));
-                    assertEquals(
-                            Float.floatToRawIntBits(overflow.right()), Float.floatToRawIntBits(restored.right()));
+                    assertEquals(Float.floatToRawIntBits(overflow.left()), Float.floatToRawIntBits(restored.left()));
+                    assertEquals(Float.floatToRawIntBits(overflow.right()), Float.floatToRawIntBits(restored.right()));
                     assertEquals(Float.floatToRawIntBits(overflow.top()), Float.floatToRawIntBits(restored.top()));
                     assertEquals(
-                            Float.floatToRawIntBits(overflow.bottom()),
-                            Float.floatToRawIntBits(restored.bottom()));
+                            Float.floatToRawIntBits(overflow.bottom()), Float.floatToRawIntBits(restored.bottom()));
                 }
             }
         }
@@ -69,8 +63,7 @@ class LayoutTypesTest {
                         assertEquals(Float.floatToRawIntBits(overflow.left()), Float.floatToRawIntBits(-0.0f));
                         assertEquals(Float.floatToRawIntBits(overflow.top()), Float.floatToRawIntBits(-0.0f));
                         assertEquals(Float.floatToRawIntBits(overflow.right()), Float.floatToRawIntBits(right));
-                        assertEquals(
-                                Float.floatToRawIntBits(overflow.bottom()), Float.floatToRawIntBits(bottom));
+                        assertEquals(Float.floatToRawIntBits(overflow.bottom()), Float.floatToRawIntBits(bottom));
                         assertEquals(overflow.isReversed(), reversed);
                         assertEquals(overflow.transpose().isReversed(), new PointBool(y, x));
                         assertEquals(overflow.transpose().transpose(), overflow);
@@ -79,14 +72,11 @@ class LayoutTypesTest {
             }
         }
         assertEquals(ScrollableOverflow.ZERO, ScrollableOverflow.of(RectF32.ZERO, PointBool.FALSE));
+        assertNotEquals(ScrollableOverflow.ZERO, ScrollableOverflow.of(RectF32.ZERO, new PointBool(true, false)));
         assertNotEquals(
-                ScrollableOverflow.ZERO, ScrollableOverflow.of(RectF32.ZERO, new PointBool(true, false)));
+                ScrollableOverflow.ZERO, ScrollableOverflow.of(new RectF32(-0.0f, 0.0f, 0.0f, 0.0f), PointBool.FALSE));
         assertNotEquals(
-                ScrollableOverflow.ZERO,
-                ScrollableOverflow.of(new RectF32(-0.0f, 0.0f, 0.0f, 0.0f), PointBool.FALSE));
-        assertNotEquals(
-                ScrollableOverflow.ZERO,
-                ScrollableOverflow.of(new RectF32(0.0f, 0.0f, -0.0f, 0.0f), PointBool.FALSE));
+                ScrollableOverflow.ZERO, ScrollableOverflow.of(new RectF32(0.0f, 0.0f, -0.0f, 0.0f), PointBool.FALSE));
     }
 
     // ---- CollapsibleMarginSet ----
@@ -121,7 +111,9 @@ class LayoutTypesTest {
         assertTrue(hidden.knownDimensionsAreDefinite().width());
         assertTrue(hidden.knownDimensionsAreDefinite().height());
         assertEquals(SizeOptF32.NONE, hidden.parentSize());
-        assertTrue(hidden.availableSpace().width() instanceof net.morphismmc.jaffy.style.available_space.AvailableSpace.MaxContent);
+        assertTrue(
+                hidden.availableSpace().width()
+                        instanceof net.morphismmc.jaffy.style.available_space.AvailableSpace.MaxContent);
         assertEquals(LineBool.FALSE, hidden.verticalMarginsAreCollapsible());
     }
 
@@ -171,30 +163,46 @@ class LayoutTypesTest {
         // Normal/Stretch -> Start
         assertEquals(
                 AxisStaticEdge.START,
-                AxisStaticPosition.fromAlignment(AlignItems.NORMAL, area, false).align().keyword());
+                AxisStaticPosition.fromAlignment(AlignItems.NORMAL, area, false)
+                        .align()
+                        .keyword());
         assertEquals(
                 AxisStaticEdge.START,
-                AxisStaticPosition.fromAlignment(AlignItems.STRETCH, area, false).align().keyword());
+                AxisStaticPosition.fromAlignment(AlignItems.STRETCH, area, false)
+                        .align()
+                        .keyword());
         // Center -> Center (unaffected by rtl)
         assertEquals(
                 AxisStaticEdge.CENTER,
-                AxisStaticPosition.fromAlignment(AlignItems.CENTER, area, false).align().keyword());
+                AxisStaticPosition.fromAlignment(AlignItems.CENTER, area, false)
+                        .align()
+                        .keyword());
         assertEquals(
                 AxisStaticEdge.CENTER,
-                AxisStaticPosition.fromAlignment(AlignItems.CENTER, area, true).align().keyword());
+                AxisStaticPosition.fromAlignment(AlignItems.CENTER, area, true)
+                        .align()
+                        .keyword());
         // End/FlexEnd flip with rtl; Start also flips with rtl
         assertEquals(
                 AxisStaticEdge.END,
-                AxisStaticPosition.fromAlignment(AlignItems.END, area, false).align().keyword());
+                AxisStaticPosition.fromAlignment(AlignItems.END, area, false)
+                        .align()
+                        .keyword());
         assertEquals(
                 AxisStaticEdge.START,
-                AxisStaticPosition.fromAlignment(AlignItems.END, area, true).align().keyword());
+                AxisStaticPosition.fromAlignment(AlignItems.END, area, true)
+                        .align()
+                        .keyword());
         assertEquals(
                 AxisStaticEdge.END,
-                AxisStaticPosition.fromAlignment(AlignItems.FLEX_END, area, false).align().keyword());
+                AxisStaticPosition.fromAlignment(AlignItems.FLEX_END, area, false)
+                        .align()
+                        .keyword());
         assertEquals(
                 AxisStaticEdge.END,
-                AxisStaticPosition.fromAlignment(AlignItems.START, area, true).align().keyword());
+                AxisStaticPosition.fromAlignment(AlignItems.START, area, true)
+                        .align()
+                        .keyword());
         // Safe alignment: keyword kept, fallback forced to Start's edge
         AxisStaticPosition safe = AxisStaticPosition.fromAlignment(AlignItems.SAFE_END, area, false);
         assertEquals(AxisStaticEdge.END, safe.align().keyword());
@@ -214,8 +222,11 @@ class LayoutTypesTest {
         assertTrue(c.isEmpty());
         assertEquals(0, c.asSlice().size());
 
-        OofCandidate cand =
-                new OofCandidate(4294967297L, 3, Position.ABSOLUTE, new Point<>(
+        OofCandidate cand = new OofCandidate(
+                4294967297L,
+                3,
+                Position.ABSOLUTE,
+                new Point<>(
                         AxisStaticPosition.fromEdge(1.0f, AxisStaticEdge.START),
                         AxisStaticPosition.fromEdge(2.0f, AxisStaticEdge.END)));
         c.push(cand);
@@ -278,7 +289,8 @@ class LayoutTypesTest {
                 new SizeF32(10.0f, 20.0f), ScrollableOverflow.ZERO, Baselines.fromFirst(5.0f));
         assertEquals(new SizeF32(10.0f, 20.0f), fromSizes.size());
         assertEquals(5.0f, fromSizes.baselines().first());
-        assertEquals(LayoutOutput.fromOuterSize(new SizeF32(10.0f, 20.0f)),
+        assertEquals(
+                LayoutOutput.fromOuterSize(new SizeF32(10.0f, 20.0f)),
                 LayoutOutput.fromSizes(new SizeF32(10.0f, 20.0f), ScrollableOverflow.ZERO));
 
         // transpose: size flips, baselines/margins/through-flag drop, candidates & area carry over

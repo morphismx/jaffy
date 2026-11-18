@@ -1,4 +1,5 @@
-// JAFFY: port of slotmap 1.1.1 src/basic.rs (the APIs taffy uses — GAP-015).
+// JAFFY-UPSTREAM: crate:slotmap:src/basic.rs
+// JAFFY-NOTE: (the APIs taffy uses — GAP-015)
 //
 // Keys are `long` (NodeId, GAP-015): high 32 bits = version (always odd),
 // low 32 bits = slot index. `KeyData::new` stores `version | 1`.
@@ -14,6 +15,7 @@
 package net.morphismmc.jaffy.infra.slotmap;
 
 import java.util.ArrayList;
+
 import org.jspecify.annotations.Nullable;
 
 public final class SlotMap<V> {
@@ -21,7 +23,9 @@ public final class SlotMap<V> {
     /// `union SlotUnion` + `version`: value + nextFree share no storage, but
     /// only one is live at a time (version % 2 > 0 means occupied).
     private static final class Slot<V> {
-        @Nullable V value;
+        @Nullable
+        V value;
+
         int nextFree;
         int version; // Even = vacant, odd = occupied.
 

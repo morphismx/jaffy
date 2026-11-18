@@ -1,7 +1,10 @@
+// JAFFY-UPSTREAM: benches/src/lib.rs
+
 package net.morphismmc.jaffy.bench;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.jspecify.annotations.Nullable;
 
 /// Port of upstream `benches/src/lib.rs` — `trait BuildTree` +

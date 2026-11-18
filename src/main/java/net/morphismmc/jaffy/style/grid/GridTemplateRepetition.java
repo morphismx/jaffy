@@ -1,10 +1,12 @@
-// JAFFY: port of upstream src/style/grid.rs — `GridTemplateRepetition<S>`
+// JAFFY-UPSTREAM: src/style/grid.rs
+// JAFFY-NOTE: `GridTemplateRepetition<S>`
 // struct + its `GenericRepetition` impl (upstream implements the trait on
 // `&GridTemplateRepetition`; the value itself implements it in Java).
 // `S: CheapCloneStr` -> `String` (GAP-017).
 package net.morphismmc.jaffy.style.grid;
 
 import java.util.List;
+
 import net.morphismmc.jaffy.geometry.MinMax;
 
 /// A typed representation of a `repeat(..)` in `grid-template-*` value

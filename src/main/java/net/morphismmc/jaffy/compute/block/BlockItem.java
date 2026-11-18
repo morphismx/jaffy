@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/block.rs — private `BlockItem` struct.
+// JAFFY-UPSTREAM: src/compute/block.rs
+// JAFFY-NOTE: private `BlockItem` struct
 //
 // `Option<f32>` -> `@Opt float`; `Option<AlignSelf>`/reference Options ->
 // `@Nullable`; `NodeId`/`u32`/`u64` -> `long`/`int` (GAP-001/006/014/017).
@@ -23,8 +24,8 @@ import net.morphismmc.jaffy.style.float_.Float;
 import net.morphismmc.jaffy.tree.layout.Layout;
 import net.morphismmc.jaffy.tree.layout.OofCandidates;
 import net.morphismmc.just.math.Opt;
-import org.jspecify.annotations.Nullable;
 
+import org.jspecify.annotations.Nullable;
 
 /// Per-child data that is accumulated and modified over the course of the
 /// layout algorithm.
@@ -104,7 +105,8 @@ final class BlockItem {
     /// Pending layout for in-flow non-floated items. Held back from
     /// `setUnroundedLayout` so the post-loop `align-content` pass in
     /// `computeInner` can shift `location.y` before commit.
-    @Nullable Layout finalLayout = null;
+    @Nullable
+    Layout finalLayout = null;
     /// Out-of-flow candidates bubbled out of this (in-flow) item's subtree.
     /// Anchors are relative to the item's border box until they are translated
     /// at merge time.

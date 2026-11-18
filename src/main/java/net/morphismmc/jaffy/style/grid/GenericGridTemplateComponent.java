@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/style/grid.rs —
+// JAFFY-UPSTREAM: src/style/grid.rs
 // `GenericGridTemplateComponent<S, Repetition>` enum. `S: CheapCloneStr` is
 // concretised to `String` inside `GenericRepetition` (GAP-017).
 package net.morphismmc.jaffy.style.grid;
@@ -20,8 +20,9 @@ public sealed interface GenericGridTemplateComponent<R extends GenericRepetition
     default boolean isAutoRepetition() {
         return switch (this) {
             case Single<R> s -> false;
-            case Repeat<R> r -> r.repetition().count() instanceof RepetitionCount.AutoFit
-                    || r.repetition().count() instanceof RepetitionCount.AutoFill;
+            case Repeat<R> r ->
+                r.repetition().count() instanceof RepetitionCount.AutoFit
+                        || r.repetition().count() instanceof RepetitionCount.AutoFill;
         };
     }
 }

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/dimension.rs — `impl Rect<Dimension>` block
+// JAFFY-UPSTREAM: src/style/dimension.rs
+// JAFFY-NOTE: `impl Rect<Dimension>` block
 // (deferred there until the geometry batch; see Dimension.java note).
 package net.morphismmc.jaffy.style.dimension;
 

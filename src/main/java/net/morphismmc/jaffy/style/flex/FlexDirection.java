@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/flex.rs — `FlexDirection` enum.
+// JAFFY-UPSTREAM: src/style/flex.rs
+// JAFFY-NOTE: `FlexDirection` enum
 //
 // `#[cfg(feature = "parse")]` FromCss impl is feature-gated: deferred.
 package net.morphismmc.jaffy.style.flex;

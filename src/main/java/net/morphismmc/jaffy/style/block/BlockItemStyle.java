@@ -1,16 +1,18 @@
-// JAFFY: port of upstream src/style/block.rs — `BlockItemStyle` trait
+// JAFFY-UPSTREAM: src/style/block.rs
+// JAFFY-NOTE: `BlockItemStyle` trait
 // (`block_layout`). The `float`/`clear` methods are `float_layout`-gated
 // upstream; `float_layout` is a default feature (Features.FLOAT_LAYOUT) so
 // they are always present. `float` is a Java keyword -> `floatValue`
 // (GAP-017). `impl ... for &T` has no Java counterpart.
 package net.morphismmc.jaffy.style.block;
 
-import org.jspecify.annotations.Nullable;
 import net.morphismmc.jaffy.style.CoreStyle;
 import net.morphismmc.jaffy.style.alignment.AlignContent;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.float_.Clear;
 import net.morphismmc.jaffy.style.float_.Float;
+
+import org.jspecify.annotations.Nullable;
 
 /// The set of styles required for a block item (child of a block container)
 public interface BlockItemStyle extends CoreStyle {

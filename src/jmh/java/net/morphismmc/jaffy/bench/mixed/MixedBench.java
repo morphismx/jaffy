@@ -1,8 +1,21 @@
+// JAFFY-UPSTREAM: benches/benches/mixed.rs
+
 package net.morphismmc.jaffy.bench.mixed;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import net.morphismmc.jaffy.bench.JaffyStyles;
+import net.morphismmc.jaffy.bench.Rng;
+import net.morphismmc.jaffy.bench.VfyjxfStyles;
+import net.morphismmc.jaffy.geometry.Size;
+import net.morphismmc.jaffy.geometry.SizeF32;
+import net.morphismmc.jaffy.style.available_space.AvailableSpace;
+import net.morphismmc.jaffy.tree.TaffyTree;
+import net.morphismmc.jaffy.tree.layout.LayoutOutput;
+import net.morphismmc.just.math.OptF32;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -16,16 +29,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
-
-import net.morphismmc.jaffy.bench.JaffyStyles;
-import net.morphismmc.jaffy.bench.Rng;
-import net.morphismmc.jaffy.bench.VfyjxfStyles;
-import net.morphismmc.jaffy.geometry.Size;
-import net.morphismmc.jaffy.geometry.SizeF32;
-import net.morphismmc.jaffy.style.available_space.AvailableSpace;
-import net.morphismmc.jaffy.tree.TaffyTree;
-import net.morphismmc.jaffy.tree.layout.LayoutOutput;
-import net.morphismmc.just.math.OptF32;
 
 /// Port of upstream `benches/benches/mixed.rs` — a depth × width tree whose
 /// containers alternate grid/flex styles and whose leaves carry a measured
@@ -48,15 +51,15 @@ public class MixedBench {
         /// `ParleyTextContext::measure` — clamp available width, then height
         /// from re-broken lines.
         SizeF32 measure(float knownW, float knownH, AvailableSpace aw, AvailableSpace ah) {
-            float width = OptF32.isSome(knownW) ? knownW : switch (aw) {
-                case AvailableSpace.MinContent ignored -> minW;
-                case AvailableSpace.MaxContent ignored -> maxW;
-                case AvailableSpace.Definite d -> Math.min(d.value(), maxW);
-            };
+            float width = OptF32.isSome(knownW)
+                    ? knownW
+                    : switch (aw) {
+                        case AvailableSpace.MinContent ignored -> minW;
+                        case AvailableSpace.MaxContent ignored -> maxW;
+                        case AvailableSpace.Definite d -> Math.min(d.value(), maxW);
+                    };
             // `break_all_lines(width).height()`: line count × line height
-            float height = OptF32.isSome(knownH)
-                    ? knownH
-                    : (float) Math.ceil(maxW / width) * lineH;
+            float height = OptF32.isSome(knownH) ? knownH : (float) Math.ceil(maxW / width) * lineH;
             return new SizeF32(width, height);
         }
     }
@@ -90,33 +93,30 @@ public class MixedBench {
         if (ctx == null) {
             return new dev.vfyjxf.taffy.geometry.FloatSize(0.0f, 0.0f);
         }
-        float width = known.width == known.width ? known.width : switch (avail.width) {
-            case dev.vfyjxf.taffy.style.AvailableSpace s when s.isMinContent() -> ctx.minW;
-            case dev.vfyjxf.taffy.style.AvailableSpace s when s.isDefinite() ->
-                Math.min(s.getValue(), ctx.maxW);
-            default -> ctx.maxW;
-        };
-        float height = known.height == known.height
-                ? known.height
-                : (float) Math.ceil(ctx.maxW / width) * ctx.lineH;
+        float width = known.width == known.width
+                ? known.width
+                : switch (avail.width) {
+                    case dev.vfyjxf.taffy.style.AvailableSpace s when s.isMinContent() -> ctx.minW;
+                    case dev.vfyjxf.taffy.style.AvailableSpace s
+                    when s.isDefinite() -> Math.min(s.getValue(), ctx.maxW);
+                    default -> ctx.maxW;
+                };
+        float height = known.height == known.height ? known.height : (float) Math.ceil(ctx.maxW / width) * ctx.lineH;
         return new dev.vfyjxf.taffy.geometry.FloatSize(width, height);
     }
 
     /// `build_mixed_tree` — leaves at depth 0 carry a text context; containers
     /// alternate grid/flex (top call is_grid=true) with `width` children.
-    private static long jaffyMixed(
-            TaffyTree<TextCtx> tree, Rng rng, int depth, int width, boolean isGrid) {
+    private static long jaffyMixed(TaffyTree<TextCtx> tree, Rng rng, int depth, int width, boolean isGrid) {
         if (depth == 0) {
-            return tree.newLeafWithContext(net.morphismmc.jaffy.style.Style.DEFAULT, TextCtx.LOREM)
-                    ;
+            return tree.newLeafWithContext(net.morphismmc.jaffy.style.Style.DEFAULT, TextCtx.LOREM);
         }
         long[] children = new long[width];
         for (int i = 0; i < width; i++) {
             children[i] = jaffyMixed(tree, rng, depth - 1, width, !isGrid);
         }
-        net.morphismmc.jaffy.style.Style style = isGrid
-                ? JaffyStyles.gridStyle(rng, (int) Math.ceil(Math.sqrt(width)))
-                : JaffyStyles.flexStyle(rng);
+        net.morphismmc.jaffy.style.Style style =
+                isGrid ? JaffyStyles.gridStyle(rng, (int) Math.ceil(Math.sqrt(width))) : JaffyStyles.flexStyle(rng);
         return tree.newWithChildren(style, children);
     }
 
@@ -131,9 +131,8 @@ public class MixedBench {
         for (int i = 0; i < width; i++) {
             children.add(vfyjxfMixed(tree, rng, depth - 1, width, !isGrid));
         }
-        dev.vfyjxf.taffy.style.TaffyStyle style = isGrid
-                ? VfyjxfStyles.gridStyle(rng, (int) Math.ceil(Math.sqrt(width)))
-                : VfyjxfStyles.flexStyle(rng);
+        dev.vfyjxf.taffy.style.TaffyStyle style =
+                isGrid ? VfyjxfStyles.gridStyle(rng, (int) Math.ceil(Math.sqrt(width))) : VfyjxfStyles.flexStyle(rng);
         return tree.newWithChildren(style, children);
     }
 
@@ -144,6 +143,7 @@ public class MixedBench {
     public static class JaffyMixedState {
         @Param({"2", "4"})
         int depth;
+
         @Param({"4", "8"})
         int width;
 
@@ -180,6 +180,7 @@ public class MixedBench {
     public static class VfyjxfMixedState {
         @Param({"2", "4"})
         int depth;
+
         @Param({"4", "8"})
         int width;
 
@@ -209,8 +210,7 @@ public class MixedBench {
 
     @Benchmark
     public void jaffyMixed(JaffyMixedState s, Blackhole bh) {
-        s.tree.computeLayoutWithMeasure(
-                s.root, MAX_CONTENT, MixedBench::jaffyMeasure);
+        s.tree.computeLayoutWithMeasure(s.root, MAX_CONTENT, MixedBench::jaffyMeasure);
         bh.consume(s.tree);
     }
 

@@ -1,6 +1,8 @@
-// JAFFY: port of upstream src/style/block.rs — `BlockContainerStyle` trait
+// JAFFY-UPSTREAM: src/style/block.rs
+// JAFFY-NOTE: `BlockContainerStyle` trait
 // (`block_layout`). `impl ... for &T` has no Java counterpart.
 package net.morphismmc.jaffy.style.block;
+
 import net.morphismmc.jaffy.style.CoreStyle;
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.style.alignment.AlignContent;

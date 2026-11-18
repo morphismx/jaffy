@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `CollapsibleMarginSet`.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: `CollapsibleMarginSet`
 // `f32_max`/`f32_min` -> `F32.max`/`f32Min` (GAP-002). serde impl deferred.
 package net.morphismmc.jaffy.tree.layout;
 
@@ -31,8 +32,7 @@ public record CollapsibleMarginSet(float positive, float negative) {
 
     /// Collapse another margin set with this set
     public CollapsibleMarginSet collapseWithSet(CollapsibleMarginSet other) {
-        return new CollapsibleMarginSet(
-                F32.max(positive, other.positive), F32.min(negative, other.negative));
+        return new CollapsibleMarginSet(F32.max(positive, other.positive), F32.min(negative, other.negative));
     }
 
     /// Resolve the resultant margin from this set once all collapsible margins

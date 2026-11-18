@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/lib.rs — crate-root documentation.
+// JAFFY-UPSTREAM: src/lib.rs
+// JAFFY-NOTE: crate-root documentation.
 //
 // The `pub mod` declarations and `pub use` re-exports have no Java
 // counterpart (packages + imports are the Java shape); the feature-flag
@@ -73,9 +74,6 @@
 /// dispatching to the correct layout algorithm for a given node yourself.
 /// See the {@link net.morphismmc.jaffy.tree.traits} package for more details
 /// on this API.
-///
-/// JSpecify null-marked package: unannotated type usages are non-null
-/// (GAP-001).
 @NullMarked
 package net.morphismmc.jaffy;
 

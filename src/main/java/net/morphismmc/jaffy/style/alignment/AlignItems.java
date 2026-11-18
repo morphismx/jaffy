@@ -1,7 +1,9 @@
-// JAFFY: port of upstream src/style/alignment.rs — `AlignItems` (and aliases
+// JAFFY-UPSTREAM: src/style/alignment.rs
+// JAFFY-NOTE: `AlignItems`
 // `JustifyItems`/`AlignSelf`/`JustifySelf`, which are the same type in Rust).
 // serde/parse impls are feature-gated: deferred.
 package net.morphismmc.jaffy.style.alignment;
+
 import net.morphismmc.jaffy.style.Direction;
 
 /// Used to control how child nodes are aligned.
@@ -16,17 +18,13 @@ public record AlignItems(AlignItemsKeyword keyword, AlignmentSafety safety) {
     /// Items are packed toward the end of the axis.
     public static final AlignItems END = new AlignItems(AlignItemsKeyword.END, AlignmentSafety.DEFAULT);
     /// Items are packed towards the flex-relative start of the axis.
-    public static final AlignItems FLEX_START =
-            new AlignItems(AlignItemsKeyword.FLEX_START, AlignmentSafety.DEFAULT);
+    public static final AlignItems FLEX_START = new AlignItems(AlignItemsKeyword.FLEX_START, AlignmentSafety.DEFAULT);
     /// Items are packed towards the flex-relative end of the axis.
-    public static final AlignItems FLEX_END =
-            new AlignItems(AlignItemsKeyword.FLEX_END, AlignmentSafety.DEFAULT);
+    public static final AlignItems FLEX_END = new AlignItems(AlignItemsKeyword.FLEX_END, AlignmentSafety.DEFAULT);
     /// Packed toward the start of the axis per the item's own direction.
-    public static final AlignItems SELF_START =
-            new AlignItems(AlignItemsKeyword.SELF_START, AlignmentSafety.DEFAULT);
+    public static final AlignItems SELF_START = new AlignItems(AlignItemsKeyword.SELF_START, AlignmentSafety.DEFAULT);
     /// Packed toward the end of the axis per the item's own direction.
-    public static final AlignItems SELF_END =
-            new AlignItems(AlignItemsKeyword.SELF_END, AlignmentSafety.DEFAULT);
+    public static final AlignItems SELF_END = new AlignItems(AlignItemsKeyword.SELF_END, AlignmentSafety.DEFAULT);
     /// Items are packed along the center of the cross axis.
     public static final AlignItems CENTER = new AlignItems(AlignItemsKeyword.CENTER, AlignmentSafety.DEFAULT);
     /// Items are aligned such as their baselines align.
@@ -38,19 +36,15 @@ public record AlignItems(AlignItemsKeyword keyword, AlignmentSafety safety) {
     /// Like `END`, but falls back to `START` on overflow to avoid data loss.
     public static final AlignItems SAFE_END = new AlignItems(AlignItemsKeyword.END, AlignmentSafety.SAFE);
     /// Like `FLEX_START`, but falls back to `START` on overflow.
-    public static final AlignItems SAFE_FLEX_START =
-            new AlignItems(AlignItemsKeyword.FLEX_START, AlignmentSafety.SAFE);
+    public static final AlignItems SAFE_FLEX_START = new AlignItems(AlignItemsKeyword.FLEX_START, AlignmentSafety.SAFE);
     /// Like `FLEX_END`, but falls back to `START` on overflow.
-    public static final AlignItems SAFE_FLEX_END =
-            new AlignItems(AlignItemsKeyword.FLEX_END, AlignmentSafety.SAFE);
+    public static final AlignItems SAFE_FLEX_END = new AlignItems(AlignItemsKeyword.FLEX_END, AlignmentSafety.SAFE);
     /// Like `CENTER`, but falls back to `START` on overflow.
     public static final AlignItems SAFE_CENTER = new AlignItems(AlignItemsKeyword.CENTER, AlignmentSafety.SAFE);
     /// Like `SELF_START`, but falls back to `START` on overflow.
-    public static final AlignItems SAFE_SELF_START =
-            new AlignItems(AlignItemsKeyword.SELF_START, AlignmentSafety.SAFE);
+    public static final AlignItems SAFE_SELF_START = new AlignItems(AlignItemsKeyword.SELF_START, AlignmentSafety.SAFE);
     /// Like `SELF_END`, but falls back to `START` on overflow.
-    public static final AlignItems SAFE_SELF_END =
-            new AlignItems(AlignItemsKeyword.SELF_END, AlignmentSafety.SAFE);
+    public static final AlignItems SAFE_SELF_END = new AlignItems(AlignItemsKeyword.SELF_END, AlignmentSafety.SAFE);
 
     /// `Default` impl — `#[default]` derives from field defaults = `NORMAL`
     public static final AlignItems DEFAULT = NORMAL;
@@ -80,15 +74,13 @@ public record AlignItems(AlignItemsKeyword keyword, AlignmentSafety safety) {
     /// `Start` when the item's direction matches the container's and to `End`
     /// when it differs. Taffy only supports `horizontal-tb`, so in the block
     /// axis `SelfStart`/`SelfEnd` always resolve to `Start`/`End`.
-    public AlignItems resolveSelfRelative(
-            Direction itemDirection, Direction containerDirection, boolean axisIsInline) {
+    public AlignItems resolveSelfRelative(Direction itemDirection, Direction containerDirection, boolean axisIsInline) {
         boolean flip = axisIsInline && itemDirection != containerDirection;
-        AlignItemsKeyword resolved =
-                switch (keyword) {
-                    case SELF_START -> flip ? AlignItemsKeyword.END : AlignItemsKeyword.START;
-                    case SELF_END -> flip ? AlignItemsKeyword.START : AlignItemsKeyword.END;
-                    default -> keyword;
-                };
+        AlignItemsKeyword resolved = switch (keyword) {
+            case SELF_START -> flip ? AlignItemsKeyword.END : AlignItemsKeyword.START;
+            case SELF_END -> flip ? AlignItemsKeyword.START : AlignItemsKeyword.END;
+            default -> keyword;
+        };
         return new AlignItems(resolved, safety);
     }
 }

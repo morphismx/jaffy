@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/util/print.rs.
+// JAFFY-UPSTREAM: src/util/print.rs
 //
 // `impl io::Write` -> `Appendable` (StringBuilder/Writer/PrintStream);
 // `io::Result<()>` -> `throws IOException`; `writeln!` -> append + '\n';
@@ -7,12 +7,11 @@
 package net.morphismmc.jaffy.util;
 
 import java.io.IOException;
+
 import net.morphismmc.jaffy.geometry.PointF32;
 import net.morphismmc.jaffy.geometry.RectF32;
-import net.morphismmc.just.fmt.RustFmt;
 import net.morphismmc.jaffy.tree.layout.Layout;
-import net.morphismmc.jaffy.tree.traits.TraversePartialTree;
-
+import net.morphismmc.just.fmt.RustFmt;
 
 /// Contains functions for printing a debug representation of the tree
 public final class PrintTree {
@@ -20,8 +19,7 @@ public final class PrintTree {
 
     /// Prints a debug representation of the computed layout for a tree of
     /// nodes, starting with the passed root node (`print_tree`).
-    public static <Tree extends net.morphismmc.jaffy.tree.traits.PrintTree> void printTree(
-            Tree tree, long root) {
+    public static <Tree extends net.morphismmc.jaffy.tree.traits.PrintTree> void printTree(Tree tree, long root) {
         // Buffer into a string so that output can be captured in tests
         StringBuilder buffer = new StringBuilder();
         try {

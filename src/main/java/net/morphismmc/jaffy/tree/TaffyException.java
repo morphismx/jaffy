@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/taffy_tree.rs — `TaffyError` enum +
+// JAFFY-UPSTREAM: src/tree/taffy_tree.rs
+// JAFFY-NOTE: `TaffyError` enum
 // `impl Display`, merged with the Java `Err`-throwing carrier
 // (docs/porting/JAVA_API.md): upstream's `enum` variants map to nested
 // `final` subclasses of this `sealed` exception — `TaffyError::
@@ -20,11 +21,10 @@ import java.util.Objects;
 
 import net.morphismmc.just.fmt.RustFmt;
 
-
 /// An error that occurs while trying to access or modify a node's
 /// children by index (`TaffyError`), thrown by {@link TaffyTree}
 /// operations that return `Err` upstream.
-public sealed abstract class TaffyException extends RuntimeException {
+public abstract sealed class TaffyException extends RuntimeException {
 
     private TaffyException(String message) {
         super(message);
@@ -38,8 +38,8 @@ public sealed abstract class TaffyException extends RuntimeException {
         private final int childCount;
 
         public ChildIndexOutOfBounds(long parent, int childIndex, int childCount) {
-            super("Index (is " + childIndex + ") should be < child_count (" + childCount
-                    + ") for parent node " + RustFmt.nodeId(parent));
+            super("Index (is " + childIndex + ") should be < child_count (" + childCount + ") for parent node "
+                    + RustFmt.nodeId(parent));
             this.parent = parent;
             this.childIndex = childIndex;
             this.childCount = childCount;

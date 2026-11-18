@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/leaf.rs — `compute_leaf_layout`.
+// JAFFY-UPSTREAM: src/compute/leaf.rs
+// JAFFY-NOTE: `compute_leaf_layout`
 //
 // `MeasureFunction: FnOnce(Size<Option<f32>>, Size<AvailableSpace>) ->
 // Size<f32>` -> `MeasureFn` (GAP-019: FnMut-style captured state is the
@@ -14,11 +15,10 @@ import net.morphismmc.jaffy.geometry.RectF32;
 import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
-import net.morphismmc.just.fmt.RustFmt;
-import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.style.BoxSizing;
 import net.morphismmc.jaffy.style.CoreStyle;
 import net.morphismmc.jaffy.style.Overflow;
+import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.tree.layout.Baselines;
 import net.morphismmc.jaffy.tree.layout.CollapsibleMarginSet;
 import net.morphismmc.jaffy.tree.layout.LayoutInput;
@@ -29,13 +29,13 @@ import net.morphismmc.jaffy.tree.layout.ScrollableOverflow;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
 import net.morphismmc.jaffy.util.CalcResolver;
 import net.morphismmc.jaffy.util.DebugLogger;
-import net.morphismmc.just.math.F32;
 import net.morphismmc.jaffy.util.MaybeResolve.RectLengthPercentageExt;
 import net.morphismmc.jaffy.util.MaybeResolve.SizeDimensionExt;
 import net.morphismmc.jaffy.util.MaybeResolve.SizeLengthPercentageAutoExt;
+import net.morphismmc.just.fmt.RustFmt;
+import net.morphismmc.just.math.F32;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
-import net.morphismmc.jaffy.util.MaybeResolve;
 
 public final class Leaf {
     private Leaf() {}
@@ -91,12 +91,10 @@ public final class Leaf {
                 SizeOptF32 styleSize = SizeDimensionExt.maybeResolveO(style.size(), parentSize, resolveCalcValue)
                         .maybeApplyAspectRatio(aspectRatio)
                         .maybeAddF(boxSizingAdjustment);
-                nodeMinSize = SizeLengthPercentageAutoExt.maybeResolveO(
-                                style.minSize(), parentSize, resolveCalcValue)
+                nodeMinSize = SizeLengthPercentageAutoExt.maybeResolveO(style.minSize(), parentSize, resolveCalcValue)
                         .maybeApplyAspectRatio(aspectRatio)
                         .maybeAddF(boxSizingAdjustment);
-                nodeMaxSize = SizeLengthPercentageAutoExt.maybeResolveO(
-                                style.maxSize(), parentSize, resolveCalcValue)
+                nodeMaxSize = SizeLengthPercentageAutoExt.maybeResolveO(style.maxSize(), parentSize, resolveCalcValue)
                         .maybeAddF(boxSizingAdjustment);
 
                 nodeSize = knownDimensions.or(styleSize);
@@ -174,15 +172,13 @@ public final class Leaf {
                                 - contentBoxInset.verticalAxisSum()));
 
         // Measure node
-        SizeF32 measuredSize =
-                measureFunction.measure(
-                        switch (runMode) {
-                            case COMPUTE_SIZE -> knownDimensions;
-                            case PERFORM_LAYOUT -> SizeOptF32.NONE;
-                            case PERFORM_HIDDEN_LAYOUT -> throw new IllegalStateException(
-                                    "unreachable"); // JAFFY(GAP-010)
-                        },
-                        computedAvailableSpace);
+        SizeF32 measuredSize = measureFunction.measure(
+                switch (runMode) {
+                    case COMPUTE_SIZE -> knownDimensions;
+                    case PERFORM_LAYOUT -> SizeOptF32.NONE;
+                    case PERFORM_HIDDEN_LAYOUT -> throw new IllegalStateException("unreachable"); // JAFFY(GAP-010)
+                },
+                computedAvailableSpace);
         SizeF32 clampedSize = knownDimensions
                 .or(nodeSize)
                 .unwrapOr(measuredSize.plus(contentBoxInset.sumAxes()))
@@ -191,8 +187,7 @@ public final class Leaf {
                 clampedSize.width(),
                 F32.max(
                         clampedSize.height(),
-                        OptF32.unwrapOr(
-                                OptF32.map(aspectRatio, ratio -> clampedSize.width() / ratio), 0.0f)));
+                        OptF32.unwrapOr(OptF32.map(aspectRatio, ratio -> clampedSize.width() / ratio), 0.0f)));
         size = size.maybeMaxO(pbSum.mapO(v -> v));
 
         // A scroll container's own padding at the end of the content is part
@@ -214,8 +209,7 @@ public final class Leaf {
         ScrollableOverflow scrollableOverflowRect =
                 net.morphismmc.jaffy.compute.common.ScrollableOverflow.finalizeScrollableOverflow(
                         rect,
-                        size.minus(border.sumAxes())
-                                .minus(new SizeF32(scrollbarGutter.x(), scrollbarGutter.y())),
+                        size.minus(border.sumAxes()).minus(new SizeF32(scrollbarGutter.x(), scrollbarGutter.y())),
                         new PointBool(isRtl, false),
                         isScrollContainer);
 

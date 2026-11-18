@@ -1,11 +1,10 @@
-// JAFFY: port of upstream src/compute/grid/types/cell_occupancy.rs —
+// JAFFY-UPSTREAM: src/compute/grid/types/cell_occupancy.rs
 // `CellOccupancyState`.
 //
 // `pub(crate)` -> public (callers cross package boundaries); `#[default]
 // Unoccupied` -> first enum constant; `Debug` -> toString reproduces the Rust
 // variant name (GAP-016).
 package net.morphismmc.jaffy.compute.grid.types.cell_occupancy;
-
 
 /// The occupancy state of a single grid cell
 public enum CellOccupancyState {

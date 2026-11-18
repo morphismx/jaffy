@@ -1,4 +1,5 @@
-// JAFFY: these files carry no upstream `mod tests`; this locks the observable
+// JAFFY-UPSTREAM: none
+// JAFFY-NOTE: these files carry no upstream `mod tests`; this locks the observable
 // semantics of the ported helper functions (fallback order, packing, NaN-free
 // fast paths, measure routing).
 package net.morphismmc.jaffy.compute;
@@ -6,8 +7,6 @@ package net.morphismmc.jaffy.compute;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
 
 import net.morphismmc.jaffy.compute.common.Alignment;
 import net.morphismmc.jaffy.compute.common.ScrollableOverflow.ScrollableOverflowContainer;
@@ -21,6 +20,8 @@ import net.morphismmc.jaffy.geometry.RectF32;
 import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
+import net.morphismmc.jaffy.style.Overflow;
+import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.style.alignment.AlignContent;
 import net.morphismmc.jaffy.style.alignment.AlignContentKeyword;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
@@ -28,16 +29,12 @@ import net.morphismmc.jaffy.style.alignment.AlignItemsKeyword;
 import net.morphismmc.jaffy.style.alignment.AlignmentSafety;
 import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.style.dimension.Dimension;
-import net.morphismmc.jaffy.style.Overflow;
-import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.tree.layout.LayoutInput;
 import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
 import net.morphismmc.just.math.OptF32;
-import net.morphismmc.jaffy.geometry.SizeBool;
-import net.morphismmc.jaffy.style.Contain;
-import net.morphismmc.jaffy.tree.layout.RequestedAxis;
-import net.morphismmc.just.math.Opt;
+
+import org.junit.jupiter.api.Test;
 
 class CommonComputeTest {
 
@@ -68,12 +65,9 @@ class CommonComputeTest {
     void alignmentFallbackDistributionRules() {
         AlignContent between = new AlignContent(AlignContentKeyword.SPACE_BETWEEN, AlignmentSafety.DEFAULT);
         AlignContent stretch = new AlignContent(AlignContentKeyword.STRETCH, AlignmentSafety.DEFAULT);
-        AlignContent safeCenter =
-                new AlignContent(AlignContentKeyword.CENTER, AlignmentSafety.SAFE);
+        AlignContent safeCenter = new AlignContent(AlignContentKeyword.CENTER, AlignmentSafety.SAFE);
         // Multi-item with free space keeps the distributed keyword
-        assertEquals(
-                AlignContentKeyword.SPACE_BETWEEN,
-                Alignment.applyAlignmentFallback(10.0f, 3, between));
+        assertEquals(AlignContentKeyword.SPACE_BETWEEN, Alignment.applyAlignmentFallback(10.0f, 3, between));
         // Single item: space-between -> flex-start (+implicit safe, still no
         // overflow so stays flex-start)
         assertEquals(AlignContentKeyword.FLEX_START, Alignment.applyAlignmentFallback(10.0f, 1, between));
@@ -95,13 +89,20 @@ class CommonComputeTest {
         // `end` is not flex-relative — reversal has no effect on it
         assertEquals(100.0f, Alignment.computeAlignmentOffset(100.0f, 3, 5.0f, AlignContentKeyword.END, true, true));
         assertEquals(50.0f, Alignment.computeAlignmentOffset(100.0f, 3, 5.0f, AlignContentKeyword.CENTER, false, true));
-        assertEquals(25.0f, Alignment.computeAlignmentOffset(100.0f, 3, 5.0f, AlignContentKeyword.SPACE_EVENLY, false, true));
+        assertEquals(
+                25.0f,
+                Alignment.computeAlignmentOffset(100.0f, 3, 5.0f, AlignContentKeyword.SPACE_EVENLY, false, true));
         // flex-reversed: FLEX_START takes the free space
-        assertEquals(100.0f, Alignment.computeAlignmentOffset(100.0f, 3, 5.0f, AlignContentKeyword.FLEX_START, true, true));
+        assertEquals(
+                100.0f, Alignment.computeAlignmentOffset(100.0f, 3, 5.0f, AlignContentKeyword.FLEX_START, true, true));
         assertEquals(0.0f, Alignment.computeAlignmentOffset(100.0f, 3, 5.0f, AlignContentKeyword.FLEX_END, true, true));
         // Subsequent items: gap + per-item share (free space clamped at 0)
-        assertEquals(55.0f, Alignment.computeAlignmentOffset(100.0f, 3, 5.0f, AlignContentKeyword.SPACE_BETWEEN, false, false));
-        assertEquals(5.0f, Alignment.computeAlignmentOffset(-10.0f, 3, 5.0f, AlignContentKeyword.SPACE_BETWEEN, false, false));
+        assertEquals(
+                55.0f,
+                Alignment.computeAlignmentOffset(100.0f, 3, 5.0f, AlignContentKeyword.SPACE_BETWEEN, false, false));
+        assertEquals(
+                5.0f,
+                Alignment.computeAlignmentOffset(-10.0f, 3, 5.0f, AlignContentKeyword.SPACE_BETWEEN, false, false));
         assertEquals(5.0f, Alignment.computeAlignmentOffset(100.0f, 3, 5.0f, AlignContentKeyword.END, false, false));
     }
 
@@ -118,10 +119,13 @@ class CommonComputeTest {
         // Child is a scroll container => only its border box contributes
         var overflow = new Point<>(Overflow.HIDDEN, Overflow.VISIBLE);
         RectF32 r = net.morphismmc.jaffy.compute.common.ScrollableOverflow.computeScrollableOverflowContribution(
-                new PointF32(5.0f, 5.0f), new SizeF32(10.0f, 10.0f),
+                new PointF32(5.0f, 5.0f),
+                new SizeF32(10.0f, 10.0f),
                 new RectF32(-4.0f, 20.0f, -4.0f, 20.0f), // propagated child overflow (clipped)
-                RectF32.ZERO, overflow,
-                net.morphismmc.jaffy.style.Contain.NONE, container(false, 100.0f, 100.0f, false, false, 0.0f),
+                RectF32.ZERO,
+                overflow,
+                net.morphismmc.jaffy.style.Contain.NONE,
+                container(false, 100.0f, 100.0f, false, false, 0.0f),
                 RectF32.ZERO);
         assertEquals(new RectF32(5.0f, 15.0f, 5.0f, 15.0f), r);
     }
@@ -130,10 +134,13 @@ class CommonComputeTest {
     void contributionPropagatesVisibleOverflow() {
         var overflow = new Point<>(Overflow.VISIBLE, Overflow.VISIBLE);
         RectF32 r = net.morphismmc.jaffy.compute.common.ScrollableOverflow.computeScrollableOverflowContribution(
-                new PointF32(5.0f, 5.0f), new SizeF32(10.0f, 10.0f),
+                new PointF32(5.0f, 5.0f),
+                new SizeF32(10.0f, 10.0f),
                 new RectF32(-4.0f, 20.0f, -4.0f, 20.0f),
-                RectF32.ZERO, overflow,
-                net.morphismmc.jaffy.style.Contain.NONE, container(false, 100.0f, 100.0f, false, false, 0.0f),
+                RectF32.ZERO,
+                overflow,
+                net.morphismmc.jaffy.style.Contain.NONE,
+                container(false, 100.0f, 100.0f, false, false, 0.0f),
                 RectF32.ZERO);
         // contribution = location + (start_extent, end_extent)
         assertEquals(new RectF32(1.0f, 25.0f, 1.0f, 25.0f), r);
@@ -144,16 +151,24 @@ class CommonComputeTest {
         var overflow = new Point<>(Overflow.VISIBLE, Overflow.VISIBLE);
         // Child entirely before the scroll origin (right edge <= 0)
         RectF32 r = net.morphismmc.jaffy.compute.common.ScrollableOverflow.computeScrollableOverflowContribution(
-                new PointF32(-30.0f, 5.0f), new SizeF32(10.0f, 10.0f),
-                RectF32.ZERO, RectF32.ZERO, overflow,
-                net.morphismmc.jaffy.style.Contain.NONE, container(true, 100.0f, 100.0f, false, false, 0.0f),
+                new PointF32(-30.0f, 5.0f),
+                new SizeF32(10.0f, 10.0f),
+                RectF32.ZERO,
+                RectF32.ZERO,
+                overflow,
+                net.morphismmc.jaffy.style.Contain.NONE,
+                container(true, 100.0f, 100.0f, false, false, 0.0f),
                 RectF32.ZERO);
         assertEquals(RectF32.ZERO, r);
         // Same geometry under a non-scroll parent contributes normally
         r = net.morphismmc.jaffy.compute.common.ScrollableOverflow.computeScrollableOverflowContribution(
-                new PointF32(-30.0f, 5.0f), new SizeF32(10.0f, 10.0f),
-                RectF32.ZERO, RectF32.ZERO, overflow,
-                net.morphismmc.jaffy.style.Contain.NONE, container(false, 100.0f, 100.0f, false, false, 0.0f),
+                new PointF32(-30.0f, 5.0f),
+                new SizeF32(10.0f, 10.0f),
+                RectF32.ZERO,
+                RectF32.ZERO,
+                overflow,
+                net.morphismmc.jaffy.style.Contain.NONE,
+                container(false, 100.0f, 100.0f, false, false, 0.0f),
                 RectF32.ZERO);
         assertEquals(new RectF32(-30.0f, -20.0f, 5.0f, 15.0f), r);
     }
@@ -162,20 +177,20 @@ class CommonComputeTest {
     void finalizeClipsStartOverflowForScrollContainer() {
         var packed = net.morphismmc.jaffy.compute.common.ScrollableOverflow.finalizeScrollableOverflow(
                 new RectF32(-20.0f, 40.0f, -30.0f, 50.0f),
-                new SizeF32(30.0f, 30.0f), new PointBool(false, false), true);
+                new SizeF32(30.0f, 30.0f),
+                new PointBool(false, false),
+                true);
         // Non-reversed scroll container: start overflow clipped to 0
         assertEquals(new RectF32(0.0f, 40.0f, 0.0f, 50.0f), packed.rect());
         assertEquals(new PointBool(false, false), packed.isReversed());
         // Reversed y scroll container: end overflow clipped to size
         packed = net.morphismmc.jaffy.compute.common.ScrollableOverflow.finalizeScrollableOverflow(
-                new RectF32(-20.0f, 40.0f, -30.0f, 50.0f),
-                new SizeF32(30.0f, 30.0f), new PointBool(false, true), true);
+                new RectF32(-20.0f, 40.0f, -30.0f, 50.0f), new SizeF32(30.0f, 30.0f), new PointBool(false, true), true);
         assertEquals(new RectF32(0.0f, 40.0f, -30.0f, 30.0f), packed.rect());
         assertEquals(new PointBool(false, true), packed.isReversed());
         // Non-scroll container: no clipping, no reversal
         packed = net.morphismmc.jaffy.compute.common.ScrollableOverflow.finalizeScrollableOverflow(
-                new RectF32(-20.0f, 40.0f, -30.0f, 50.0f),
-                new SizeF32(30.0f, 30.0f), new PointBool(true, true), false);
+                new RectF32(-20.0f, 40.0f, -30.0f, 50.0f), new SizeF32(30.0f, 30.0f), new PointBool(true, true), false);
         assertEquals(new RectF32(-20.0f, 40.0f, -30.0f, 50.0f), packed.rect());
         assertEquals(PointBool.FALSE, packed.isReversed());
     }
@@ -217,7 +232,8 @@ class CommonComputeTest {
 
     // ---- leaf.rs ----
 
-    private static LayoutInput leafInput(SizeOptF32 known, Size<net.morphismmc.jaffy.style.available_space.AvailableSpace> space) {
+    private static LayoutInput leafInput(
+            SizeOptF32 known, Size<net.morphismmc.jaffy.style.available_space.AvailableSpace> space) {
         return new LayoutInput(
                 RunMode.COMPUTE_SIZE,
                 SizingMode.INHERENT_SIZE,
@@ -232,7 +248,8 @@ class CommonComputeTest {
     @Test
     void leafLayoutEarlyReturnWithKnownSize() {
         var out = net.morphismmc.jaffy.compute.Leaf.computeLeafLayout(
-                leafInput(new SizeOptF32(30.0f, 40.0f),
+                leafInput(
+                        new SizeOptF32(30.0f, 40.0f),
                         new Size<>(AvailableSpace.MAX_CONTENT, AvailableSpace.MAX_CONTENT)),
                 Style.DEFAULT,
                 (v, b) -> 0.0f,
@@ -244,8 +261,7 @@ class CommonComputeTest {
     void leafLayoutMeasuresUnderAvailableSpace() {
         // No known size -> measure callback produces the content size
         var out = net.morphismmc.jaffy.compute.Leaf.computeLeafLayout(
-                leafInput(SizeOptF32.NONE,
-                        new Size<>(AvailableSpace.MAX_CONTENT, AvailableSpace.MAX_CONTENT)),
+                leafInput(SizeOptF32.NONE, new Size<>(AvailableSpace.MAX_CONTENT, AvailableSpace.MAX_CONTENT)),
                 Style.DEFAULT,
                 (v, b) -> 0.0f,
                 (kd, sp) -> new SizeF32(50.0f, 20.0f));

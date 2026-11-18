@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.style.dimension
- */
+// JAFFY-UPSTREAM: src/style/dimension.rs
 @NullMarked
 package net.morphismmc.jaffy.style.dimension;
 

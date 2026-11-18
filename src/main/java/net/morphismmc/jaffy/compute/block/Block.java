@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/block.rs — CSS Block layout.
+// JAFFY-UPSTREAM: src/compute/block.rs
+// JAFFY-NOTE: CSS Block layout
 //
 // `float_layout`/`content_size` cargo features are always on (GAP-007).
 // `Option<f32>` -> `@Opt float` (GAP-006); reference Options -> `@Nullable`;
@@ -10,9 +11,9 @@
 // `java.lang.Float` (item float style is reached via `item.floatValue`).
 package net.morphismmc.jaffy.compute.block;
 
-import it.unimi.dsi.fastutil.longs.LongIterator;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.morphismmc.jaffy.Features;
 import net.morphismmc.jaffy.compute.common.Alignment;
 import net.morphismmc.jaffy.compute.common.ScrollableOverflow;
@@ -54,7 +55,6 @@ import net.morphismmc.jaffy.style.block.TextAlign;
 import net.morphismmc.jaffy.style.dimension.Dimension;
 import net.morphismmc.jaffy.style.dimension.LengthPercentage;
 import net.morphismmc.jaffy.style.dimension.LengthPercentageAuto;
-import net.morphismmc.jaffy.style.float_.Clear;
 import net.morphismmc.jaffy.style.float_.FloatDirection;
 import net.morphismmc.jaffy.tree.layout.AxisStaticPosition;
 import net.morphismmc.jaffy.tree.layout.Baselines;
@@ -72,18 +72,20 @@ import net.morphismmc.jaffy.tree.traits.LayoutBlockContainer;
 import net.morphismmc.jaffy.tree.traits.LayoutPartialTree;
 import net.morphismmc.jaffy.util.CalcResolver;
 import net.morphismmc.jaffy.util.DebugLogger;
-import net.morphismmc.just.math.F32;
 import net.morphismmc.jaffy.util.MaybeResolve.RectLengthPercentageAutoExt;
 import net.morphismmc.jaffy.util.MaybeResolve.RectLengthPercentageExt;
 import net.morphismmc.jaffy.util.MaybeResolve.SizeDimensionExt;
 import net.morphismmc.jaffy.util.MaybeResolve.SizeLengthPercentageAutoExt;
+import net.morphismmc.jaffy.util.Sys;
+import net.morphismmc.just.math.F32;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
 import net.morphismmc.just.math.OptI32;
 import net.morphismmc.just.math.Unsigned;
-import net.morphismmc.jaffy.util.Sys;
+
 import org.jspecify.annotations.Nullable;
 
+import it.unimi.dsi.fastutil.longs.LongIterator;
 
 /// Computes the layout of {@link LayoutPartialTree} according to the block
 /// layout algorithm.
@@ -115,7 +117,8 @@ public final class Block {
 
         // Pull these out earlier to avoid borrowing issues
         Point<Overflow> overflow = style.overflow();
-        boolean isScrollContainer = overflow.x().isScrollContainer() || overflow.y().isScrollContainer();
+        boolean isScrollContainer =
+                overflow.x().isScrollContainer() || overflow.y().isScrollContainer();
         Contain contain = style.contain();
         // css-align-3 §5.1.1: a non-`normal` `align-content` makes a block
         // container establish an independent formatting context.
@@ -130,8 +133,7 @@ public final class Block {
         RectF32 padding = RectLengthPercentageExt.resolveOrZeroO(style.padding(), parentSize.width(), calc);
         RectF32 border = RectLengthPercentageExt.resolveOrZeroO(style.border(), parentSize.width(), calc);
         SizeF32 paddingBorderSize = padding.plus(border).sumAxes();
-        SizeF32 boxSizingAdjustment =
-                style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSize : SizeF32.ZERO;
+        SizeF32 boxSizingAdjustment = style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSize : SizeF32.ZERO;
 
         SizeOptF32 minSize = SizeLengthPercentageAutoExt.maybeResolveO(style.minSize(), parentSize, calc)
                 .maybeApplyAspectRatio(aspectRatio)
@@ -149,14 +151,10 @@ public final class Block {
         // If both min and max in a given axis are set and max <= min then this
         // determines the size in that axis
         SizeOptF32 minMaxDefiniteSize = minSize.zipMap(
-                maxSize,
-                (min, max) ->
-                        OptF32.isSome(min) && OptF32.isSome(max) && max <= min ? min : OptF32.NONE);
+                maxSize, (min, max) -> OptF32.isSome(min) && OptF32.isSome(max) && max <= min ? min : OptF32.NONE);
 
-        SizeOptF32 styledBasedKnownDimensions = knownDimensions
-                .or(minMaxDefiniteSize)
-                .or(clampedStyleSize)
-                .maybeMaxF(paddingBorderSize);
+        SizeOptF32 styledBasedKnownDimensions =
+                knownDimensions.or(minMaxDefiniteSize).or(clampedStyleSize).maybeMaxF(paddingBorderSize);
 
         // Short-circuit layout if the container's size is fully determined by
         // the container's size and the run mode is ComputeSize (and thus the
@@ -164,14 +162,13 @@ public final class Block {
         if (inputs.runMode() == RunMode.COMPUTE_SIZE) {
             if (OptF32.isSome(styledBasedKnownDimensions.width())
                     && OptF32.isSome(styledBasedKnownDimensions.height())) {
-                return LayoutOutput.fromOuterSize(new SizeF32(
-                        styledBasedKnownDimensions.width(), styledBasedKnownDimensions.height()));
+                return LayoutOutput.fromOuterSize(
+                        new SizeF32(styledBasedKnownDimensions.width(), styledBasedKnownDimensions.height()));
             }
 
             // We can also short-circuit if the width is known and only the
             // width has been requested.
-            if (inputs.axis() == RequestedAxis.HORIZONTAL
-                    && OptF32.isSome(styledBasedKnownDimensions.width())) {
+            if (inputs.axis() == RequestedAxis.HORIZONTAL && OptF32.isSome(styledBasedKnownDimensions.width())) {
                 return LayoutOutput.fromOuterSize(new SizeF32(styledBasedKnownDimensions.width(), 0.0f));
             }
         }
@@ -271,8 +268,7 @@ public final class Block {
         // Apply content box inset
         blockCtx.applyContentBoxInset(new FloatInsets(contentBoxInset.left(), contentBoxInset.right()));
 
-        SizeF32 boxSizingAdjustment =
-                style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSize : SizeF32.ZERO;
+        SizeF32 boxSizingAdjustment = style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSize : SizeF32.ZERO;
         SizeOptF32 size = SizeDimensionExt.maybeResolveO(style.size(), parentSize, calc)
                 .maybeApplyAspectRatio(aspectRatio)
                 .maybeAddF(boxSizingAdjustment);
@@ -293,20 +289,22 @@ public final class Block {
         // resolved it (re-clamping would undo padding/border overrides).
         SizeOptF32 knownDimensions;
         {
-            SizeOptF32 derived = inputKnownDimensions
-                    .maybeApplyAspectRatio(aspectRatio)
-                    .maybeClampO(minSize, maxSize);
+            SizeOptF32 derived =
+                    inputKnownDimensions.maybeApplyAspectRatio(aspectRatio).maybeClampO(minSize, maxSize);
             knownDimensions = new SizeOptF32(
                     OptF32.or(inputKnownDimensions.width(), derived.width()),
                     OptF32.or(inputKnownDimensions.height(), derived.height()));
         }
         SizeOptF32 percentageBasisDimensions = new SizeOptF32(
                 knownDimensions.width(),
-                OptF32.filter(knownDimensions.height(), v -> inputs.knownDimensionsAreDefinite().height()));
+                OptF32.filter(
+                        knownDimensions.height(),
+                        v -> inputs.knownDimensionsAreDefinite().height()));
         SizeOptF32 containerContentBoxSize = percentageBasisDimensions.maybeSubF(contentBoxInset.sumAxes());
 
         Point<Overflow> overflow = style.overflow();
-        boolean isScrollContainer = overflow.x().isScrollContainer() || overflow.y().isScrollContainer();
+        boolean isScrollContainer =
+                overflow.x().isScrollContainer() || overflow.y().isScrollContainer();
         boolean establishesNewBfc = isScrollContainer
                 || style.alignContent().keyword() != AlignContentKeyword.NORMAL
                 || style.contain().establishesIndependentFormattingContext();
@@ -352,13 +350,11 @@ public final class Block {
         if (OptF32.isSome(knownDimensions.width())) {
             containerOuterWidth = knownDimensions.width();
         } else {
-            AvailableSpace availableWidth =
-                    availableSpace.width().maybeSubF(contentBoxInset.horizontalAxisSum());
+            AvailableSpace availableWidth = availableSpace.width().maybeSubF(contentBoxInset.horizontalAxisSum());
             float intrinsicWidth = determineContentBasedContainerWidth(tree, items, availableWidth)
                     + contentBoxInset.horizontalAxisSum();
             containerOuterWidth = F32.maybeMaxO(
-                    F32.maybeClampO(intrinsicWidth, minSize.width(), maxSize.width()),
-                    paddingBorderSize.width());
+                    F32.maybeClampO(intrinsicWidth, minSize.width(), maxSize.width()), paddingBorderSize.width());
         }
 
         // Short-circuit if computing size and both dimensions known
@@ -378,7 +374,8 @@ public final class Block {
         // (https://drafts.csswg.org/css-flexbox/#min-size-auto: the content
         // size suggestion must not be influenced by the item's specified
         // height).
-        @Opt float containerPercentageResolutionHeight = OptF32.or(
+        @Opt
+        float containerPercentageResolutionHeight = OptF32.or(
                 percentageBasisDimensions.height(),
                 inputs.sizingMode() == SizingMode.INHERENT_SIZE
                         ? OptF32.maybeMaxO(size.height(), minSize.height())
@@ -392,10 +389,8 @@ public final class Block {
         // own width when the parent size is unknown (e.g. at the root of the
         // layout tree).
         float percentageResolutionWidth = OptF32.unwrapOr(parentSize.width(), containerOuterWidth);
-        RectF32 resolvedPadding =
-                RectLengthPercentageExt.resolveOrZeroO(rawPadding, percentageResolutionWidth, calc);
-        RectF32 resolvedBorder =
-                RectLengthPercentageExt.resolveOrZeroO(rawBorder, percentageResolutionWidth, calc);
+        RectF32 resolvedPadding = RectLengthPercentageExt.resolveOrZeroO(rawPadding, percentageResolutionWidth, calc);
+        RectF32 resolvedBorder = RectLengthPercentageExt.resolveOrZeroO(rawBorder, percentageResolutionWidth, calc);
         RectF32 resolvedContentBoxInset = resolvedPadding.plus(resolvedBorder).plus(scrollbarGutter);
         FinalLayoutResult result = performFinalLayoutOnInFlowChildren(
                 tree,
@@ -442,9 +437,8 @@ public final class Block {
         // margin no longer adjoins the box's bottom edge, so it stays inside
         // the box instead of collapsing with the box's own bottom margin.
         // (`max-height` has no such effect.)
-        boolean heightConstrainedByMinHeight = OptF32.isSome(minSize.height())
-                && minSize.height() > 0.0f
-                && minSize.height() >= containerOuterHeight;
+        boolean heightConstrainedByMinHeight =
+                OptF32.isSome(minSize.height()) && minSize.height() > 0.0f && minSize.height() >= containerOuterHeight;
         boolean ownBottomMarginCollapsesWithChildren =
                 ownMarginsCollapseWithChildren.end() && !heightConstrainedByMinHeight;
 
@@ -469,7 +463,8 @@ public final class Block {
                     Layout layout = item.finalLayout;
                     item.finalLayout = new Layout(
                             layout.order(),
-                            new PointF32(layout.location().x(), layout.location().y() + groupOffset),
+                            new PointF32(
+                                    layout.location().x(), layout.location().y() + groupOffset),
                             layout.size(),
                             layout.scrollableOverflowRect(),
                             layout.scrollbarSize(),
@@ -480,8 +475,7 @@ public final class Block {
                 // The static positions of out-of-flow children move with the
                 // in-flow content
                 if (item.position.isOutOfFlow()) {
-                    item.staticPosition =
-                            new PointF32(item.staticPosition.x(), item.staticPosition.y() + groupOffset);
+                    item.staticPosition = new PointF32(item.staticPosition.x(), item.staticPosition.y() + groupOffset);
                 }
             }
             boolean anyInFlow = items.stream().anyMatch(item -> item.finalLayout != null);
@@ -500,15 +494,16 @@ public final class Block {
                     PointF32 contributionLocation = new PointF32(
                             layout.location().x() - resolvedBorder.left() - scrollbarGutter.left(),
                             layout.location().y() - resolvedBorder.top());
-                    inflowOverflowRect = inflowOverflowRect.union(ScrollableOverflow.computeScrollableOverflowContribution(
-                            contributionLocation,
-                            layout.size(),
-                            layout.scrollableOverflowRect().rect(),
-                            layout.border(),
-                            item.overflow,
-                            item.contain,
-                            overflowContainer,
-                            layout.margin().map(value -> F32.min(value, 0.0f))));
+                    inflowOverflowRect =
+                            inflowOverflowRect.union(ScrollableOverflow.computeScrollableOverflowContribution(
+                                    contributionLocation,
+                                    layout.size(),
+                                    layout.scrollableOverflowRect().rect(),
+                                    layout.border(),
+                                    item.overflow,
+                                    item.contain,
+                                    overflowContainer,
+                                    layout.margin().map(value -> F32.min(value, 0.0f))));
                 }
             }
         }
@@ -586,8 +581,7 @@ public final class Block {
                 // that rectangle.
                 // <https://www.w3.org/TR/css-position-3/#staticpos-rect>
                 LineF32 inlineArea = new LineF32(
-                        resolvedContentBoxInset.left(),
-                        containerOuterWidth - resolvedContentBoxInset.right());
+                        resolvedContentBoxInset.left(), containerOuterWidth - resolvedContentBoxInset.right());
                 LineF32 blockArea = new LineF32(item.staticPosition.y(), item.staticPosition.y());
                 // A `justify_self` of `None` takes the container's
                 // `justify-items`. Block containers have no `align-items`, so
@@ -615,8 +609,7 @@ public final class Block {
 
         RectF32 absolutePositionInset = resolvedBorder.plus(scrollbarGutter);
         SizeF32 absolutePositionArea = finalOuterSize.minus(absolutePositionInset.sumAxes());
-        PointF32 absolutePositionOffset =
-                new PointF32(absolutePositionInset.left(), absolutePositionInset.top());
+        PointF32 absolutePositionOffset = new PointF32(absolutePositionInset.left(), absolutePositionInset.top());
         output = new LayoutOutput(
                 output.size(),
                 output.scrollableOverflowRect(),
@@ -629,9 +622,7 @@ public final class Block {
 
         {
             float clientWidth = F32.max(
-                    finalOuterSize.width()
-                            - resolvedBorder.horizontalAxisSum()
-                            - scrollbarGutter.horizontalAxisSum(),
+                    finalOuterSize.width() - resolvedBorder.horizontalAxisSum() - scrollbarGutter.horizontalAxisSum(),
                     0.0f);
             if (direction.isRtl()) {
                 inflowOverflowRect = inflowOverflowRect.union(new RectF32(0.0f, clientWidth, 0.0f, 0.0f));
@@ -681,8 +672,7 @@ public final class Block {
 
     /// Create a `List` of {@link BlockItem} structs where each item in the
     /// list represents a child of the current node (`generate_item_list`).
-    private static List<BlockItem> generateItemList(
-            LayoutBlockContainer tree, long node, SizeOptF32 nodeInnerSize) {
+    private static List<BlockItem> generateItemList(LayoutBlockContainer tree, long node, SizeOptF32 nodeInnerSize) {
         CalcResolver calc = tree::calc;
         List<BlockItem> items = new ArrayList<>();
         LongIterator childIds = tree.childIds(node);
@@ -694,13 +684,10 @@ public final class Block {
                 continue;
             }
             @Opt float aspectRatio = childStyle.aspectRatio();
-            RectF32 padding = RectLengthPercentageExt.resolveOrZeroO(
-                    childStyle.padding(), nodeInnerSize.width(), calc);
-            RectF32 border = RectLengthPercentageExt.resolveOrZeroO(
-                    childStyle.border(), nodeInnerSize.width(), calc);
+            RectF32 padding = RectLengthPercentageExt.resolveOrZeroO(childStyle.padding(), nodeInnerSize.width(), calc);
+            RectF32 border = RectLengthPercentageExt.resolveOrZeroO(childStyle.border(), nodeInnerSize.width(), calc);
             SizeF32 pbSum = padding.plus(border).sumAxes();
-            SizeF32 boxSizingAdjustment =
-                    childStyle.boxSizing() == BoxSizing.CONTENT_BOX ? pbSum : SizeF32.ZERO;
+            SizeF32 boxSizingAdjustment = childStyle.boxSizing() == BoxSizing.CONTENT_BOX ? pbSum : SizeF32.ZERO;
 
             Position position = childStyle.position();
             Point<Overflow> overflow = childStyle.overflow();
@@ -715,12 +702,11 @@ public final class Block {
             if (isCompressibleReplaced) {
                 @Opt float width = childStyle.size().width().maybeResolveO(0.0f, calc);
                 @Opt float maxWidth = childStyle.maxSize().width().maybeResolveO(0.0f, calc);
-                minContentWidthCap = OptF32.isSome(width)
-                        ? OptF32.maybeMinO(width, maxWidth)
-                        : maxWidth;
+                minContentWidthCap = OptF32.isSome(width) ? OptF32.maybeMinO(width, maxWidth) : maxWidth;
                 minContentWidthCap = OptF32.maybeAddF(minContentWidthCap, boxSizingAdjustment.width());
             }
-            boolean isScrollContainer = overflow.x().isScrollContainer() || overflow.y().isScrollContainer();
+            boolean isScrollContainer =
+                    overflow.x().isScrollContainer() || overflow.y().isScrollContainer();
             Contain contain = childStyle.contain();
 
             boolean isInSameBfc = isBlock
@@ -781,10 +767,7 @@ public final class Block {
     /// <https://github.com/w3c/csswg-drafts/issues/11044#issuecomment-2599101601>
     /// <https://github.com/w3c/csswg-drafts/issues/13260>
     private static @Opt float resolveStretchHeight(
-            Dimension heightStyle,
-            @Opt float containerInnerHeight,
-            RectF32 itemMargin,
-            LineBool marginsTreatedAsZero) {
+            Dimension heightStyle, @Opt float containerInnerHeight, RectF32 itemMargin, LineBool marginsTreatedAsZero) {
         if (!heightStyle.isStretch()) {
             return OptF32.NONE;
         }
@@ -819,7 +802,8 @@ public final class Block {
                 item.inset.right().maybeResolveO(parentSize.width(), calc),
                 item.inset.top().maybeResolveO(parentSize.height(), calc),
                 item.inset.bottom().maybeResolveO(parentSize.height(), calc));
-        @Opt float x = direction.isRtl()
+        @Opt
+        float x = direction.isRtl()
                 ? OptF32.or(OptF32.map(inset.right(), v -> -v), inset.left())
                 : OptF32.or(inset.left(), OptF32.map(inset.right(), v -> -v));
         @Opt float y = OptF32.or(inset.top(), OptF32.map(inset.bottom(), v -> -v));
@@ -830,8 +814,7 @@ public final class Block {
     /// container is not known (`determine_content_based_container_width`).
     private static float determineContentBasedContainerWidth(
             LayoutPartialTree tree, List<BlockItem> items, AvailableSpace availableWidth) {
-        Size<AvailableSpace> availableSpace =
-                new Size<>(availableWidth, AvailableSpace.MIN_CONTENT);
+        Size<AvailableSpace> availableSpace = new Size<>(availableWidth, AvailableSpace.MIN_CONTENT);
         CalcResolver calc = tree::calc;
 
         float maxChildWidth = 0.0f;
@@ -850,8 +833,8 @@ public final class Block {
                 width = knownDimensions.width();
             } else {
                 AvailableSpace itemAvailableWidth;
-                SizingKeywordResolution resolution = SizingKeyword.resolveSizingKeyword(
-                        item.sizeStyle.width(), OptF32.NONE, OptF32.NONE, calc);
+                SizingKeywordResolution resolution =
+                        SizingKeyword.resolveSizingKeyword(item.sizeStyle.width(), OptF32.NONE, OptF32.NONE, calc);
                 if (resolution instanceof SizingKeywordResolution.Measure m) {
                     itemAvailableWidth = m.availableSpace();
                 } else if (resolution instanceof SizingKeywordResolution.Exact e) {
@@ -872,15 +855,12 @@ public final class Block {
                 // The cap is the item's min-content contribution, so its
                 // fit-content contribution is
                 // min(max-content, max(cap, available))
-                if (OptF32.isSome(item.minContentWidthCap)
-                        && itemAvailableWidth instanceof AvailableSpace.MinContent) {
-                    width = F32.maybeMaxO(
-                            F32.min(measured, item.minContentWidthCap), item.minSize.width());
+                if (OptF32.isSome(item.minContentWidthCap) && itemAvailableWidth instanceof AvailableSpace.MinContent) {
+                    width = F32.maybeMaxO(F32.min(measured, item.minContentWidthCap), item.minSize.width());
                 } else if (OptF32.isSome(item.minContentWidthCap)
                         && itemAvailableWidth instanceof AvailableSpace.Definite d) {
                     width = F32.maybeMaxO(
-                            F32.min(measured, Sys.f32Max(item.minContentWidthCap, d.value())),
-                            item.minSize.width());
+                            F32.min(measured, Sys.f32Max(item.minContentWidthCap, d.value())), item.minSize.width());
                 } else {
                     width = measured;
                 }
@@ -923,9 +903,8 @@ public final class Block {
         // The automatic width of a block-level box whose `justify-self` is
         // neither `normal` nor `stretch` is equivalent to `fit-content` rather
         // than `stretch`
-        Dimension widthStyle = isFitContent && item.sizeStyle.width().isAuto()
-                ? Dimension.fitContent()
-                : item.sizeStyle.width();
+        Dimension widthStyle =
+                isFitContent && item.sizeStyle.width().isAuto() ? Dimension.fitContent() : item.sizeStyle.width();
 
         // Items with a sizing keyword width (min-content, max-content,
         // fit-content, fit-content(...), stretch) resolve their width either
@@ -933,8 +912,8 @@ public final class Block {
         // space constraint
         CalcResolver calc = tree::calc;
         @Opt float keywordWidth = OptF32.NONE;
-        SizingKeywordResolution widthResolution = SizingKeyword.resolveSizingKeyword(
-                widthStyle, stretchWidth, containerInnerWidth, calc);
+        SizingKeywordResolution widthResolution =
+                SizingKeyword.resolveSizingKeyword(widthStyle, stretchWidth, containerInnerWidth, calc);
         if (widthResolution instanceof SizingKeywordResolution.Exact e) {
             keywordWidth = e.value();
         } else if (widthResolution instanceof SizingKeywordResolution.Measure m) {
@@ -950,7 +929,8 @@ public final class Block {
                     item.isInSameBfc ? LineBool.TRUE : LineBool.FALSE);
         }
 
-        @Opt float keywordHeight = resolveStretchHeight(
+        @Opt
+        float keywordHeight = resolveStretchHeight(
                 item.sizeStyle.height(),
                 containerPercentageResolutionHeight,
                 itemNonAutoMargin,
@@ -1024,15 +1004,15 @@ public final class Block {
         CalcResolver calc = tree::calc;
         // Resolve container_inner_width for sizing child nodes using initial
         // content_box_inset
-        float containerInnerWidth =
-                F32.max(containerOuterWidth - resolvedContentBoxInset.horizontalAxisSum(), 0.0f);
+        float containerInnerWidth = F32.max(containerOuterWidth - resolvedContentBoxInset.horizontalAxisSum(), 0.0f);
         ScrollableOverflowContainer overflowContainer = new ScrollableOverflowContainer(
                 isScrollContainer,
                 new SizeF32(containerInnerWidth + resolvedPadding.horizontalAxisSum(), 0.0f),
                 new PointBool(direction.isRtl(), false),
                 resolvedPadding);
-        @Opt float containerPctResHeight = OptF32.maybeSubF(
-                containerPercentageResolutionHeight, resolvedContentBoxInset.verticalAxisSum());
+        @Opt
+        float containerPctResHeight =
+                OptF32.maybeSubF(containerPercentageResolutionHeight, resolvedContentBoxInset.verticalAxisSum());
         SizeOptF32 parentSize = new SizeOptF32(containerInnerWidth, containerPctResHeight);
         // Vertical available space in block flow is indefinite, NOT a
         // min-content constraint: MaxContent is taffy's representation of
@@ -1042,14 +1022,14 @@ public final class Block {
         // containing only scroll-container items (overflow != visible,
         // automatic minimum size = 0) collapsed to zero height. Browsers size
         // such rows to the item's content.
-        Size<AvailableSpace> availableSpace = new Size<>(
-                new AvailableSpace.Definite(containerInnerWidth), AvailableSpace.MAX_CONTENT);
+        Size<AvailableSpace> availableSpace =
+                new Size<>(new AvailableSpace.Definite(containerInnerWidth), AvailableSpace.MAX_CONTENT);
 
         // TODO: handle nested blocks with different widths
         if (blockCtx.isBfcRoot()) {
             blockCtx.setWidth(containerOuterWidth);
-            blockCtx.applyContentBoxInset(new FloatInsets(
-                    resolvedContentBoxInset.left(), resolvedContentBoxInset.right()));
+            blockCtx.applyContentBoxInset(
+                    new FloatInsets(resolvedContentBoxInset.left(), resolvedContentBoxInset.right()));
         }
 
         // If this block's top margin does not collapse with its children's
@@ -1082,10 +1062,8 @@ public final class Block {
                         : containerOuterWidth - resolvedContentBoxInset.right();
                 item.staticPosition = new PointF32(x, yOffsetForAbsolute);
             } else {
-                RectOptF32 itemMargin =
-                        item.margin.mapO(m -> m.resolveToOption(containerInnerWidth, calc));
-                RectF32 itemNonAutoMargin =
-                        itemMargin.mapF(m -> OptF32.unwrapOr(m, 0.0f));
+                RectOptF32 itemMargin = item.margin.mapO(m -> m.resolveToOption(containerInnerWidth, calc));
+                RectF32 itemNonAutoMargin = itemMargin.mapF(m -> OptF32.unwrapOr(m, 0.0f));
                 float itemNonAutoXMarginSum = itemNonAutoMargin.horizontalAxisSum();
 
                 SizeF32 scrollbarSize = new SizeF32(
@@ -1100,8 +1078,7 @@ public final class Block {
                     // A float with `width: auto` is shrink-to-fit
                     // (fit-content) sized: the available space clamped between
                     // its min-content and max-content sizes.
-                    float availableWidth =
-                            F32.max(containerInnerWidth - itemNonAutoXMarginSum, 0.0f);
+                    float availableWidth = F32.max(containerInnerWidth - itemNonAutoXMarginSum, 0.0f);
                     @Opt float itemKnownWidth;
                     AvailableSpace itemAvailableWidth;
                     SizingKeywordResolution resolution = SizingKeyword.resolveSizingKeyword(
@@ -1116,7 +1093,8 @@ public final class Block {
                         itemKnownWidth = OptF32.NONE;
                         itemAvailableWidth = new AvailableSpace.Definite(availableWidth);
                     }
-                    @Opt float itemKnownHeight = resolveStretchHeight(
+                    @Opt
+                    float itemKnownHeight = resolveStretchHeight(
                             item.sizeStyle.height(),
                             containerPctResHeight,
                             itemNonAutoMargin,
@@ -1166,15 +1144,13 @@ public final class Block {
                     // placement into a border-box location for the output
                     // Layout
                     location = new PointF32(
-                            location.x() + itemNonAutoMargin.left(),
-                            location.y() + itemNonAutoMargin.top());
+                            location.x() + itemNonAutoMargin.left(), location.y() + itemNonAutoMargin.top());
 
                     // A relatively positioned float is placed as a float
                     // first, then offset by its inset. The offset does not
                     // affect the placement of other content (CSS 2.2 9.4.3).
                     PointF32 insetOffset = resolveRelativeOffset(item, parentSize, direction, tree);
-                    location = new PointF32(
-                            location.x() + insetOffset.x(), location.y() + insetOffset.y());
+                    location = new PointF32(location.x() + insetOffset.x(), location.y() + insetOffset.y());
 
                     // Deferred to the post-loop pass in `computeInner` (like
                     // in-flow items) so that `align-content` can shift
@@ -1195,8 +1171,8 @@ public final class Block {
                     PointF32 contributionLocation = new PointF32(
                             location.x() - resolvedContentBoxInset.left() + resolvedPadding.left(),
                             location.y() - resolvedBorder.top());
-                    inflowOverflowRect = inflowOverflowRect.union(
-                            ScrollableOverflow.computeScrollableOverflowContribution(
+                    inflowOverflowRect =
+                            inflowOverflowRect.union(ScrollableOverflow.computeScrollableOverflowContribution(
                                     contributionLocation,
                                     itemLayout.size(),
                                     itemLayout.scrollableOverflowRect().rect(),
@@ -1223,11 +1199,11 @@ public final class Block {
                 boolean isStretch = justifySelf.keyword() == AlignItemsKeyword.STRETCH;
                 // The (resolved) `justify-self` if it is neither `normal` nor
                 // `stretch`
-                @Nullable AlignItems nonStretchJustifySelf =
-                        justifySelf.keyword() == AlignItemsKeyword.NORMAL
-                                        || justifySelf.keyword() == AlignItemsKeyword.STRETCH
-                                ? null
-                                : justifySelf;
+                @Nullable
+                AlignItems nonStretchJustifySelf = justifySelf.keyword() == AlignItemsKeyword.NORMAL
+                                || justifySelf.keyword() == AlignItemsKeyword.STRETCH
+                        ? null
+                        : justifySelf;
 
                 float yMarginOffset = 0.0f;
                 boolean itemAvoidsFloats = false;
@@ -1242,8 +1218,7 @@ public final class Block {
                     floatAvoidingWidth = 0.0f;
                 } else {
                     // Set yMarginOffset (different bfc child)
-                    if (!isCollapsingWithFirstMarginSet
-                            || !ownMarginsCollapseWithChildren.start()) {
+                    if (!isCollapsingWithFirstMarginSet || !ownMarginsCollapseWithChildren.start()) {
                         yMarginOffset = activeCollapsibleMarginSet
                                 .collapseWithMargin(itemNonAutoMargin.top())
                                 .resolve();
@@ -1255,8 +1230,7 @@ public final class Block {
                     // preceding in-flow sibling (in the same BFC) are not
                     // reflected in the flag
                     if (hasActiveFloats || blockCtx.hasActiveFloats(minY)) {
-                        FloatInsets xMargins =
-                                new FloatInsets(itemNonAutoMargin.left(), itemNonAutoMargin.right());
+                        FloatInsets xMargins = new FloatInsets(itemNonAutoMargin.left(), itemNonAutoMargin.right());
                         // An auto width resolves to at least the negation of
                         // the margin sum (so that the margin box width is
                         // non-negative, per CSS2 §10.3.3)
@@ -1278,11 +1252,12 @@ public final class Block {
                                                 item.minSize.height()),
                                         0.0f),
                                 item.paddingBorderSum.height());
-                        @Opt @Unsigned int slotSegment = OptI32.NONE;
+                        @Opt
+                        @Unsigned
+                        int slotSegment = OptI32.NONE;
                         BfcSlot slot;
                         while (true) {
-                            slot = blockCtx.findBfcSlot(
-                                    minY, minHeight, xMargins, direction, item.clear, slotSegment);
+                            slot = blockCtx.findBfcSlot(minY, minHeight, xMargins, direction, item.clear, slotSegment);
                             if (slot.segmentId() == OptI32.NONE) {
                                 break;
                             }
@@ -1308,8 +1283,7 @@ public final class Block {
 
                         hasActiveFloats = slot.segmentId() != OptI32.NONE;
                         itemAvoidsFloats = true;
-                        stretchWidth =
-                                Sys.f32Max(Sys.f32Max(slot.stretchWidth(), minAutoWidth), 0.0f);
+                        stretchWidth = Sys.f32Max(Sys.f32Max(slot.stretchWidth(), minAutoWidth), 0.0f);
                         floatAvoidingPosition = new PointF32(slot.x(), slot.y());
                         floatAvoidingWidth = slot.borderWidth();
                     } else if (!hasActiveFloats) {
@@ -1365,10 +1339,8 @@ public final class Block {
                             + activeCollapsibleMarginSet
                                     .collapseWithMargin(itemNonAutoMargin.top())
                                     .resolve();
-                    BlockContext childBlockCtx =
-                            blockCtx.subContext(Sys.f32Max(estimatedY, clearPos), insets);
-                    LayoutOutput output =
-                            tree.computeBlockChildLayout(item.nodeId, childInputs, childBlockCtx);
+                    BlockContext childBlockCtx = blockCtx.subContext(Sys.f32Max(estimatedY, clearPos), insets);
+                    LayoutOutput output = tree.computeBlockChildLayout(item.nodeId, childInputs, childBlockCtx);
 
                     // Extract float contribution from child block context
                     childFloatContribution = childBlockCtx.floatedContentHeightContribution();
@@ -1385,20 +1357,18 @@ public final class Block {
                 item.oofCandidates = itemLayout.oofCandidates().take();
                 SizeF32 finalSize = itemLayout.size();
 
-                CollapsibleMarginSet topMarginSet = itemLayout
-                        .topMargin()
-                        .collapseWithMargin(OptF32.unwrapOr(itemMargin.top(), 0.0f));
-                CollapsibleMarginSet bottomMarginSet = itemLayout
-                        .bottomMargin()
-                        .collapseWithMargin(OptF32.unwrapOr(itemMargin.bottom(), 0.0f));
+                CollapsibleMarginSet topMarginSet =
+                        itemLayout.topMargin().collapseWithMargin(OptF32.unwrapOr(itemMargin.top(), 0.0f));
+                CollapsibleMarginSet bottomMarginSet =
+                        itemLayout.bottomMargin().collapseWithMargin(OptF32.unwrapOr(itemMargin.bottom(), 0.0f));
 
                 // Expand auto margins to fill available space
                 // Note: Vertical auto-margins for relatively positioned block
                 // items simply resolve to 0. See:
                 // https://www.w3.org/TR/CSS21/visudet.html#abs-non-replaced-width
                 float freeXSpace = Sys.f32Max(0.0f, stretchWidth - finalSize.width());
-                int autoMarginCount = (OptF32.isNone(itemMargin.left()) ? 1 : 0)
-                        + (OptF32.isNone(itemMargin.right()) ? 1 : 0);
+                int autoMarginCount =
+                        (OptF32.isNone(itemMargin.left()) ? 1 : 0) + (OptF32.isNone(itemMargin.right()) ? 1 : 0);
                 float xAxisAutoMarginSize = autoMarginCount > 0 ? freeXSpace / autoMarginCount : 0.0f;
                 RectF32 resolvedMargin = new RectF32(
                         OptF32.unwrapOr(itemMargin.left(), xAxisAutoMarginSize),
@@ -1410,9 +1380,7 @@ public final class Block {
                 PointF32 insetOffset = resolveRelativeOffset(item, parentSize, direction, tree);
 
                 // Set yMarginOffset (same bfc child)
-                if (item.isInSameBfc
-                        && (!isCollapsingWithFirstMarginSet
-                                || !ownMarginsCollapseWithChildren.start())) {
+                if (item.isInSameBfc && (!isCollapsingWithFirstMarginSet || !ownMarginsCollapseWithChildren.start())) {
                     yMarginOffset = activeCollapsibleMarginSet
                             .collapseWithSet(topMarginSet)
                             .resolve();
@@ -1433,7 +1401,9 @@ public final class Block {
                     // still move the container (and hence the item) relative
                     // to the floats.
                     float hypotheticalY = committedYOffset
-                            + activeCollapsibleMarginSet.collapseWithSet(topMarginSet).resolve();
+                            + activeCollapsibleMarginSet
+                                    .collapseWithSet(topMarginSet)
+                                    .resolve();
                     // Clearance is forced (regardless of the hypothetical
                     // position) if a relevant float is adjoining the
                     // margin-collapse strut that the item's top margin would
@@ -1451,10 +1421,9 @@ public final class Block {
                         // so the item's cleared position within the container
                         // must be reduced by that amount to keep its absolute
                         // position correct.
-                        float escapedMargin =
-                                isCollapsingWithFirstMarginSet && ownMarginsCollapseWithChildren.start()
-                                        ? activeCollapsibleMarginSet.resolve()
-                                        : 0.0f;
+                        float escapedMargin = isCollapsingWithFirstMarginSet && ownMarginsCollapseWithChildren.start()
+                                ? activeCollapsibleMarginSet.resolve()
+                                : 0.0f;
                         yMarginOffset = clearThreshold - committedYOffset - escapedMargin;
                     }
                 }
@@ -1493,9 +1462,8 @@ public final class Block {
                     // already accounted for in the slot's border-box
                     // position/width (margins may overlap floats), so only the
                     // auto portion of the resolved margin is added here.
-                    float extraMarginLeft = itemAvoidsFloats
-                            ? resolvedMargin.left() - itemNonAutoMargin.left()
-                            : resolvedMargin.left();
+                    float extraMarginLeft =
+                            itemAvoidsFloats ? resolvedMargin.left() - itemNonAutoMargin.left() : resolvedMargin.left();
                     float extraMarginRight = itemAvoidsFloats
                             ? resolvedMargin.right() - itemNonAutoMargin.right()
                             : resolvedMargin.right();
@@ -1525,8 +1493,7 @@ public final class Block {
                 // legacy `text-align`, but auto margins (which have already
                 // absorbed the free space) take precedence over
                 // `justify-self`.
-                boolean hasAutoXMargin =
-                        OptF32.isNone(itemMargin.left()) || OptF32.isNone(itemMargin.right());
+                boolean hasAutoXMargin = OptF32.isNone(itemMargin.left()) || OptF32.isNone(itemMargin.right());
                 float itemOuterWidth = itemLayout.size().width() + resolvedMargin.horizontalAxisSum();
                 if (nonStretchJustifySelf != null && !hasAutoXMargin) {
                     // The alignment container is the containing block, except
@@ -1544,8 +1511,7 @@ public final class Block {
                     }
 
                     AlignItemsKeyword keyword =
-                            nonStretchJustifySelf.safety() == AlignmentSafety.SAFE
-                                            && alignFreeXSpace < 0.0f
+                            nonStretchJustifySelf.safety() == AlignmentSafety.SAFE && alignFreeXSpace < 0.0f
                                     ? AlignItemsKeyword.START
                                     : nonStretchJustifySelf.keyword();
                     float alignOffset;
@@ -1558,8 +1524,7 @@ public final class Block {
                         alignOffset = end != direction.isRtl() ? alignFreeXSpace : 0.0f;
                     }
                     location = new PointF32(
-                            containerStart + resolvedMargin.left() + insetOffset.x() + alignOffset,
-                            location.y());
+                            containerStart + resolvedMargin.left() + insetOffset.x() + alignOffset, location.y());
                 } else if (nonStretchJustifySelf == null && itemOuterWidth < containerInnerWidth) {
                     float alignFreeXSpace = containerInnerWidth - itemOuterWidth;
                     float x = location.x();
@@ -1579,13 +1544,11 @@ public final class Block {
                 // its first in-flow child that has one. The child's relative
                 // offset does not affect it.
                 if (OptF32.isNone(firstBaseline)) {
-                    @Opt float childBaseline = Alignment.childFirstBaseline(
-                            itemLayout.baselines().first(),
-                            itemLayout.size().height(),
-                            item.overflow.y());
+                    @Opt
+                    float childBaseline = Alignment.childFirstBaseline(
+                            itemLayout.baselines().first(), itemLayout.size().height(), item.overflow.y());
                     final float baselineLocY = location.y();
-                    firstBaseline = OptF32.map(
-                            childBaseline, baseline -> baselineLocY - insetOffset.y() + baseline);
+                    firstBaseline = OptF32.map(childBaseline, baseline -> baselineLocY - insetOffset.y() + baseline);
                 }
 
                 // Used auto margins include float-avoidance offsets, unlike
@@ -1623,8 +1586,8 @@ public final class Block {
                     PointF32 contributionLocation = new PointF32(
                             location.x() - resolvedContentBoxInset.left() + resolvedPadding.left(),
                             location.y() - resolvedBorder.top());
-                    inflowOverflowRect = inflowOverflowRect.union(
-                            ScrollableOverflow.computeScrollableOverflowContribution(
+                    inflowOverflowRect =
+                            inflowOverflowRect.union(ScrollableOverflow.computeScrollableOverflowContribution(
                                     contributionLocation,
                                     finalSize,
                                     itemLayout.scrollableOverflowRect().rect(),
@@ -1663,10 +1626,10 @@ public final class Block {
                     activeCollapsibleMarginSet = activeCollapsibleMarginSet
                             .collapseWithSet(topMarginSet)
                             .collapseWithSet(bottomMarginSet);
-                    yOffsetForAbsolute =
-                            committedYOffset + itemLayout.size().height() + yMarginOffset;
+                    yOffsetForAbsolute = committedYOffset + itemLayout.size().height() + yMarginOffset;
                 } else {
-                    committedYOffset = location.y() - insetOffset.y() + itemLayout.size().height();
+                    committedYOffset =
+                            location.y() - insetOffset.y() + itemLayout.size().height();
                     // A self-collapsing item with clearance is not collapsed
                     // through (its margins do not collapse with margins of
                     // preceding siblings), but its top and bottom margins
@@ -1679,8 +1642,7 @@ public final class Block {
                         // collapsed margin, so following content is offset by
                         // `collapsed margin - top margin` from the border edge.
                         committedYOffset -= topMarginSet.resolve();
-                        activeCollapsibleMarginSet =
-                                topMarginSet.collapseWithSet(bottomMarginSet);
+                        activeCollapsibleMarginSet = topMarginSet.collapseWithSet(bottomMarginSet);
                         activeMarginSetHasClearance = true;
                     } else {
                         activeCollapsibleMarginSet = bottomMarginSet;
@@ -1698,9 +1660,8 @@ public final class Block {
         // The margins of a self-collapsing element with clearance do not
         // collapse with the bottom margin of the parent block: they extend the
         // parent's content height instead of escaping it
-        CollapsibleMarginSet lastChildBottomMarginSet = activeMarginSetHasClearance
-                ? CollapsibleMarginSet.ZERO
-                : activeCollapsibleMarginSet;
+        CollapsibleMarginSet lastChildBottomMarginSet =
+                activeMarginSetHasClearance ? CollapsibleMarginSet.ZERO : activeCollapsibleMarginSet;
         float bottomYMarginOffset;
         if (activeMarginSetHasClearance) {
             bottomYMarginOffset = activeCollapsibleMarginSet.resolve();
@@ -1714,10 +1675,6 @@ public final class Block {
         committedYOffset += resolvedContentBoxInset.bottom() + bottomYMarginOffset;
         float contentHeight = Sys.f32Max(0.0f, committedYOffset);
         return new FinalLayoutResult(
-                inflowOverflowRect,
-                contentHeight,
-                firstChildTopMarginSet,
-                lastChildBottomMarginSet,
-                firstBaseline);
+                inflowOverflowRect, contentHeight, firstChildTopMarginSet, lastChildBottomMarginSet, firstBaseline);
     }
 }

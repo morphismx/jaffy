@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/grid/alignment.rs.
+// JAFFY-UPSTREAM: src/compute/grid/alignment.rs
 //
 // Three `pub(super)` functions + helpers map to static methods on this
 // class; (f32, Line<f32>) / (Rect,f32,f32,Option) tuples -> records
@@ -15,23 +15,23 @@
 package net.morphismmc.jaffy.compute.grid;
 
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.common.ScrollableOverflow;
 import net.morphismmc.jaffy.compute.common.ScrollableOverflow.ScrollableOverflowContainer;
 import net.morphismmc.jaffy.compute.common.SizingKeyword;
 import net.morphismmc.jaffy.compute.common.SizingKeyword.SizingKeywordResolution;
 import net.morphismmc.jaffy.compute.grid.types.grid_track.GridTrack;
+import net.morphismmc.jaffy.geometry.AbsoluteAxis;
 import net.morphismmc.jaffy.geometry.InBothAbsAxis;
+import net.morphismmc.jaffy.geometry.LineBool;
 import net.morphismmc.jaffy.geometry.LineF32;
 import net.morphismmc.jaffy.geometry.LineOptF32;
-import net.morphismmc.jaffy.geometry.MinMax;
 import net.morphismmc.jaffy.geometry.Point;
 import net.morphismmc.jaffy.geometry.PointF32;
 import net.morphismmc.jaffy.geometry.RectF32;
 import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
-import net.morphismmc.jaffy.geometry.AbsoluteAxis;
-import net.morphismmc.jaffy.geometry.LineBool;
 import net.morphismmc.jaffy.style.BoxSizing;
 import net.morphismmc.jaffy.style.Contain;
 import net.morphismmc.jaffy.style.Direction;
@@ -42,18 +42,17 @@ import net.morphismmc.jaffy.style.alignment.AlignContent;
 import net.morphismmc.jaffy.style.alignment.AlignContentKeyword;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.alignment.AlignItemsKeyword;
-import net.morphismmc.jaffy.style.dimension.Dimension;
 import net.morphismmc.jaffy.style.available_space.AvailableSpace;
+import net.morphismmc.jaffy.style.dimension.Dimension;
 import net.morphismmc.jaffy.tree.layout.Layout;
 import net.morphismmc.jaffy.tree.layout.LayoutOutput;
 import net.morphismmc.jaffy.tree.layout.OofCandidates;
-import net.morphismmc.jaffy.tree.traits.LayoutGridContainer;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
-import net.morphismmc.just.math.F32;
+import net.morphismmc.jaffy.tree.traits.LayoutGridContainer;
 import net.morphismmc.jaffy.util.MaybeResolve;
+import net.morphismmc.just.math.F32;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
-
 
 /// Alignment of tracks and final positioning of items
 public final class Alignment {
@@ -100,9 +99,8 @@ public final class Alignment {
         // simply pass zero here. Grid layout is never reversed.
         float gap = 0.0f;
         boolean layoutIsReversed = false;
-        AlignContentKeyword trackAlignment =
-                net.morphismmc.jaffy.compute.common.Alignment.applyAlignmentFallback(
-                        freeSpace, numTracks, trackAlignmentStyle);
+        AlignContentKeyword trackAlignment = net.morphismmc.jaffy.compute.common.Alignment.applyAlignmentFallback(
+                freeSpace, numTracks, trackAlignmentStyle);
         trackAlignment = axisIsReversed ? trackAlignment.reversed() : trackAlignment;
 
         // If every track is collapsed then no track receives the alignment offset below, but the
@@ -159,8 +157,7 @@ public final class Alignment {
             RectF32 paddingBoxInset,
             ScrollableOverflowContainer overflowContainer,
             OofCandidates bubbledCandidates) {
-        SizeF32 gridAreaSize =
-                new SizeF32(gridArea.right() - gridArea.left(), gridArea.bottom() - gridArea.top());
+        SizeF32 gridAreaSize = new SizeF32(gridArea.right() - gridArea.left(), gridArea.bottom() - gridArea.top());
 
         Style style = tree.getGridChildStyle(node);
 
@@ -175,12 +172,10 @@ public final class Alignment {
         // (block) axis resolves them to plain start/end.
         Direction itemDirection = style.direction();
         AlignItems styleJustifySelf = style.justifySelf();
-        AlignItems justifySelf = (styleJustifySelf != null ? styleJustifySelf
-                        : containerAlignmentStyles.horizontal())
+        AlignItems justifySelf = (styleJustifySelf != null ? styleJustifySelf : containerAlignmentStyles.horizontal())
                 .resolveSelfRelative(itemDirection, direction, true);
         AlignItems styleAlignSelf = style.alignSelf();
-        AlignItems alignSelf = (styleAlignSelf != null ? styleAlignSelf
-                        : containerAlignmentStyles.vertical())
+        AlignItems alignSelf = (styleAlignSelf != null ? styleAlignSelf : containerAlignmentStyles.vertical())
                 .resolveSelfRelative(itemDirection, direction, false);
 
         Position position = style.position();
@@ -190,28 +185,25 @@ public final class Alignment {
         LineOptF32 insetVertical = style.inset()
                 .verticalComponents()
                 .mapO(size -> size.resolveToOption(containingBlockSize.height(), tree::calc));
-        RectF32 padding = style.padding()
-                .mapF(p -> p.resolveOrZero(containingBlockSize.width(), tree::calc));
-        RectF32 border = style.border()
-                .mapF(p -> p.resolveOrZero(containingBlockSize.width(), tree::calc));
+        RectF32 padding = style.padding().mapF(p -> p.resolveOrZero(containingBlockSize.width(), tree::calc));
+        RectF32 border = style.border().mapF(p -> p.resolveOrZero(containingBlockSize.width(), tree::calc));
         SizeF32 paddingBorderSize = padding.plus(border).sumAxes();
 
-        SizeF32 boxSizingAdjustment =
-                style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSize : SizeF32.ZERO;
+        SizeF32 boxSizingAdjustment = style.boxSizing() == BoxSizing.CONTENT_BOX ? paddingBorderSize : SizeF32.ZERO;
 
         Size<Dimension> sizeStyle = style.size();
-        SizeOptF32 inherentSize = MaybeResolve.SizeDimensionExt
-                .maybeResolveF(sizeStyle, containingBlockSize, tree::calc)
+        SizeOptF32 inherentSize = MaybeResolve.SizeDimensionExt.maybeResolveF(
+                        sizeStyle, containingBlockSize, tree::calc)
                 .maybeApplyAspectRatio(aspectRatio)
                 .maybeAddF(boxSizingAdjustment);
-        SizeOptF32 minSize = MaybeResolve.SizeLengthPercentageAutoExt
-                .maybeResolveF(style.minSize(), containingBlockSize, tree::calc)
+        SizeOptF32 minSize = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveF(
+                        style.minSize(), containingBlockSize, tree::calc)
                 .maybeAddF(boxSizingAdjustment)
                 .or(new SizeOptF32(paddingBorderSize.width(), paddingBorderSize.height()))
                 .maybeMaxF(paddingBorderSize)
                 .maybeApplyAspectRatio(aspectRatio);
-        SizeOptF32 maxSize = MaybeResolve.SizeLengthPercentageAutoExt
-                .maybeResolveF(style.maxSize(), containingBlockSize, tree::calc)
+        SizeOptF32 maxSize = MaybeResolve.SizeLengthPercentageAutoExt.maybeResolveF(
+                        style.maxSize(), containingBlockSize, tree::calc)
                 .maybeApplyAspectRatio(aspectRatio)
                 .maybeAddF(boxSizingAdjustment);
 
@@ -222,34 +214,34 @@ public final class Alignment {
         // See: https://www.w3.org/TR/css-grid-1/#grid-item-sizing
         InBothAbsAxis<AlignItems> alignmentStyles = new InBothAbsAxis<>(
                 switch (justifySelf.keyword()) {
-                    case NORMAL -> (OptF32.isSome(inherentSize.width())
-                                    || sizeStyle.width().isSizingKeyword()
-                                    || isReplaced)
-                            ? AlignItems.START
-                            : AlignItems.STRETCH;
+                    case NORMAL ->
+                        (OptF32.isSome(inherentSize.width())
+                                        || sizeStyle.width().isSizingKeyword()
+                                        || isReplaced)
+                                ? AlignItems.START
+                                : AlignItems.STRETCH;
                     default -> justifySelf;
                 },
                 switch (alignSelf.keyword()) {
-                    case NORMAL -> (OptF32.isSome(inherentSize.height())
-                                    || sizeStyle.height().isSizingKeyword()
-                                    || OptF32.isSome(aspectRatio)
-                                    || isReplaced)
-                            ? AlignItems.START
-                            : AlignItems.STRETCH;
+                    case NORMAL ->
+                        (OptF32.isSome(inherentSize.height())
+                                        || sizeStyle.height().isSizingKeyword()
+                                        || OptF32.isSome(aspectRatio)
+                                        || isReplaced)
+                                ? AlignItems.START
+                                : AlignItems.STRETCH;
                     default -> alignSelf;
                 });
 
         // Note: This is not a bug. It is part of the CSS spec that both horizontal and vertical margins
         // resolve against the WIDTH of the grid area.
-        net.morphismmc.jaffy.geometry.RectOptF32 margin = style.margin()
-                .mapO(m -> m.resolveToOption(containingBlockSize.width(), tree::calc));
+        net.morphismmc.jaffy.geometry.RectOptF32 margin =
+                style.margin().mapO(m -> m.resolveToOption(containingBlockSize.width(), tree::calc));
 
         // drop(style) — no-op (Java GC)
 
         SizeF32 gridAreaMinusItemMarginsSize = new SizeF32(
-                F32.max(
-                        F32.maybeSubO(F32.maybeSubO(gridAreaSize.width(), margin.left()), margin.right()),
-                        0.0f),
+                F32.max(F32.maybeSubO(F32.maybeSubO(gridAreaSize.width(), margin.left()), margin.right()), 0.0f),
                 F32.max(
                         F32.maybeSubO(F32.maybeSubO(gridAreaSize.height(), margin.top()), margin.bottom())
                                 - baselineShim,
@@ -260,13 +252,17 @@ public final class Alignment {
         // by measuring the item under the corresponding available space constraint
         SizingKeywordResolution keywordWidth = OptF32.isNone(inherentSize.width())
                 ? SizingKeyword.resolveSizingKeyword(
-                        sizeStyle.width(), gridAreaMinusItemMarginsSize.width(),
-                        containingBlockSize.width(), tree::calc)
+                        sizeStyle.width(),
+                        gridAreaMinusItemMarginsSize.width(),
+                        containingBlockSize.width(),
+                        tree::calc)
                 : null;
         SizingKeywordResolution keywordHeight = OptF32.isNone(inherentSize.height())
                 ? SizingKeyword.resolveSizingKeyword(
-                        sizeStyle.height(), gridAreaMinusItemMarginsSize.height(),
-                        containingBlockSize.height(), tree::calc)
+                        sizeStyle.height(),
+                        gridAreaMinusItemMarginsSize.height(),
+                        containingBlockSize.height(),
+                        tree::calc)
                 : null;
 
         // If both axes need to be measured then resolve them with a single measure call
@@ -275,10 +271,12 @@ public final class Alignment {
                 && keywordHeight instanceof SizingKeywordResolution.Measure mh
                 && !position.isOutOfFlow()) {
             SizeF32 measured = tree.measureChildSizeBoth(
-                    node, SizeOptF32.NONE,
+                    node,
+                    SizeOptF32.NONE,
                     new SizeOptF32(containingBlockSize.width(), containingBlockSize.height()),
                     new Size<>(mw.availableSpace(), mh.availableSpace()),
-                    SizingMode.INHERENT_SIZE, LineBool.FALSE);
+                    SizingMode.INHERENT_SIZE,
+                    LineBool.FALSE);
             keywordMeasuredSize = new SizeOptF32(measured.width(), measured.height());
         } else {
             keywordMeasuredSize = SizeOptF32.NONE;
@@ -294,8 +292,7 @@ public final class Alignment {
             if (position.isOutOfFlow()) {
                 if (OptF32.isSome(insetHorizontal.start()) && OptF32.isSome(insetHorizontal.end())) {
                     width = F32.max(
-                            gridAreaMinusItemMarginsSize.width()
-                                    - insetHorizontal.start() - insetHorizontal.end(),
+                            gridAreaMinusItemMarginsSize.width() - insetHorizontal.start() - insetHorizontal.end(),
                             0.0f);
                 }
             }
@@ -308,13 +305,15 @@ public final class Alignment {
                     width = OptF32.isSome(keywordMeasuredSize.width())
                             ? keywordMeasuredSize.width()
                             : tree.measureChildSize(
-                                    node, SizeOptF32.NONE,
+                                    node,
+                                    SizeOptF32.NONE,
                                     new SizeOptF32(containingBlockSize.width(), containingBlockSize.height()),
                                     new Size<>(
                                             m.availableSpace(),
-                                            new AvailableSpace.Definite(
-                                                    gridAreaMinusItemMarginsSize.height())),
-                                    SizingMode.INHERENT_SIZE, AbsoluteAxis.HORIZONTAL, LineBool.FALSE);
+                                            new AvailableSpace.Definite(gridAreaMinusItemMarginsSize.height())),
+                                    SizingMode.INHERENT_SIZE,
+                                    AbsoluteAxis.HORIZONTAL,
+                                    LineBool.FALSE);
                 }
             }
 
@@ -340,9 +339,7 @@ public final class Alignment {
             if (position.isOutOfFlow()) {
                 if (OptF32.isSome(insetVertical.start()) && OptF32.isSome(insetVertical.end())) {
                     height = F32.max(
-                            gridAreaMinusItemMarginsSize.height()
-                                    - insetVertical.start() - insetVertical.end(),
-                            0.0f);
+                            gridAreaMinusItemMarginsSize.height() - insetVertical.start() - insetVertical.end(), 0.0f);
                 }
             }
 
@@ -354,15 +351,17 @@ public final class Alignment {
                     height = OptF32.isSome(keywordMeasuredSize.height())
                             ? keywordMeasuredSize.height()
                             : tree.measureChildSize(
-                                    node, new SizeOptF32(w, OptF32.NONE),
+                                    node,
+                                    new SizeOptF32(w, OptF32.NONE),
                                     new SizeOptF32(containingBlockSize.width(), containingBlockSize.height()),
                                     new Size<>(
                                             OptF32.isSome(w)
                                                     ? new AvailableSpace.Definite(w)
-                                                    : new AvailableSpace.Definite(
-                                                            gridAreaMinusItemMarginsSize.width()),
+                                                    : new AvailableSpace.Definite(gridAreaMinusItemMarginsSize.width()),
                                             m.availableSpace()),
-                                    SizingMode.INHERENT_SIZE, AbsoluteAxis.VERTICAL, LineBool.FALSE);
+                                    SizingMode.INHERENT_SIZE,
+                                    AbsoluteAxis.VERTICAL,
+                                    LineBool.FALSE);
                 }
             }
 
@@ -392,24 +391,28 @@ public final class Alignment {
         SizeOptF32 size;
         if (position.isOutOfFlow() && (OptF32.isNone(width) || OptF32.isNone(height))) {
             SizeF32 measured = tree.measureChildSizeBoth(
-                    node, new SizeOptF32(width, height),
+                    node,
+                    new SizeOptF32(width, height),
                     new SizeOptF32(containingBlockSize.width(), containingBlockSize.height()),
                     new Size<>(
                             new AvailableSpace.Definite(gridAreaMinusItemMarginsSize.width()),
                             new AvailableSpace.Definite(gridAreaMinusItemMarginsSize.height())),
-                    SizingMode.INHERENT_SIZE, LineBool.FALSE);
+                    SizingMode.INHERENT_SIZE,
+                    LineBool.FALSE);
             size = new SizeOptF32(measured.width(), measured.height());
         } else {
             size = new SizeOptF32(width, height);
         }
 
         LayoutOutput layoutOutput = tree.performChildLayout(
-                node, size,
+                node,
+                size,
                 new SizeOptF32(containingBlockSize.width(), containingBlockSize.height()),
                 new Size<>(
                         new AvailableSpace.Definite(gridAreaMinusItemMarginsSize.width()),
                         new AvailableSpace.Definite(gridAreaMinusItemMarginsSize.height())),
-                SizingMode.INHERENT_SIZE, LineBool.FALSE);
+                SizingMode.INHERENT_SIZE,
+                LineBool.FALSE);
 
         // Resolve final size (`size.unwrap_or(layout_output.size)` yields Size<f32>)
         SizeF32 finalSize = size.unwrapOr(layoutOutput.size()).maybeClampO(minSize, maxSize);
@@ -418,12 +421,22 @@ public final class Alignment {
 
         AxisAlignment xAlignment = alignItemWithinArea(
                 new LineF32(gridArea.left(), gridArea.right()),
-                alignmentStyles.horizontal(), width, position, insetHorizontal,
-                margin.horizontalComponents(), 0.0f, direction);
+                alignmentStyles.horizontal(),
+                width,
+                position,
+                insetHorizontal,
+                margin.horizontalComponents(),
+                0.0f,
+                direction);
         AxisAlignment yAlignment = alignItemWithinArea(
                 new LineF32(gridArea.top(), gridArea.bottom()),
-                alignmentStyles.vertical(), height, position, insetVertical,
-                margin.verticalComponents(), baselineShim, Direction.LTR);
+                alignmentStyles.vertical(),
+                height,
+                position,
+                insetVertical,
+                margin.verticalComponents(),
+                baselineShim,
+                Direction.LTR);
         float x = xAlignment.offset();
         float yWithoutRelativeOffset = yAlignment.offset();
         // A relative offset moves the item, but does not affect the container's baseline (which is computed from the
@@ -450,19 +463,27 @@ public final class Alignment {
         tree.setUnroundedLayout(
                 node,
                 new Layout(
-                        order, new PointF32(x, y), new SizeF32(width, height),
-                        layoutOutput.scrollableOverflowRect(), scrollbarSize,
-                        border, padding, resolvedMargin));
+                        order,
+                        new PointF32(x, y),
+                        new SizeF32(width, height),
+                        layoutOutput.scrollableOverflowRect(),
+                        scrollbarSize,
+                        border,
+                        padding,
+                        resolvedMargin));
 
         RectF32 contribution = ScrollableOverflow.computeScrollableOverflowContribution(
                 new PointF32(x - paddingBoxInset.left(), y - paddingBoxInset.top()),
                 new SizeF32(width, height),
                 layoutOutput.scrollableOverflowRect().rect(),
-                border, overflow, contain, overflowContainer, resolvedMargin);
+                border,
+                overflow,
+                contain,
+                overflowContainer,
+                resolvedMargin);
 
-        float baseline =
-                net.morphismmc.jaffy.compute.common.Alignment.childFirstBaseline(
-                        layoutOutput.baselines().first(), height, overflow.y());
+        float baseline = net.morphismmc.jaffy.compute.common.Alignment.childFirstBaseline(
+                layoutOutput.baselines().first(), height, overflow.y());
         return new AlignAndPositionResult(contribution, yWithoutRelativeOffset, height, baseline);
     }
 
@@ -477,9 +498,8 @@ public final class Alignment {
             float baselineShim,
             Direction direction) {
         // Calculate grid area dimension in the axis
-        LineF32 nonAutoMargin = new LineF32(
-                OptF32.unwrapOr(margin.start(), 0.0f) + baselineShim,
-                OptF32.unwrapOr(margin.end(), 0.0f));
+        LineF32 nonAutoMargin =
+                new LineF32(OptF32.unwrapOr(margin.start(), 0.0f) + baselineShim, OptF32.unwrapOr(margin.end(), 0.0f));
         float gridAreaSize = F32.max(gridArea.end() - gridArea.start(), 0.0f);
         float freeSpace = F32.max(gridAreaSize - resolvedSize - nonAutoMargin.sum(), 0.0f);
 
@@ -492,18 +512,15 @@ public final class Alignment {
 
         boolean overflows = resolvedSize + nonAutoMargin.sum() > gridAreaSize;
         AlignItemsKeyword alignmentKeyword =
-                net.morphismmc.jaffy.compute.common.Alignment.resolveSelfAlignmentSafety(
-                        alignmentStyle, overflows);
+                net.morphismmc.jaffy.compute.common.Alignment.resolveSelfAlignmentSafety(alignmentStyle, overflows);
 
         // Compute offset in the axis
         float alignmentBasedOffset = switch (alignmentKeyword) {
             // TODO: Add support for baseline alignment. For now we treat it as "start".
-            case START, FLEX_START, BASELINE, STRETCH -> direction.isRtl()
-                    ? gridAreaSize - resolvedSize - resolvedMargin.end()
-                    : resolvedMargin.start();
-            case END, FLEX_END -> direction.isRtl()
-                    ? resolvedMargin.start()
-                    : gridAreaSize - resolvedSize - resolvedMargin.end();
+            case START, FLEX_START, BASELINE, STRETCH ->
+                direction.isRtl() ? gridAreaSize - resolvedSize - resolvedMargin.end() : resolvedMargin.start();
+            case END, FLEX_END ->
+                direction.isRtl() ? resolvedMargin.start() : gridAreaSize - resolvedSize - resolvedMargin.end();
             case CENTER -> (gridAreaSize - resolvedSize + resolvedMargin.start() - resolvedMargin.end()) / 2.0f;
             // Normal is resolved, and SelfStart/SelfEnd are resolved to Start/End against
             // the item's own direction, in `align_and_position_item`.

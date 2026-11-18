@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/common/sizing_keyword.rs — shared
+// JAFFY-UPSTREAM: src/compute/common/sizing_keyword.rs
+// JAFFY-NOTE: shared
 // resolution logic for sizing keywords on the `width`/`height` style
 // properties.
 //
@@ -16,15 +17,16 @@ import net.morphismmc.jaffy.geometry.RectOptF32;
 import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
-import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.style.CompactLength;
+import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.style.dimension.Dimension;
-import net.morphismmc.jaffy.tree.traits.LayoutPartialTree;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
+import net.morphismmc.jaffy.tree.traits.LayoutPartialTree;
 import net.morphismmc.jaffy.util.CalcResolver;
 import net.morphismmc.just.math.F32;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
+
 import org.jspecify.annotations.Nullable;
 
 public final class SizingKeyword {
@@ -129,12 +131,10 @@ public final class SizingKeyword {
                         0.0f));
 
         SizingKeywordResolution keywordWidth = OptF32.isNone(knownDimensions.width())
-                ? resolveSizingKeyword(
-                        sizeStyle.width(), stretchSize.width(), areaSize.width(), tree::calc)
+                ? resolveSizingKeyword(sizeStyle.width(), stretchSize.width(), areaSize.width(), tree::calc)
                 : null;
         SizingKeywordResolution keywordHeight = OptF32.isNone(knownDimensions.height())
-                ? resolveSizingKeyword(
-                        sizeStyle.height(), stretchSize.height(), areaSize.height(), tree::calc)
+                ? resolveSizingKeyword(sizeStyle.height(), stretchSize.height(), areaSize.height(), tree::calc)
                 : null;
 
         if (keywordWidth instanceof SizingKeywordResolution.Measure(AvailableSpace width)
@@ -153,32 +153,34 @@ public final class SizingKeyword {
         if (keywordWidth != null) {
             float width = switch (keywordWidth) {
                 case SizingKeywordResolution.Exact(float w) -> w;
-                case SizingKeywordResolution.Measure(AvailableSpace available) -> tree.measureChildSize(
-                        node,
-                        knownDimensions,
-                        areaSize.mapO(v -> v),
-                        new Size<>(available, new AvailableSpace.Definite(stretchSize.height())),
-                        sizingMode,
-                        AbsoluteAxis.HORIZONTAL,
-                        LineBool.FALSE);
+                case SizingKeywordResolution.Measure(AvailableSpace available) ->
+                    tree.measureChildSize(
+                            node,
+                            knownDimensions,
+                            areaSize.mapO(v -> v),
+                            new Size<>(available, new AvailableSpace.Definite(stretchSize.height())),
+                            sizingMode,
+                            AbsoluteAxis.HORIZONTAL,
+                            LineBool.FALSE);
             };
             knownDimensions = new SizeOptF32(width, knownDimensions.height());
         }
         if (keywordHeight != null) {
             float height = switch (keywordHeight) {
                 case SizingKeywordResolution.Exact(float h) -> h;
-                case SizingKeywordResolution.Measure(AvailableSpace available) -> tree.measureChildSize(
-                        node,
-                        knownDimensions,
-                        areaSize.mapO(v -> v),
-                        new Size<>(
-                                OptF32.isSome(knownDimensions.width())
-                                        ? new AvailableSpace.Definite(knownDimensions.width())
-                                        : new AvailableSpace.Definite(stretchSize.width()),
-                                available),
-                        sizingMode,
-                        AbsoluteAxis.VERTICAL,
-                        LineBool.FALSE);
+                case SizingKeywordResolution.Measure(AvailableSpace available) ->
+                    tree.measureChildSize(
+                            node,
+                            knownDimensions,
+                            areaSize.mapO(v -> v),
+                            new Size<>(
+                                    OptF32.isSome(knownDimensions.width())
+                                            ? new AvailableSpace.Definite(knownDimensions.width())
+                                            : new AvailableSpace.Definite(stretchSize.width()),
+                                    available),
+                            sizingMode,
+                            AbsoluteAxis.VERTICAL,
+                            LineBool.FALSE);
             };
             knownDimensions = new SizeOptF32(knownDimensions.width(), height);
         }

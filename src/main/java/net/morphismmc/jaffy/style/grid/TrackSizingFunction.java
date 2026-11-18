@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/style/grid.rs —
+// JAFFY-UPSTREAM: src/style/grid.rs
 // `type TrackSizingFunction = MinMax<MinTrackSizingFunction, MaxTrackSizingFunction>`
 // and its impl block. A Java class cannot alias a generic instantiation, so
 // the associated items live as statics here and values stay
@@ -63,8 +63,7 @@ public final class TrackSizingFunction {
 
     /// `FromPercent::from_percent`
     public static MinMax<MinTrackSizingFunction, MaxTrackSizingFunction> fromPercent(double percent) {
-        return new MinMax<>(
-                MinTrackSizingFunction.fromPercent(percent), MaxTrackSizingFunction.fromPercent(percent));
+        return new MinMax<>(MinTrackSizingFunction.fromPercent(percent), MaxTrackSizingFunction.fromPercent(percent));
     }
 
     /// `FromFr::from_fr`

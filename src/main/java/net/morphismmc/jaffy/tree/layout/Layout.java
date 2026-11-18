@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `Layout` struct.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: `Layout` struct
 // `order: u32` -> `int` (GAP-014). serde impl deferred.
 package net.morphismmc.jaffy.tree.layout;
 
@@ -106,7 +107,8 @@ public record Layout(
         }
         return F32.max(
                 0.0f,
-                scrollableOverflowRect.right() + F32.min(scrollbarSize.width(), size.width())
+                scrollableOverflowRect.right()
+                        + F32.min(scrollbarSize.width(), size.width())
                         - size.width()
                         + border.left()
                         + border.right());
@@ -120,7 +122,8 @@ public record Layout(
         }
         return F32.max(
                 0.0f,
-                scrollableOverflowRect.bottom() + F32.min(scrollbarSize.height(), size.height())
+                scrollableOverflowRect.bottom()
+                        + F32.min(scrollbarSize.height(), size.height())
                         - size.height()
                         + border.top()
                         + border.bottom());

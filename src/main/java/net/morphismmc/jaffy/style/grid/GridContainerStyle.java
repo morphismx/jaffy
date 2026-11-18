@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `GridContainerStyle` trait (`grid`).
+// JAFFY-UPSTREAM: src/style/grid.rs
+// JAFFY-NOTE: `GridContainerStyle` trait (`grid`)
 // The GATs are concretised (GAP-017): `CustomIdent = String`,
 // `Repetition = GridTemplateRepetition`, the iterator GATs are `List`s, and
 // `Option<…List>` is a nullable `List` (GAP-001). `impl ... for &T` has no
@@ -6,11 +7,11 @@
 package net.morphismmc.jaffy.style.grid;
 
 import java.util.List;
+
 import net.morphismmc.jaffy.geometry.AbsoluteAxis;
 import net.morphismmc.jaffy.geometry.AbstractAxis;
 import net.morphismmc.jaffy.geometry.MinMax;
 import net.morphismmc.jaffy.geometry.Size;
-import org.jspecify.annotations.Nullable;
 import net.morphismmc.jaffy.style.CoreStyle;
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.style.alignment.AlignContent;
@@ -18,16 +19,20 @@ import net.morphismmc.jaffy.style.alignment.AlignContentKeyword;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.dimension.LengthPercentage;
 
+import org.jspecify.annotations.Nullable;
+
 /// The set of styles required for a CSS Grid container
 public interface GridContainerStyle extends CoreStyle {
 
     /// Defines the track sizing functions (heights) of the grid rows.
     /// `Option<TemplateTrackList>` -> nullable list. No upstream default.
-    @Nullable List<GenericGridTemplateComponent<GridTemplateRepetition>> gridTemplateRows();
+    @Nullable
+    List<GenericGridTemplateComponent<GridTemplateRepetition>> gridTemplateRows();
 
     /// Defines the track sizing functions (widths) of the grid columns.
     /// `Option<TemplateTrackList>` -> nullable list. No upstream default.
-    @Nullable List<GenericGridTemplateComponent<GridTemplateRepetition>> gridTemplateColumns();
+    @Nullable
+    List<GenericGridTemplateComponent<GridTemplateRepetition>> gridTemplateColumns();
 
     /// Defines the size of implicitly created rows. No upstream default.
     List<MinMax<MinTrackSizingFunction, MaxTrackSizingFunction>> gridAutoRows();
@@ -37,7 +42,8 @@ public interface GridContainerStyle extends CoreStyle {
 
     /// Named grid areas. `Option<GridTemplateAreas<'a>>` (`IntoIterator<Item =
     /// GridTemplateArea>`) -> nullable `Iterable`. No upstream default.
-    @Nullable Iterable<GridTemplateArea> gridTemplateAreas();
+    @Nullable
+    Iterable<GridTemplateArea> gridTemplateAreas();
 
     /// The number of rows in the `grid-template-areas` template (0 if there is no template).
     /// May be greater than the extent of the named areas due to unnamed (`.`) cells.
@@ -77,11 +83,13 @@ public interface GridContainerStyle extends CoreStyle {
 
     /// Defines the line names for column lines (`Option<TemplateLineNames>` -> nullable list).
     /// No upstream default.
-    @Nullable List<List<String>> gridTemplateColumnNames();
+    @Nullable
+    List<List<String>> gridTemplateColumnNames();
 
     /// Defines the line names for row lines (`Option<TemplateLineNames>` -> nullable list).
     /// No upstream default.
-    @Nullable List<List<String>> gridTemplateRowNames();
+    @Nullable
+    List<List<String>> gridTemplateRowNames();
 
     /// Controls how items get placed into the grid for auto-placed items
     default GridAutoFlow gridAutoFlow() {

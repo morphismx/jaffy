@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/float.rs — `PlacedFloatedBox`.
+// JAFFY-UPSTREAM: src/compute/float.rs
+// JAFFY-NOTE: `PlacedFloatedBox`
 package net.morphismmc.jaffy.compute.float_;
 
 /// A floated box

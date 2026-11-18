@@ -1,3 +1,6 @@
+// JAFFY-UPSTREAM: benches/src/lib.rs
+// JAFFY-NOTE: `GenStyle` impl for jaffy
+
 package net.morphismmc.jaffy.bench;
 
 import java.util.ArrayList;
@@ -87,18 +90,21 @@ public final class JaffyStyles {
         for (int i = 0; i < trackCount; i++) {
             rows.add(gridTrack(rng));
         }
-        return Style.DEFAULT.withDisplay(Display.GRID)
+        return Style.DEFAULT
+                .withDisplay(Display.GRID)
                 .withGridTemplateColumns(cols)
                 .withGridTemplateRows(rows);
     }
 
     /// `random_flex_style` (mixed.rs): flex, 50% Row/Column, 50% Wrap/NoWrap
     public static Style flexStyle(Rng rng) {
-        return Style.DEFAULT.withDisplay(Display.FLEX)
+        return Style.DEFAULT
+                .withDisplay(Display.FLEX)
                 .withFlexDirection(rng.nextBool() ? FlexDirection.ROW : FlexDirection.COLUMN)
-                .withFlexWrap(rng.nextBool()
-                        ? net.morphismmc.jaffy.style.flex.FlexWrap.WRAP
-                        : net.morphismmc.jaffy.style.flex.FlexWrap.NO_WRAP);
+                .withFlexWrap(
+                        rng.nextBool()
+                                ? net.morphismmc.jaffy.style.flex.FlexWrap.WRAP
+                                : net.morphismmc.jaffy.style.flex.FlexWrap.NO_WRAP);
     }
 
     /// `leaf_style` (relayout.rs): `size: { width: 10, height }`
@@ -116,25 +122,27 @@ public final class JaffyStyles {
     /// grid_template_columns=[auto,auto], padding=1.
     public static Style containerStyle(String containers, int depth) {
         Display display = switch (containers) {
-            case "mixed" -> switch (depth % 3) {
-                case 0 -> Display.FLEX;
-                case 1 -> Display.BLOCK;
-                default -> Display.GRID;
-            };
+            case "mixed" ->
+                switch (depth % 3) {
+                    case 0 -> Display.FLEX;
+                    case 1 -> Display.BLOCK;
+                    default -> Display.GRID;
+                };
             case "block" -> Display.BLOCK;
             case "grid" -> Display.GRID;
             default -> Display.FLEX;
         };
-        return Style.DEFAULT.withDisplay(display)
+        return Style.DEFAULT
+                .withDisplay(display)
                 .withFlexDirection(depth % 2 == 0 ? FlexDirection.COLUMN : FlexDirection.ROW)
                 .withGridTemplateColumns(TWO_AUTO_COLS)
                 .withPadding(PADDING_1);
     }
 
     /// `huge_nested` fixed style (flexbox.rs): `size: length(10), flex_grow: 1`
-    public static final Style HUGE_NESTED =
-            Style.DEFAULT.withSize(new Size<>(Dimension.length(10.0f), Dimension.length(10.0f)))
-                    .withFlexGrow(1.0f);
+    public static final Style HUGE_NESTED = Style.DEFAULT
+            .withSize(new Size<>(Dimension.length(10.0f), Dimension.length(10.0f)))
+            .withFlexGrow(1.0f);
 
     /// `deep_auto` fixed style (flexbox.rs): `flex_grow: 1, margin: length(10)`
     private static final LengthPercentageAuto LPA10 = LengthPercentageAuto.length(10.0f);
@@ -142,21 +150,21 @@ public final class JaffyStyles {
             Style.DEFAULT.withFlexGrow(1.0f).withMargin(new Rect<>(LPA10, LPA10, LPA10, LPA10));
 
     /// `SuperDeepStyleGen` style (flexbox.rs): Row + grow 1 + margin 10
-    public static final Style SUPER_DEEP =
-            Style.DEFAULT.withFlexDirection(FlexDirection.ROW)
-                    .withFlexGrow(1.0f)
-                    .withMargin(new Rect<>(LPA10, LPA10, LPA10, LPA10));
+    public static final Style SUPER_DEEP = Style.DEFAULT
+            .withFlexDirection(FlexDirection.ROW)
+            .withFlexGrow(1.0f)
+            .withMargin(new Rect<>(LPA10, LPA10, LPA10, LPA10));
 
     /// `RandomAbsoluteStyleGenerator::create_leaf_style` — abs pos, random insets
     public static Style absoluteLeaf(Rng rng) {
-        return Style.DEFAULT.withPosition(Position.ABSOLUTE)
+        return Style.DEFAULT
+                .withPosition(Position.ABSOLUTE)
                 .withInset(new Rect<>(inset(rng), inset(rng), inset(rng), inset(rng)))
                 .withSize(new Size<>(dimension(rng), dimension(rng)));
     }
 
     /// `RandomAbsoluteStyleGenerator::create_container_style` — rel pos, random size
     public static Style absoluteContainer(Rng rng) {
-        return Style.DEFAULT.withPosition(Position.RELATIVE)
-                .withSize(new Size<>(dimension(rng), dimension(rng)));
+        return Style.DEFAULT.withPosition(Position.RELATIVE).withSize(new Size<>(dimension(rng), dimension(rng)));
     }
 }

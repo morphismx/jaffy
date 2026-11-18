@@ -1,4 +1,10 @@
-// JAFFY: serde impls of upstream/src/style/mod.rs (Style + misc style enums +
+// JAFFY-UPSTREAM: src/style/mod.rs
+// JAFFY-FROM: src/style/float.rs
+// JAFFY-FROM: src/style/flex.rs
+// JAFFY-FROM: src/style/block.rs
+// JAFFY-FROM: src/style/available_space.rs
+// JAFFY-FROM: src/style/grid.rs
+// JAFFY-NOTE: serde impls
 // Contain), src/style/float.rs (Float/FloatDirection/Clear),
 // src/style/flex.rs (FlexDirection/FlexWrap), src/style/block.rs (TextAlign),
 // src/style/available_space.rs (AvailableSpace, serialize-only),
@@ -11,16 +17,12 @@
 // the wire: `null` out, unit expected in.
 package net.morphismmc.jaffy.gson;
 
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.jaffy.geometry.MinMax;
 import net.morphismmc.jaffy.geometry.Point;
@@ -53,7 +55,12 @@ import net.morphismmc.jaffy.style.grid.GridTemplateAreas;
 import net.morphismmc.jaffy.style.grid.GridTemplateRepetition;
 import net.morphismmc.jaffy.style.grid.MaxTrackSizingFunction;
 import net.morphismmc.jaffy.style.grid.MinTrackSizingFunction;
-import net.morphismmc.just.math.OptF32;
+
+import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 
 final class StyleSerde {
 
@@ -114,8 +121,7 @@ final class StyleSerde {
 
     // ---- Style ----
 
-    private static final TypeAdapter<Point<Overflow>> OVERFLOW_POINT =
-            GeometrySerde.pointAdapter(OVERFLOW);
+    private static final TypeAdapter<Point<Overflow>> OVERFLOW_POINT = GeometrySerde.pointAdapter(OVERFLOW);
     private static final TypeAdapter<Rect<LengthPercentageAuto>> RECT_LPA =
             GeometrySerde.rectAdapter(DimensionSerde.LENGTH_PERCENTAGE_AUTO);
     private static final TypeAdapter<Rect<LengthPercentage>> RECT_LP =
@@ -270,8 +276,7 @@ final class StyleSerde {
             float flexGrow = d.flexGrow();
             float flexShrink = d.flexShrink();
             List<GenericGridTemplateComponent<GridTemplateRepetition>> gridTemplateRows = d.gridTemplateRows();
-            List<GenericGridTemplateComponent<GridTemplateRepetition>> gridTemplateColumns =
-                    d.gridTemplateColumns();
+            List<GenericGridTemplateComponent<GridTemplateRepetition>> gridTemplateColumns = d.gridTemplateColumns();
             List<MinMax<MinTrackSizingFunction, MaxTrackSizingFunction>> gridAutoRows = d.gridAutoRows();
             List<MinMax<MinTrackSizingFunction, MaxTrackSizingFunction>> gridAutoColumns = d.gridAutoColumns();
             GridAutoFlow gridAutoFlow = d.gridAutoFlow();
@@ -334,12 +339,9 @@ final class StyleSerde {
                     case "grid_auto_rows" -> gridAutoRows = readMinMaxes(in);
                     case "grid_auto_columns" -> gridAutoColumns = readMinMaxes(in);
                     case "grid_auto_flow" -> gridAutoFlow = GRID_AUTO_FLOW.read(in);
-                    case "grid_template_areas" -> gridTemplateAreas =
-                            readNullable(in, GridSerde.GRID_TEMPLATE_AREAS);
-                    case "grid_template_column_names" -> gridTemplateColumnNames =
-                            GeometrySerde.readStringLists(in);
-                    case "grid_template_row_names" -> gridTemplateRowNames =
-                            GeometrySerde.readStringLists(in);
+                    case "grid_template_areas" -> gridTemplateAreas = readNullable(in, GridSerde.GRID_TEMPLATE_AREAS);
+                    case "grid_template_column_names" -> gridTemplateColumnNames = GeometrySerde.readStringLists(in);
+                    case "grid_template_row_names" -> gridTemplateRowNames = GeometrySerde.readStringLists(in);
                     case "grid_row" -> gridRow = GRID_LINE_LINE.read(in);
                     case "grid_column" -> gridColumn = GRID_LINE_LINE.read(in);
                     default -> in.skipValue();
@@ -393,8 +395,7 @@ final class StyleSerde {
                     gridColumn);
         }
 
-        private static <T> void writeNullable(JsonWriter out, TypeAdapter<T> adapter, T v)
-                throws IOException {
+        private static <T> void writeNullable(JsonWriter out, TypeAdapter<T> adapter, T v) throws IOException {
             if (v == null) {
                 out.nullValue();
             } else {
@@ -411,8 +412,7 @@ final class StyleSerde {
         }
 
         private static void writeComponents(
-                JsonWriter out, List<GenericGridTemplateComponent<GridTemplateRepetition>> v)
-                throws IOException {
+                JsonWriter out, List<GenericGridTemplateComponent<GridTemplateRepetition>> v) throws IOException {
             out.beginArray();
             for (GenericGridTemplateComponent<GridTemplateRepetition> c : v) {
                 TEMPLATE_COMPONENT.write(out, c);
@@ -420,8 +420,8 @@ final class StyleSerde {
             out.endArray();
         }
 
-        private static List<GenericGridTemplateComponent<GridTemplateRepetition>> readComponents(
-                JsonReader in) throws IOException {
+        private static List<GenericGridTemplateComponent<GridTemplateRepetition>> readComponents(JsonReader in)
+                throws IOException {
             List<GenericGridTemplateComponent<GridTemplateRepetition>> list = new ArrayList<>();
             in.beginArray();
             while (in.hasNext()) {
@@ -432,8 +432,7 @@ final class StyleSerde {
         }
 
         private static void writeMinMaxes(
-                JsonWriter out, List<MinMax<MinTrackSizingFunction, MaxTrackSizingFunction>> v)
-                throws IOException {
+                JsonWriter out, List<MinMax<MinTrackSizingFunction, MaxTrackSizingFunction>> v) throws IOException {
             out.beginArray();
             for (MinMax<MinTrackSizingFunction, MaxTrackSizingFunction> t : v) {
                 GridSerde.TRACK_SIZING.write(out, t);
@@ -441,8 +440,8 @@ final class StyleSerde {
             out.endArray();
         }
 
-        private static List<MinMax<MinTrackSizingFunction, MaxTrackSizingFunction>> readMinMaxes(
-                JsonReader in) throws IOException {
+        private static List<MinMax<MinTrackSizingFunction, MaxTrackSizingFunction>> readMinMaxes(JsonReader in)
+                throws IOException {
             List<MinMax<MinTrackSizingFunction, MaxTrackSizingFunction>> list = new ArrayList<>();
             in.beginArray();
             while (in.hasNext()) {

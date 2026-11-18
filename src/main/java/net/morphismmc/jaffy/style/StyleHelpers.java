@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/style_helpers.rs.
+// JAFFY-UPSTREAM: src/style_helpers.rs
 //
 // Rust traits (TaffyZero/TaffyAuto/TaffyMinContent/TaffyMaxContent/
 // TaffyFitContent/FromLength/FromPercent/FromFr/TaffyGridLine/TaffyGridSpan)
@@ -140,20 +140,26 @@ public final class StyleHelpers {
 
         /// `Rect::<T>::zero()` — all four sides `T::ZERO`
         public static Rect<LengthPercentage> zero() {
-            return new Rect<>(LengthPercentage.ZERO, LengthPercentage.ZERO, LengthPercentage.ZERO,
-                    LengthPercentage.ZERO);
+            return new Rect<>(
+                    LengthPercentage.ZERO, LengthPercentage.ZERO, LengthPercentage.ZERO, LengthPercentage.ZERO);
         }
 
         /// `Rect::<T>::length(value)` — `T::from_length` for all four sides
         public static Rect<LengthPercentage> length(double value) {
-            return new Rect<>(LengthPercentage.fromLength(value), LengthPercentage.fromLength(value),
-                    LengthPercentage.fromLength(value), LengthPercentage.fromLength(value));
+            return new Rect<>(
+                    LengthPercentage.fromLength(value),
+                    LengthPercentage.fromLength(value),
+                    LengthPercentage.fromLength(value),
+                    LengthPercentage.fromLength(value));
         }
 
         /// `Rect::<T>::percent(percent)` — `T::from_percent` for all four sides
         public static Rect<LengthPercentage> percent(double percent) {
-            return new Rect<>(LengthPercentage.fromPercent(percent), LengthPercentage.fromPercent(percent),
-                    LengthPercentage.fromPercent(percent), LengthPercentage.fromPercent(percent));
+            return new Rect<>(
+                    LengthPercentage.fromPercent(percent),
+                    LengthPercentage.fromPercent(percent),
+                    LengthPercentage.fromPercent(percent),
+                    LengthPercentage.fromPercent(percent));
         }
     }
 
@@ -164,26 +170,38 @@ public final class StyleHelpers {
 
         /// `Rect::<T>::zero()`
         public static Rect<LengthPercentageAuto> zero() {
-            return new Rect<>(LengthPercentageAuto.ZERO, LengthPercentageAuto.ZERO, LengthPercentageAuto.ZERO,
+            return new Rect<>(
+                    LengthPercentageAuto.ZERO,
+                    LengthPercentageAuto.ZERO,
+                    LengthPercentageAuto.ZERO,
                     LengthPercentageAuto.ZERO);
         }
 
         /// `Rect::<T>::auto()` — all four sides `T::AUTO`
         public static Rect<LengthPercentageAuto> auto() {
-            return new Rect<>(LengthPercentageAuto.AUTO, LengthPercentageAuto.AUTO, LengthPercentageAuto.AUTO,
+            return new Rect<>(
+                    LengthPercentageAuto.AUTO,
+                    LengthPercentageAuto.AUTO,
+                    LengthPercentageAuto.AUTO,
                     LengthPercentageAuto.AUTO);
         }
 
         /// `Rect::<T>::length(value)`
         public static Rect<LengthPercentageAuto> length(double value) {
-            return new Rect<>(LengthPercentageAuto.fromLength(value), LengthPercentageAuto.fromLength(value),
-                    LengthPercentageAuto.fromLength(value), LengthPercentageAuto.fromLength(value));
+            return new Rect<>(
+                    LengthPercentageAuto.fromLength(value),
+                    LengthPercentageAuto.fromLength(value),
+                    LengthPercentageAuto.fromLength(value),
+                    LengthPercentageAuto.fromLength(value));
         }
 
         /// `Rect::<T>::percent(percent)`
         public static Rect<LengthPercentageAuto> percent(double percent) {
-            return new Rect<>(LengthPercentageAuto.fromPercent(percent), LengthPercentageAuto.fromPercent(percent),
-                    LengthPercentageAuto.fromPercent(percent), LengthPercentageAuto.fromPercent(percent));
+            return new Rect<>(
+                    LengthPercentageAuto.fromPercent(percent),
+                    LengthPercentageAuto.fromPercent(percent),
+                    LengthPercentageAuto.fromPercent(percent),
+                    LengthPercentageAuto.fromPercent(percent));
         }
     }
 
@@ -204,14 +222,20 @@ public final class StyleHelpers {
 
         /// `Rect::<T>::length(value)`
         public static Rect<Dimension> length(double value) {
-            return new Rect<>(Dimension.fromLength(value), Dimension.fromLength(value),
-                    Dimension.fromLength(value), Dimension.fromLength(value));
+            return new Rect<>(
+                    Dimension.fromLength(value),
+                    Dimension.fromLength(value),
+                    Dimension.fromLength(value),
+                    Dimension.fromLength(value));
         }
 
         /// `Rect::<T>::percent(percent)`
         public static Rect<Dimension> percent(double percent) {
-            return new Rect<>(Dimension.fromPercent(percent), Dimension.fromPercent(percent),
-                    Dimension.fromPercent(percent), Dimension.fromPercent(percent));
+            return new Rect<>(
+                    Dimension.fromPercent(percent),
+                    Dimension.fromPercent(percent),
+                    Dimension.fromPercent(percent),
+                    Dimension.fromPercent(percent));
         }
     }
 }

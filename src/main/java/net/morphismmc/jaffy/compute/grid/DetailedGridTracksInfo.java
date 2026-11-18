@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/grid/mod.rs —
+// JAFFY-UPSTREAM: src/compute/grid/mod.rs
 // `DetailedGridTracksInfo<S: CheapCloneStr>` (specialised to String, GAP-017).
 //
 // `impl core::fmt::Write` -> StringBuilder (infallible; upstream's
@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.jspecify.annotations.Nullable;
-
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts.TrackRange;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
@@ -27,19 +25,18 @@ import net.morphismmc.jaffy.compute.grid.types.named.GridLineNames;
 import net.morphismmc.jaffy.compute.grid.types.named.GridLineNamesIter;
 import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.jaffy.geometry.LineF32;
-import net.morphismmc.just.fmt.RustFmt;
-import net.morphismmc.just.math.Opt;
-import net.morphismmc.just.math.OptI32;
-import net.morphismmc.just.math.Unsigned;
-import net.morphismmc.jaffy.style.grid.GenericGridPlacement;
 import net.morphismmc.jaffy.style.grid.GridAreaAxis;
 import net.morphismmc.jaffy.style.grid.GridPlacement;
 import net.morphismmc.jaffy.style.grid.LineNonNamedGridPlacementExt;
 import net.morphismmc.jaffy.style.grid.LineOriginZeroGridPlacementExt;
+import net.morphismmc.just.fmt.RustFmt;
 import net.morphismmc.just.math.F32;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
+import net.morphismmc.just.math.OptI32;
+import net.morphismmc.just.math.Unsigned;
 
+import org.jspecify.annotations.Nullable;
 
 /// Information from the computation of grids tracks
 public final class DetailedGridTracksInfo {
@@ -101,11 +98,9 @@ public final class DetailedGridTracksInfo {
             }
             if (track.isCollapsed) {
                 int index = positions.size();
-                if (!collapsedTracks.isEmpty()
-                        && collapsedTracks.get(collapsedTracks.size() - 1).end() == index) {
-                    TrackRange last = collapsedTracks.get(collapsedTracks.size() - 1);
-                    collapsedTracks.set(
-                            collapsedTracks.size() - 1, new TrackRange(last.start(), index + 1));
+                if (!collapsedTracks.isEmpty() && collapsedTracks.getLast().end() == index) {
+                    TrackRange last = collapsedTracks.getLast();
+                    collapsedTracks.set(collapsedTracks.size() - 1, new TrackRange(last.start(), index + 1));
                 } else {
                     collapsedTracks.add(new TrackRange(index, index + 1));
                 }
@@ -122,9 +117,9 @@ public final class DetailedGridTracksInfo {
         PositionsAndCollapsed pc = positionsFromGridTrackLayout(gridTracks);
         // An axis with no tracks consists of a single gutter whose offset is where the axis'
         // single grid line was positioned by content alignment
-        @Opt float emptyAxisLine = pc.positions().isEmpty() && !gridTracks.isEmpty()
-                ? gridTracks.get(0).offset
-                : OptF32.NONE;
+        @Opt
+        float emptyAxisLine =
+                pc.positions().isEmpty() && !gridTracks.isEmpty() ? gridTracks.getFirst().offset : OptF32.NONE;
         DetailedGridTracksInfo info = new DetailedGridTracksInfo();
         info.negativeImplicitTracks = trackCount.negativeImplicit();
         info.explicitTracks = trackCount.explicit();
@@ -182,7 +177,8 @@ public final class DetailedGridTracksInfo {
             if (needsSpace) {
                 out.append(' ');
             }
-            out.append(RustFmt.display((position.end() - position.start()) / zoom)).append("px");
+            out.append(RustFmt.display((position.end() - position.start()) / zoom))
+                    .append("px");
             needsSpace = true;
         }
         List<String> trailingNames = namesForLine(positions.size());
@@ -223,8 +219,7 @@ public final class DetailedGridTracksInfo {
             float paddingStart,
             float paddingEnd,
             boolean isReversed) {
-        TrackCounts trackCounts =
-                new TrackCounts(negativeImplicitTracks, explicitTracks, positiveImplicitTracks);
+        TrackCounts trackCounts = new TrackCounts(negativeImplicitTracks, explicitTracks, positiveImplicitTracks);
         int minLine = -trackCounts.negativeImplicit();
         int maxLine = trackCounts.explicit() + trackCounts.positiveImplicit();
         // Resolve the placement to a pair of (sorted) lines first, and only then treat lines
@@ -232,11 +227,9 @@ public final class DetailedGridTracksInfo {
         // `grid-column: 3 / 1`, or a non-existent named line which resolves past the end of the
         // explicit grid) is normalized before the out-of-grid check, so e.g. `foo / 3` on a
         // 2-column grid resolves to the area between line 3 and the end padding edge.
-        Line<@Nullable OriginZeroLine> resolved =
-                LineOriginZeroGridPlacementExt.resolveAbsolutelyPositionedGridTracks(
-                        LineNonNamedGridPlacementExt.intoOriginZero(
-                                lineNames.resolveLineNames(placement, areas, axis, explicitTracks),
-                                explicitTracks));
+        Line<@Nullable OriginZeroLine> resolved = LineOriginZeroGridPlacementExt.resolveAbsolutelyPositionedGridTracks(
+                LineNonNamedGridPlacementExt.intoOriginZero(
+                        lineNames.resolveLineNames(placement, areas, axis, explicitTracks), explicitTracks));
         @Nullable OriginZeroLine startLine = resolved.start();
         if (startLine != null && (startLine.value() < minLine || startLine.value() > maxLine)) {
             startLine = null;
@@ -246,8 +239,12 @@ public final class DetailedGridTracksInfo {
             endLine = null;
         }
         // and_then(try_into_track_vec_index).map(index / 2)
-        @Opt @Unsigned int startIdx = trackLineIndex(startLine, trackCounts);
-        @Opt @Unsigned int endIdx = trackLineIndex(endLine, trackCounts);
+        @Opt
+        @Unsigned
+        int startIdx = trackLineIndex(startLine, trackCounts);
+        @Opt
+        @Unsigned
+        int endIdx = trackLineIndex(endLine, trackCounts);
 
         float startPosition;
         if (startIdx == OptI32.NONE) {
@@ -257,7 +254,7 @@ public final class DetailedGridTracksInfo {
             if (startIdx < positions.size()) {
                 pos = absoluteTrackEdge(startIdx, true, isReversed);
             } else if (!positions.isEmpty()) {
-                LineF32 track = positions.get(positions.size() - 1);
+                LineF32 track = positions.getLast();
                 pos = isReversed ? track.start() : track.end();
             } else {
                 pos = emptyAxisLine;
@@ -273,7 +270,7 @@ public final class DetailedGridTracksInfo {
             if (endIdx > 0 && line < positions.size()) {
                 pos = absoluteTrackEdge(line, false, isReversed);
             } else if (!positions.isEmpty()) {
-                LineF32 track = positions.get(0);
+                LineF32 track = positions.getFirst();
                 pos = isReversed ? track.end() : track.start();
             } else {
                 pos = emptyAxisLine;
@@ -291,8 +288,7 @@ public final class DetailedGridTracksInfo {
 
     /// `.and_then(|line| line.try_into_track_vec_index(counts).map(|index| index / 2))`
     /// (-1 from `tryIntoTrackVecIndex` encodes None; `Option<usize>` -> @Opt @Unsigned int)
-    private static @Opt @Unsigned int trackLineIndex(
-            @Nullable OriginZeroLine line, TrackCounts counts) {
+    private static @Opt @Unsigned int trackLineIndex(@Nullable OriginZeroLine line, TrackCounts counts) {
         if (line == null) {
             return OptI32.NONE;
         }
@@ -323,9 +319,7 @@ public final class DetailedGridTracksInfo {
         LineF32 track;
         if (range != null) {
             int adjacent = isStart ? range.end() : range.start() - 1; // usize checked_sub on start
-            track = adjacent >= 0 && adjacent < positions.size()
-                    ? positions.get(adjacent)
-                    : positions.get(index);
+            track = adjacent >= 0 && adjacent < positions.size() ? positions.get(adjacent) : positions.get(index);
         } else {
             track = positions.get(index);
         }
@@ -394,9 +388,7 @@ public final class DetailedGridTracksInfo {
             out.append(r.start()).append("..").append(r.end());
         }
         out.append("], empty_axis_line: ")
-                .append(OptF32.isSome(emptyAxisLine)
-                        ? "Some(" + RustFmt.debug(emptyAxisLine) + ")"
-                        : "None");
+                .append(OptF32.isSome(emptyAxisLine) ? "Some(" + RustFmt.debug(emptyAxisLine) + ")" : "None");
         out.append(", line_names: ").append(lineNames);
         return out.append(" }").toString();
     }

@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/grid/types/coordinates.rs —
+// JAFFY-UPSTREAM: src/compute/grid/types/coordinates.rs
 // `impl Line<OriginZeroLine>` block (SPECIALIZATIONS Ext pattern).
 package net.morphismmc.jaffy.compute.grid.types.coordinates;
 

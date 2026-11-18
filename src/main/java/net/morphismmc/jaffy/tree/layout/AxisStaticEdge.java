@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `AxisStaticEdge` enum.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: `AxisStaticEdge` enum
 package net.morphismmc.jaffy.tree.layout;
 
 /// The physical alignment of an out-of-flow box's margin box within its static-position
@@ -16,5 +17,5 @@ public enum AxisStaticEdge {
     /// Center the box within the area
     CENTER,
     /// Align the end (right/bottom) edge of the box's margin box to the end of the area
-    END;
+    END
 }

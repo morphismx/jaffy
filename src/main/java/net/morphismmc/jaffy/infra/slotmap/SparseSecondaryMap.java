@@ -1,4 +1,5 @@
-// JAFFY: port of slotmap 1.1.1 src/sparse_secondary.rs (the APIs taffy uses — GAP-015).
+// JAFFY-UPSTREAM: crate:slotmap:src/sparse_secondary.rs
+// JAFFY-NOTE: (the APIs taffy uses — GAP-015)
 //
 // `HashMap<u32, Slot<V>>` -> fastutil Int2ObjectOpenHashMap keyed by the u32
 // slot index (GAP-014/-015). taffy never iterates it, so hash order is
@@ -9,9 +10,11 @@
 // Not ported: retain/entry/iterators/serde/clone — no upstream call sites.
 package net.morphismmc.jaffy.infra.slotmap;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.util.function.IntFunction;
+
 import org.jspecify.annotations.Nullable;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 public final class SparseSecondaryMap<V> {
 

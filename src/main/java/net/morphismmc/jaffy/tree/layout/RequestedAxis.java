@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `RequestedAxis` enum.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: `RequestedAxis` enum
 //
 // `From<AbsoluteAxis>` -> static `from`; `TryFrom<RequestedAxis> for
 // AbsoluteAxis` -> `AbsoluteAxis.tryFrom` (lives on the impl target type).

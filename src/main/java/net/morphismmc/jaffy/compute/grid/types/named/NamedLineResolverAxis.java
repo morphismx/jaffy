@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/grid/types/named.rs —
+// JAFFY-UPSTREAM: src/compute/grid/types/named.rs
 // `NamedLineResolverAxis` (module-private in Rust -> package-private).
 //
 // `lines`/`areas` are `&'a` borrows of the parent's maps; `LinePositions =
@@ -6,11 +6,9 @@
 // `partition_point` -> the private static binary search at the bottom.
 package net.morphismmc.jaffy.compute.grid.types.named;
 
-import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntLists;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
 import java.util.Map;
 import java.util.function.IntPredicate;
+
 import net.morphismmc.jaffy.compute.grid.types.coordinates.GridLine;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
 import net.morphismmc.jaffy.geometry.Line;
@@ -22,6 +20,9 @@ import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptI32;
 import net.morphismmc.just.math.Unsigned;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntLists;
 
 /// Resolver for named placements in one grid axis
 final class NamedLineResolverAxis {
@@ -35,8 +36,7 @@ final class NamedLineResolverAxis {
     private final int explicitTrackCount;
 
     NamedLineResolverAxis(
-            Map<String, IntArrayList> lines, Map<String, AreaLines> areas, GridAreaAxis axis,
-            int explicitTrackCount) {
+            Map<String, IntArrayList> lines, Map<String, AreaLines> areas, GridAreaAxis axis, int explicitTrackCount) {
         this.lines = lines;
         this.areas = areas;
         this.axis = axis;
@@ -63,7 +63,8 @@ final class NamedLineResolverAxis {
             endResolved = new GridPlacement.Line(findNamedLine(nl.name(), nl.index(), GridAreaEnd.END));
         }
 
-        // If both the *-start and *-end values of its grid-placement properties specify a line, its grid span is implicit.
+        // If both the *-start and *-end values of its grid-placement properties specify a line, its grid span is
+        // implicit.
         // If it has an explicit span value, its grid span is explicit.
         // Otherwise, its grid span is automatic:
         //   - if it is subgridded in that axis, its grid span is determined from its <line-name-list>;
@@ -73,7 +74,8 @@ final class NamedLineResolverAxis {
         if (startResolved instanceof GridPlacement.Line startLine
                 && endResolved instanceof GridPlacement.NamedSpan endSpan
                 && startLine.line().asI16() != 0) {
-            OriginZeroLine afterStartLine = startLine.line().intoOriginZeroLine(explicitTrackCount).add(1);
+            OriginZeroLine afterStartLine =
+                    startLine.line().intoOriginZeroLine(explicitTrackCount).add(1);
             OriginZeroLine endLine =
                     nthLineForwards(linesNamed(endSpan.name()), afterStartLine, Integer.max(endSpan.span(), 1));
             return new Line<>(
@@ -83,7 +85,8 @@ final class NamedLineResolverAxis {
         if (startResolved instanceof GridPlacement.NamedSpan startSpan
                 && endResolved instanceof GridPlacement.Line endLine
                 && endLine.line().asI16() != 0) {
-            OriginZeroLine beforeEndLine = endLine.line().intoOriginZeroLine(explicitTrackCount).sub(1);
+            OriginZeroLine beforeEndLine =
+                    endLine.line().intoOriginZeroLine(explicitTrackCount).sub(1);
             OriginZeroLine startLine =
                     nthLineBackwards(linesNamed(startSpan.name()), beforeEndLine, Integer.max(startSpan.span(), 1));
             return new Line<>(
@@ -116,9 +119,12 @@ final class NamedLineResolverAxis {
         // the first line named `<custom-ident>-start` (or `<custom-ident>-end` for an end line).
         // Otherwise it is treated as if the integer 1 had been specified along with it.
         if (idx == 0) {
-            @Opt @Unsigned int firstLine = areaLine(name, end);
+            @Opt
+            @Unsigned
+            int firstLine = areaLine(name, end);
             if (firstLine != OptI32.NONE) {
-                return OriginZeroLine.clamped(NamedLineResolver.ozLine(firstLine)).intoGridLine(explicitTrackCount);
+                return OriginZeroLine.clamped(NamedLineResolver.ozLine(firstLine))
+                        .intoGridLine(explicitTrackCount);
             }
         }
 
@@ -141,7 +147,9 @@ final class NamedLineResolverAxis {
         }
         NamedLineResolver.AreaEdgeName edge = NamedLineResolver.splitAreaEdgeName(name);
         if (edge != null) {
-            @Opt @Unsigned int areaLine = areaLine(edge.areaName(), edge.end());
+            @Opt
+            @Unsigned
+            int areaLine = areaLine(edge.areaName(), edge.end());
             if (areaLine != OptI32.NONE) {
                 return IntLists.singleton(areaLine);
             }

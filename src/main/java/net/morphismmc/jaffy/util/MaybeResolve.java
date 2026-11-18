@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/util/resolve.rs — `MaybeResolve`/`ResolveOrZero`
+// JAFFY-UPSTREAM: src/util/resolve.rs
+// JAFFY-NOTE: `MaybeResolve`/`ResolveOrZero`
 // trait impls.
 //
 // Distribution per established conventions:
@@ -57,24 +58,21 @@ public final class MaybeResolve {
         private SizeLengthPercentageAutoExt() {}
 
         /// `maybe_resolve` — `Size<Option<f32>>` context
-        public static SizeOptF32 maybeResolveO(
-                Size<LengthPercentageAuto> self, SizeOptF32 context, CalcResolver calc) {
+        public static SizeOptF32 maybeResolveO(Size<LengthPercentageAuto> self, SizeOptF32 context, CalcResolver calc) {
             return new SizeOptF32(
                     self.width().maybeResolveO(context.width(), calc),
                     self.height().maybeResolveO(context.height(), calc));
         }
 
         /// `maybe_resolve` — `Size<f32>` context
-        public static SizeOptF32 maybeResolveF(
-                Size<LengthPercentageAuto> self, SizeF32 context, CalcResolver calc) {
+        public static SizeOptF32 maybeResolveF(Size<LengthPercentageAuto> self, SizeF32 context, CalcResolver calc) {
             return new SizeOptF32(
                     self.width().maybeResolveF(context.width(), calc),
                     self.height().maybeResolveF(context.height(), calc));
         }
 
         /// `resolve_or_zero` — `Size<Option<f32>>` context, `None` becomes 0.0
-        public static SizeF32 resolveOrZeroO(
-                Size<LengthPercentageAuto> self, SizeOptF32 context, CalcResolver calc) {
+        public static SizeF32 resolveOrZeroO(Size<LengthPercentageAuto> self, SizeOptF32 context, CalcResolver calc) {
             return new SizeF32(
                     self.width().resolveOrZero(context.width(), calc),
                     self.height().resolveOrZero(context.height(), calc));
@@ -124,8 +122,7 @@ public final class MaybeResolve {
         }
 
         /// `resolve_or_zero` — `Option<f32>` context applied to all four sides
-        public static RectF32 resolveOrZeroO(
-                Rect<LengthPercentage> self, @Opt float context, CalcResolver calc) {
+        public static RectF32 resolveOrZeroO(Rect<LengthPercentage> self, @Opt float context, CalcResolver calc) {
             return new RectF32(
                     self.left().resolveOrZero(context, calc),
                     self.right().resolveOrZero(context, calc),
@@ -149,8 +146,7 @@ public final class MaybeResolve {
         private RectLengthPercentageAutoExt() {}
 
         /// `resolve_or_zero` — `Size<Option<f32>>` context
-        public static RectF32 resolveOrZeroO(
-                Rect<LengthPercentageAuto> self, SizeOptF32 context, CalcResolver calc) {
+        public static RectF32 resolveOrZeroO(Rect<LengthPercentageAuto> self, SizeOptF32 context, CalcResolver calc) {
             return new RectF32(
                     self.left().resolveOrZero(context.width(), calc),
                     self.right().resolveOrZero(context.width(), calc),
@@ -159,8 +155,7 @@ public final class MaybeResolve {
         }
 
         /// `resolve_or_zero` — `Option<f32>` context applied to all four sides
-        public static RectF32 resolveOrZeroO(
-                Rect<LengthPercentageAuto> self, @Opt float context, CalcResolver calc) {
+        public static RectF32 resolveOrZeroO(Rect<LengthPercentageAuto> self, @Opt float context, CalcResolver calc) {
             return new RectF32(
                     self.left().resolveOrZero(context, calc),
                     self.right().resolveOrZero(context, calc),
@@ -169,8 +164,7 @@ public final class MaybeResolve {
         }
 
         /// `resolve_or_zero` — `f32` context applied to all four sides
-        public static RectF32 resolveOrZeroF(
-                Rect<LengthPercentageAuto> self, float context, CalcResolver calc) {
+        public static RectF32 resolveOrZeroF(Rect<LengthPercentageAuto> self, float context, CalcResolver calc) {
             return new RectF32(
                     self.left().resolveOrZero(context, calc),
                     self.right().resolveOrZero(context, calc),

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/explicit_grid.rs `mod test`.
+// JAFFY-UPSTREAM: src/compute/grid/explicit_grid.rs
+// JAFFY-NOTE: `mod test`
 // `length(v)` -> TrackSizingFunction.fromLength(v) in template context
 // (upstream generic helper infers the target type);
 // `percent(v)`/`fr(v)`/`auto()`/`minmax(min,max)`/`repeat(count, tracks)`
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.ExplicitGrid.AutoRepeatStrategy;
 import net.morphismmc.jaffy.compute.grid.ExplicitGrid.ExplicitGridSize;
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
@@ -36,6 +38,7 @@ import net.morphismmc.jaffy.style.grid.RepetitionCount;
 import net.morphismmc.jaffy.style.grid.TrackSizingFunction;
 import net.morphismmc.jaffy.util.CalcResolver;
 import net.morphismmc.just.math.F32;
+
 import org.junit.jupiter.api.Test;
 
 class ExplicitGridTest {
@@ -102,10 +105,12 @@ class ExplicitGridTest {
         Style gridStyle = TestHelpers.intoGrid(600f, 600f, 2, 4);
         SizeOptF32 preferredSize = preferredSize(gridStyle);
         ExplicitGridSize col = cols(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         ExplicitGridSize row = rows(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.VERTICAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.VERTICAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         assertEquals(2, col.trackCount());
         assertEquals(4, row.trackCount());
@@ -118,16 +123,16 @@ class ExplicitGridTest {
         Style gridStyle = Style.DEFAULT
                 .withDisplay(Display.GRID)
                 .withSize(size(120, 80))
-                .withGridTemplateColumns(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40)))))
-                .withGridTemplateRows(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))));
+                .withGridTemplateColumns(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40)))))
+                .withGridTemplateRows(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))));
         SizeOptF32 preferredSize = preferredSize(gridStyle);
         ExplicitGridSize col = cols(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         ExplicitGridSize row = rows(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.VERTICAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.VERTICAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         assertEquals(3, col.trackCount());
         assertEquals(4, row.trackCount());
@@ -140,16 +145,16 @@ class ExplicitGridTest {
         Style gridStyle = Style.DEFAULT
                 .withDisplay(Display.GRID)
                 .withSize(size(140, 90))
-                .withGridTemplateColumns(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40)))))
-                .withGridTemplateRows(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))));
+                .withGridTemplateColumns(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40)))))
+                .withGridTemplateRows(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))));
         SizeOptF32 preferredSize = preferredSize(gridStyle);
         ExplicitGridSize col = cols(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         ExplicitGridSize row = rows(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.VERTICAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.VERTICAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         assertEquals(3, col.trackCount());
         assertEquals(4, row.trackCount());
@@ -162,16 +167,16 @@ class ExplicitGridTest {
         Style gridStyle = Style.DEFAULT
                 .withDisplay(Display.GRID)
                 .withMinSize(minSize(120, 80))
-                .withGridTemplateColumns(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40)))))
-                .withGridTemplateRows(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))));
+                .withGridTemplateColumns(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40)))))
+                .withGridTemplateRows(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))));
         SizeOptF32 innerContainerSize = new SizeOptF32(120f, 80f);
         ExplicitGridSize col = cols(
-                gridStyle, innerContainerSize.getAbs(AbsoluteAxis.HORIZONTAL),
+                gridStyle,
+                innerContainerSize.getAbs(AbsoluteAxis.HORIZONTAL),
                 AutoRepeatStrategy.MIN_REPETITIONS_THAT_DO_OVERFLOW);
         ExplicitGridSize row = rows(
-                gridStyle, innerContainerSize.getAbs(AbsoluteAxis.VERTICAL),
+                gridStyle,
+                innerContainerSize.getAbs(AbsoluteAxis.VERTICAL),
                 AutoRepeatStrategy.MIN_REPETITIONS_THAT_DO_OVERFLOW);
         assertEquals(3, col.trackCount());
         assertEquals(4, row.trackCount());
@@ -184,16 +189,16 @@ class ExplicitGridTest {
         Style gridStyle = Style.DEFAULT
                 .withDisplay(Display.GRID)
                 .withMinSize(minSize(140, 90))
-                .withGridTemplateColumns(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40)))))
-                .withGridTemplateRows(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))));
+                .withGridTemplateColumns(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40)))))
+                .withGridTemplateRows(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))));
         SizeOptF32 innerContainerSize = new SizeOptF32(140f, 90f);
         ExplicitGridSize col = cols(
-                gridStyle, innerContainerSize.getAbs(AbsoluteAxis.HORIZONTAL),
+                gridStyle,
+                innerContainerSize.getAbs(AbsoluteAxis.HORIZONTAL),
                 AutoRepeatStrategy.MIN_REPETITIONS_THAT_DO_OVERFLOW);
         ExplicitGridSize row = rows(
-                gridStyle, innerContainerSize.getAbs(AbsoluteAxis.VERTICAL),
+                gridStyle,
+                innerContainerSize.getAbs(AbsoluteAxis.VERTICAL),
                 AutoRepeatStrategy.MIN_REPETITIONS_THAT_DO_OVERFLOW);
         assertEquals(4, col.trackCount());
         assertEquals(5, row.trackCount());
@@ -206,16 +211,18 @@ class ExplicitGridTest {
         Style gridStyle = Style.DEFAULT
                 .withDisplay(Display.GRID)
                 .withSize(size(140, 100))
-                .withGridTemplateColumns(List.of(
-                        repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40), trackLength(20)))))
-                .withGridTemplateRows(List.of(
-                        repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20), trackLength(10)))));
+                .withGridTemplateColumns(
+                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40), trackLength(20)))))
+                .withGridTemplateRows(
+                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20), trackLength(10)))));
         SizeOptF32 preferredSize = preferredSize(gridStyle);
         ExplicitGridSize col = cols(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         ExplicitGridSize row = rows(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.VERTICAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.VERTICAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         // 2 repetitions * 2 repeated tracks = 4 tracks in total
         assertEquals(4, col.trackCount());
@@ -230,17 +237,17 @@ class ExplicitGridTest {
         Style gridStyle = Style.DEFAULT
                 .withDisplay(Display.GRID)
                 .withSize(size(140, 100))
-                .withGridTemplateColumns(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40)))))
-                .withGridTemplateRows(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))))
+                .withGridTemplateColumns(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40)))))
+                .withGridTemplateRows(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))))
                 .withGap(gap(20));
         SizeOptF32 preferredSize = preferredSize(gridStyle);
         ExplicitGridSize col = cols(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         ExplicitGridSize row = rows(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.VERTICAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.VERTICAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         assertEquals(2, col.trackCount()); // 2 tracks + 1 gap
         assertEquals(3, row.trackCount()); // 3 tracks + 2 gaps
@@ -252,17 +259,18 @@ class ExplicitGridTest {
     void explicitGridSizingNoDefinedSize() {
         Style gridStyle = Style.DEFAULT
                 .withDisplay(Display.GRID)
-                .withGridTemplateColumns(List.of(repeat(RepetitionCount.AUTO_FILL,
-                        List.of(trackLength(40), trackPercent(0.5), trackLength(20)))))
-                .withGridTemplateRows(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))))
+                .withGridTemplateColumns(List.of(repeat(
+                        RepetitionCount.AUTO_FILL, List.of(trackLength(40), trackPercent(0.5), trackLength(20)))))
+                .withGridTemplateRows(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))))
                 .withGap(gap(20));
         SizeOptF32 preferredSize = preferredSize(gridStyle);
         ExplicitGridSize col = cols(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
                 AutoRepeatStrategy.MIN_REPETITIONS_THAT_DO_OVERFLOW);
         ExplicitGridSize row = rows(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.VERTICAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.VERTICAL),
                 AutoRepeatStrategy.MIN_REPETITIONS_THAT_DO_OVERFLOW);
         assertEquals(3, col.trackCount());
         assertEquals(1, row.trackCount());
@@ -275,17 +283,18 @@ class ExplicitGridTest {
         Style gridStyle = Style.DEFAULT
                 .withDisplay(Display.GRID)
                 .withSize(size(140, 100))
-                .withGridTemplateColumns(List.of(
-                        length(20), repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40)))))
-                .withGridTemplateRows(List.of(
-                        length(40), repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))))
+                .withGridTemplateColumns(
+                        List.of(length(20), repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(40)))))
+                .withGridTemplateRows(List.of(length(40), repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))))
                 .withGap(gap(20));
         SizeOptF32 preferredSize = preferredSize(gridStyle);
         ExplicitGridSize col = cols(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.HORIZONTAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         ExplicitGridSize row = rows(
-                gridStyle, preferredSize.getAbs(AbsoluteAxis.VERTICAL),
+                gridStyle,
+                preferredSize.getAbs(AbsoluteAxis.VERTICAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         assertEquals(3, col.trackCount()); // 3 tracks + 2 gaps
         assertEquals(2, row.trackCount()); // 2 tracks + 1 gap
@@ -301,16 +310,16 @@ class ExplicitGridTest {
                 .withPadding(new Rect<>(
                         LengthPercentage.fromLength(10), LengthPercentage.fromLength(10),
                         LengthPercentage.fromLength(20), LengthPercentage.fromLength(20)))
-                .withGridTemplateColumns(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))))
-                .withGridTemplateRows(
-                        List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))));
+                .withGridTemplateColumns(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))))
+                .withGridTemplateRows(List.of(repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(20)))));
         SizeOptF32 innerContainerSize = new SizeOptF32(100f, 80f);
         ExplicitGridSize col = cols(
-                gridStyle, innerContainerSize.getAbs(AbsoluteAxis.HORIZONTAL),
+                gridStyle,
+                innerContainerSize.getAbs(AbsoluteAxis.HORIZONTAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         ExplicitGridSize row = rows(
-                gridStyle, innerContainerSize.getAbs(AbsoluteAxis.VERTICAL),
+                gridStyle,
+                innerContainerSize.getAbs(AbsoluteAxis.VERTICAL),
                 AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW);
         assertEquals(5, col.trackCount()); // 40px horizontal padding
         assertEquals(4, row.trackCount()); // 20px vertical padding
@@ -326,13 +335,20 @@ class ExplicitGridTest {
                         repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(2))),
                         repeat(new RepetitionCount.Count(10_000), List.of(trackLength(37)))));
         ExplicitGridSize first = ExplicitGrid.computeExplicitGridSizeInAxis(
-                autoRepeatFirst, net.morphismmc.just.math.OptF32.NONE,
-                AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW, CALC_42, AbsoluteAxis.HORIZONTAL);
+                autoRepeatFirst,
+                net.morphismmc.just.math.OptF32.NONE,
+                AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW,
+                CALC_42,
+                AbsoluteAxis.HORIZONTAL);
         assertEquals(new ExplicitGridSize(1, 10_000), first);
         List<GridTrack> tracks = new ArrayList<>();
         ExplicitGrid.initializeGridTracks(
-                tracks, TrackCounts.fromRaw(0, first.trackCount(), 0), autoRepeatFirst,
-                AbsoluteAxis.HORIZONTAL, first.autoRepetitionCount(), idx -> false);
+                tracks,
+                TrackCounts.fromRaw(0, first.trackCount(), 0),
+                autoRepeatFirst,
+                AbsoluteAxis.HORIZONTAL,
+                first.autoRepetitionCount(),
+                idx -> false);
         assertEquals(MinTrackSizingFunction.fromLength(2.0), tracks.get(1).minTrackSizingFunction);
         assertEquals(MinTrackSizingFunction.fromLength(37.0), tracks.get(3).minTrackSizingFunction);
 
@@ -342,8 +358,11 @@ class ExplicitGridTest {
                         repeat(new RepetitionCount.Count(10_000), List.of(trackLength(37))),
                         repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(2)))));
         ExplicitGridSize last = ExplicitGrid.computeExplicitGridSizeInAxis(
-                autoRepeatLast, net.morphismmc.just.math.OptF32.NONE,
-                AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW, CALC_42, AbsoluteAxis.HORIZONTAL);
+                autoRepeatLast,
+                net.morphismmc.just.math.OptF32.NONE,
+                AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW,
+                CALC_42,
+                AbsoluteAxis.HORIZONTAL);
         assertEquals(new ExplicitGridSize(0, 10_000), last);
     }
 
@@ -364,22 +383,30 @@ class ExplicitGridTest {
                     .withDisplay(Display.GRID)
                     .withSize(new Size<>(Dimension.fromLength(800), Dimension.AUTO))
                     .withGap(new Size<>(LengthPercentage.fromLength(8), LengthPercentage.ZERO))
-                    .withGridTemplateColumns(List.of(repeat(count, List.of(
-                            minmax(MinTrackSizingFunction.calc(calcPtr), MaxTrackSizingFunction.fromFr(1.0))))));
+                    .withGridTemplateColumns(List.of(repeat(
+                            count,
+                            List.of(minmax(
+                                    MinTrackSizingFunction.calc(calcPtr), MaxTrackSizingFunction.fromFr(1.0))))));
             // The calc() resolves to min(800, 300) = 300px -> two tracks + one gap fit
             assertEquals(
                     new ExplicitGridSize(2, 2),
                     ExplicitGrid.computeExplicitGridSizeInAxis(
-                            gridStyle, 800f, AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW,
-                            resolveCalc, AbsoluteAxis.HORIZONTAL),
+                            gridStyle,
+                            800f,
+                            AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW,
+                            resolveCalc,
+                            AbsoluteAxis.HORIZONTAL),
                     count.toString());
 
             // The calc() resolves against the container: in a 250px container it is 250px, one track
             assertEquals(
                     new ExplicitGridSize(1, 1),
                     ExplicitGrid.computeExplicitGridSizeInAxis(
-                            gridStyle, 250f, AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW,
-                            resolveCalc, AbsoluteAxis.HORIZONTAL),
+                            gridStyle,
+                            250f,
+                            AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW,
+                            resolveCalc,
+                            AbsoluteAxis.HORIZONTAL),
                     count.toString());
         }
     }
@@ -395,14 +422,16 @@ class ExplicitGridTest {
                         repeat(new RepetitionCount.Count(65_535), repeatedTracks),
                         repeat(RepetitionCount.AUTO_FILL, List.of(trackLength(1)))));
         ExplicitGridSize result = ExplicitGrid.computeExplicitGridSizeInAxis(
-                gridStyle, net.morphismmc.just.math.OptF32.NONE,
-                AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW, CALC_42, AbsoluteAxis.HORIZONTAL);
+                gridStyle,
+                net.morphismmc.just.math.OptF32.NONE,
+                AutoRepeatStrategy.MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW,
+                CALC_42,
+                AbsoluteAxis.HORIZONTAL);
         assertEquals(new ExplicitGridSize(0, 10_000), result);
     }
 
     /// `(GridTrackKind, MinTrackSizingFunction, MaxTrackSizingFunction)` expectation triple
-    private record ExpectedTrack(
-            GridTrackKind kind, MinTrackSizingFunction min, MaxTrackSizingFunction max) {}
+    private record ExpectedTrack(GridTrackKind kind, MinTrackSizingFunction min, MaxTrackSizingFunction max) {}
 
     @Test
     void initializeGridTracks() {
@@ -422,16 +451,15 @@ class ExplicitGridTest {
                 .withGap(gap(20))
                 .withGridTemplateColumns(List.of(
                         length(100),
-                        GridTemplateComponent.single(minmax(
-                                MinTrackSizingFunction.fromLength(100), MaxTrackSizingFunction.fromFr(2.0))),
+                        GridTemplateComponent.single(
+                                minmax(MinTrackSizingFunction.fromLength(100), MaxTrackSizingFunction.fromFr(2.0))),
                         GridTemplateComponent.single(trackFr(1))))
                 .withGridAutoColumns(List.of(TrackSizingFunction.AUTO, trackLength(100)));
         TrackCounts trackCounts = new TrackCounts(3, 3, 3);
 
         // Call function
         List<GridTrack> tracks = new ArrayList<>();
-        ExplicitGrid.initializeGridTracks(
-                tracks, trackCounts, gridStyle, AbsoluteAxis.HORIZONTAL, 0, idx -> false);
+        ExplicitGrid.initializeGridTracks(tracks, trackCounts, gridStyle, AbsoluteAxis.HORIZONTAL, 0, idx -> false);
 
         // Assertions
         List<ExpectedTrack> expected = List.of(

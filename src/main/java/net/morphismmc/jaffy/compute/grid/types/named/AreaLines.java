@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/types/named.rs — `AreaLines`.
+// JAFFY-UPSTREAM: src/compute/grid/types/named.rs
+// JAFFY-NOTE: `AreaLines`
 //
 // `Copy + Clone` -> record (GAP-005); `line_mut() -> &mut u32` cannot exist on
 // a record, so the two use sites are expressed as `lineRaw` + `withLine`
@@ -13,7 +14,6 @@ import net.morphismmc.jaffy.style.grid.GridAreaEnd;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptI32;
 import net.morphismmc.just.math.Unsigned;
-
 
 /// The one-indexed positions of the first line that starts and the first line that ends a named grid area in
 /// each axis, i.e. the first line named `<area-name>-start`/`<area-name>-end` (explicitly or by
@@ -36,18 +36,22 @@ public record AreaLines(int rowStart, int rowEnd, int columnStart, int columnEnd
     /// to `value` (module-private upstream).
     AreaLines withLine(GridAreaAxis axis, GridAreaEnd end, int value) {
         return switch (axis) {
-            case ROW -> end == GridAreaEnd.START
-                    ? new AreaLines(value, rowEnd, columnStart, columnEnd)
-                    : new AreaLines(rowStart, value, columnStart, columnEnd);
-            case COLUMN -> end == GridAreaEnd.START
-                    ? new AreaLines(rowStart, rowEnd, value, columnEnd)
-                    : new AreaLines(rowStart, rowEnd, columnStart, value);
+            case ROW ->
+                end == GridAreaEnd.START
+                        ? new AreaLines(value, rowEnd, columnStart, columnEnd)
+                        : new AreaLines(rowStart, value, columnStart, columnEnd);
+            case COLUMN ->
+                end == GridAreaEnd.START
+                        ? new AreaLines(rowStart, rowEnd, value, columnEnd)
+                        : new AreaLines(rowStart, rowEnd, columnStart, value);
         };
     }
 
     /// The line for the passed edge of the area (`None` if there is none)
     /// `Option<&u32>` -> @Opt @Unsigned int, OptI32.NONE (module-private upstream).
-    @Opt @Unsigned int line(GridAreaAxis axis, GridAreaEnd end) {
+    @Opt
+    @Unsigned
+    int line(GridAreaAxis axis, GridAreaEnd end) {
         int line = lineRaw(axis, end);
         return line != 0 ? line : OptI32.NONE;
     }

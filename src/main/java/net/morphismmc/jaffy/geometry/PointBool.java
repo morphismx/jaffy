@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `Point<bool>` specialization
+// JAFFY-UPSTREAM: src/geometry.rs
+// JAFFY-NOTE: `Point<bool>` specialization
 // (SPECIALIZATIONS.md).
 package net.morphismmc.jaffy.geometry;
 

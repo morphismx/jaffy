@@ -1,17 +1,19 @@
-// JAFFY: port of upstream src/style/grid.rs — `MaxTrackSizingFunction`
+// JAFFY-UPSTREAM: src/style/grid.rs
+// JAFFY-NOTE: `MaxTrackSizingFunction`
 // (CompactLength newtype, same Primitive/Calc representation as Dimension).
 // serde/parse impls deferred.
 package net.morphismmc.jaffy.style.grid;
 
-import net.morphismmc.jaffy.util.CalcResolver;
-import net.morphismmc.just.math.Opt;
-import net.morphismmc.just.math.OptF32;
-import org.jspecify.annotations.Nullable;
 import net.morphismmc.jaffy.style.CompactBits;
 import net.morphismmc.jaffy.style.CompactLength;
 import net.morphismmc.jaffy.style.dimension.Dimension;
 import net.morphismmc.jaffy.style.dimension.LengthPercentage;
 import net.morphismmc.jaffy.style.dimension.LengthPercentageAuto;
+import net.morphismmc.jaffy.util.CalcResolver;
+import net.morphismmc.just.math.Opt;
+import net.morphismmc.just.math.OptF32;
+
+import org.jspecify.annotations.Nullable;
 
 /// Maximum track sizing function: specifies the maximum size of a grid track.
 public sealed interface MaxTrackSizingFunction {
@@ -55,7 +57,7 @@ public sealed interface MaxTrackSizingFunction {
 
         @Override
         public boolean rustEq(MaxTrackSizingFunction other) {
-            return other instanceof Primitive p && bits == p.bits;
+            return other instanceof Primitive(long oBits) && bits == oBits;
         }
     }
 
@@ -95,7 +97,7 @@ public sealed interface MaxTrackSizingFunction {
 
         @Override
         public boolean rustEq(MaxTrackSizingFunction other) {
-            return other instanceof Calc c && bits == c.bits && calc == c.calc;
+            return other instanceof Calc(long oBits, Object oCalc) && bits == oBits && calc == oCalc;
         }
     }
 
@@ -107,7 +109,8 @@ public sealed interface MaxTrackSizingFunction {
 
     float value();
 
-    @Nullable Object calcValue();
+    @Nullable
+    Object calcValue();
 
     default boolean isPlainCalc() {
         return CompactBits.isPlainCalc(calcTag());
@@ -345,7 +348,8 @@ public sealed interface MaxTrackSizingFunction {
         if (isPlainCalc()) { // #[cfg(feature = "calc")]
             return new ExpandedMaxTrackSizingFunction.Calc(calcValue());
         }
-        throw new IllegalStateException("MaxTrackSizingFunction contains a value with an invalid tag"); // JAFFY(GAP-010)
+        throw new IllegalStateException(
+                "MaxTrackSizingFunction contains a value with an invalid tag"); // JAFFY(GAP-010)
     }
 
     // ---- Trait impls ----

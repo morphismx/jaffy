@@ -1,9 +1,11 @@
-// JAFFY: port of upstream src/tree/layout.rs — `LayoutOutput` struct.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: `LayoutOutput` struct
 // `oof_positioning_area: Option<OofPositioningArea>` -> nullable field (GAP-001).
 // serde impl deferred.
 package net.morphismmc.jaffy.tree.layout;
 
 import net.morphismmc.jaffy.geometry.SizeF32;
+
 import org.jspecify.annotations.Nullable;
 
 /// A struct containing the result of laying a single node, which is returned up to the parent node

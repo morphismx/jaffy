@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `AxisStaticPosition` struct.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: `AxisStaticPosition` struct
 // The `debug_assert!` on unresolved self-start/self-end maps to
 // `IllegalStateException` (GAP-010).
 package net.morphismmc.jaffy.tree.layout;
@@ -39,14 +40,12 @@ public record AxisStaticPosition(LineF32 area, AxisStaticAlign align) {
     /// `axisIsRtl` is whether this axis is the inline axis of a right-to-left static-position
     /// containing block, in which case `start` and `end` are flipped.
     public static AxisStaticPosition fromAlignment(AlignItems alignment, LineF32 area, boolean axisIsRtl) {
-        if (alignment.keyword() == AlignItemsKeyword.SELF_START
-                || alignment.keyword() == AlignItemsKeyword.SELF_END) {
+        if (alignment.keyword() == AlignItemsKeyword.SELF_START || alignment.keyword() == AlignItemsKeyword.SELF_END) {
             throw new IllegalStateException(
                     "self-start/self-end must be resolved before computing the static position");
         }
-        AlignItemsKeyword fallback = alignment.safety() == AlignmentSafety.SAFE
-                ? AlignItemsKeyword.START
-                : alignment.keyword();
+        AlignItemsKeyword fallback =
+                alignment.safety() == AlignmentSafety.SAFE ? AlignItemsKeyword.START : alignment.keyword();
         return new AxisStaticPosition(
                 area,
                 new AxisStaticAlign(
@@ -57,8 +56,8 @@ public record AxisStaticPosition(LineF32 area, AxisStaticAlign align) {
     /// aligns the box to. Normal and Stretch (and anything else that is not an end or
     /// center alignment) fall back to start-alignment for static-position purposes.
     private static AxisStaticEdge edgeFor(AlignItemsKeyword keyword, boolean axisIsRtl) {
-        boolean startPosition = !(keyword == AlignItemsKeyword.END || keyword == AlignItemsKeyword.FLEX_END)
-                != axisIsRtl;
+        boolean startPosition =
+                !(keyword == AlignItemsKeyword.END || keyword == AlignItemsKeyword.FLEX_END) != axisIsRtl;
         if (keyword == AlignItemsKeyword.CENTER) {
             return AxisStaticEdge.CENTER;
         }

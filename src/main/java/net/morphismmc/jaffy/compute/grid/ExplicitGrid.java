@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/grid/explicit_grid.rs.
+// JAFFY-UPSTREAM: src/compute/grid/explicit_grid.rs
 //
 // The file's two free functions + `pub(crate) enum AutoRepeatStrategy` map
 // to static methods + a nested enum (single Java top-level per manifest
@@ -16,6 +16,7 @@ package net.morphismmc.jaffy.compute.grid;
 import java.util.List;
 import java.util.function.IntPredicate;
 import java.util.function.Supplier;
+
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.Coordinates;
 import net.morphismmc.jaffy.compute.grid.types.grid_track.GridTrack;
@@ -31,11 +32,10 @@ import net.morphismmc.jaffy.style.grid.MinTrackSizingFunction;
 import net.morphismmc.jaffy.style.grid.RepetitionCount;
 import net.morphismmc.jaffy.style.grid.TrackSizingFunction;
 import net.morphismmc.jaffy.util.CalcResolver;
-import net.morphismmc.just.math.F32;
-import net.morphismmc.just.math.OptF32;
 import net.morphismmc.jaffy.util.Sys;
+import net.morphismmc.just.math.F32;
 import net.morphismmc.just.math.Opt;
-
+import net.morphismmc.just.math.OptF32;
 
 /// Helper functions for initialising GridTracks from styles
 /// This mainly consists of evaluating GridAutoTracks
@@ -124,8 +124,7 @@ public final class ExplicitGrid {
             }
             nonAutoRepeatingTrackCountLong = saturatingAdd(nonAutoRepeatingTrackCountLong, additionalTracks);
         }
-        int nonAutoRepeatingTrackCount =
-                (int) Long.min(nonAutoRepeatingTrackCountLong, Coordinates.MAX_GRID_TRACKS);
+        int nonAutoRepeatingTrackCount = (int) Long.min(nonAutoRepeatingTrackCountLong, Coordinates.MAX_GRID_TRACKS);
 
         int autoRepetitionCount = 0;
         boolean allTrackDefsHaveFixedComponent = true;
@@ -251,8 +250,7 @@ public final class ExplicitGrid {
                 numRepetitions = switch (autoFitStrategy) {
                     case MAX_REPETITIONS_THAT_DO_NOT_OVERFLOW ->
                         saturatingAdd(f32ToU32(Sys.floor(numRepetitionThatFit)), 1);
-                    case MIN_REPETITIONS_THAT_DO_OVERFLOW ->
-                        saturatingAdd(f32ToU32(Sys.ceil(numRepetitionThatFit)), 1);
+                    case MIN_REPETITIONS_THAT_DO_OVERFLOW -> saturatingAdd(f32ToU32(Sys.ceil(numRepetitionThatFit)), 1);
                 };
             }
         }
@@ -334,8 +332,7 @@ public final class ExplicitGrid {
                 // `auto_tracks.clone().cycle().skip(offset)` -> cyclic index iteration
                 int[] idx = {offset};
                 createImplicitTracks(
-                        tracks, counts.negativeImplicit(),
-                        () -> autoTracks.get(idx[0]++ % autoTrackCount), gap);
+                        tracks, counts.negativeImplicit(), () -> autoTracks.get(idx[0]++ % autoTrackCount), gap);
             }
         }
 
@@ -360,13 +357,13 @@ public final class ExplicitGrid {
                         currentTrackIndex += 1;
                     }
                 } else {
-                    GridTemplateRepetition repeat =
-                            ((GenericGridTemplateComponent.Repeat<GridTemplateRepetition>) trackSizingFunction)
-                                    .repetition();
+                    GridTemplateRepetition repeat = ((GenericGridTemplateComponent.Repeat<GridTemplateRepetition>)
+                                    trackSizingFunction)
+                            .repetition();
                     if (repeat.count() instanceof RepetitionCount.Count c) {
                         // `repeat.tracks().cycle().take(repeated_track_count)` -> cyclic index iteration
-                        int repeatedTrackCount = Integer.min(
-                                repeat.trackCount() * c.count(), explicitTrackLimit - currentTrackIndex);
+                        int repeatedTrackCount =
+                                Integer.min(repeat.trackCount() * c.count(), explicitTrackLimit - currentTrackIndex);
                         List<MinMax<MinTrackSizingFunction, MaxTrackSizingFunction>> repeatTracks = repeat.tracks();
                         for (int i = 0; i < repeatedTrackCount; i++) {
                             MinMax<MinTrackSizingFunction, MaxTrackSizingFunction> sizingFunction =
@@ -441,13 +438,15 @@ public final class ExplicitGrid {
             // `auto_tracks.clone().cycle()` -> cyclic index iteration
             int[] idx = {0};
             createImplicitTracks(
-                    tracks, counts.positiveImplicit() + gridAreaTracks,
-                    () -> autoTracks.get(idx[0]++ % autoTrackCount), gap);
+                    tracks,
+                    counts.positiveImplicit() + gridAreaTracks,
+                    () -> autoTracks.get(idx[0]++ % autoTrackCount),
+                    gap);
         }
 
         // Mark first and last grid lines as collapsed
-        tracks.get(0).collapse();
-        tracks.get(tracks.size() - 1).collapse();
+        tracks.getFirst().collapse();
+        tracks.getLast().collapse();
     }
 
     /// Utility function for repeating logic of creating implicit tracks
@@ -461,8 +460,7 @@ public final class ExplicitGrid {
         for (int i = 0; i < count; i++) {
             MinMax<MinTrackSizingFunction, MaxTrackSizingFunction> trackDef = autoTracksIter.get();
             tracks.add(GridTrack.newGridTrack(
-                    TrackSizingFunction.minSizingFunction(trackDef),
-                    TrackSizingFunction.maxSizingFunction(trackDef)));
+                    TrackSizingFunction.minSizingFunction(trackDef), TrackSizingFunction.maxSizingFunction(trackDef)));
             tracks.add(GridTrack.gutter(gap));
         }
     }

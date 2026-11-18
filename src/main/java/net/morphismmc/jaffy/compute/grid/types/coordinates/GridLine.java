@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/types/coordinates.rs — `GridLine`
+// JAFFY-UPSTREAM: src/compute/grid/types/coordinates.rs
+// JAFFY-NOTE: `GridLine`
 // i16 newtype. `pub` kept (appears in the public GridPlacement API).
 package net.morphismmc.jaffy.compute.grid.types.coordinates;
 

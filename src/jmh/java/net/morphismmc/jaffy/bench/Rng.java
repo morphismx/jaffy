@@ -1,3 +1,6 @@
+// JAFFY-UPSTREAM: none
+// JAFFY-NOTE: bench support: deterministic xorshift64 RNG
+
 package net.morphismmc.jaffy.bench;
 
 /// Shared deterministic RNG (xorshift64) — the same seed produces the same

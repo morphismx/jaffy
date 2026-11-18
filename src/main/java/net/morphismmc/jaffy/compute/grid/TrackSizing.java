@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/track_sizing.rs — the track sizing
+// JAFFY-UPSTREAM: src/compute/grid/track_sizing.rs
+// JAFFY-NOTE: the track sizing
 // algorithm (<https://www.w3.org/TR/css-grid-1/#layout-algorithm>). One Rust
 // file with only private items + pub(super) functions -> single Java class.
 //
@@ -42,17 +43,16 @@ import net.morphismmc.jaffy.geometry.LineBool;
 import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
-import net.morphismmc.just.math.Opt;
 import net.morphismmc.jaffy.style.StyleHelpers.SizeAvailableSpaceExt;
 import net.morphismmc.jaffy.style.alignment.AlignContent;
-import net.morphismmc.jaffy.style.alignment.AlignContentKeyword;
 import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.style.grid.MaxTrackSizingFunction;
 import net.morphismmc.jaffy.tree.layout.LayoutOutput;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
 import net.morphismmc.jaffy.tree.traits.LayoutPartialTree;
-import net.morphismmc.just.math.F32;
 import net.morphismmc.jaffy.util.FrontBackVecBuilder;
+import net.morphismmc.just.math.F32;
+import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
 
 public final class TrackSizing {
@@ -63,7 +63,8 @@ public final class TrackSizing {
     /// estimate callback threaded through the algorithm.
     @FunctionalInterface
     public interface TrackSizeEstimate {
-        @Opt float estimate(GridTrack track, @Opt float basis, LayoutPartialTree tree);
+        @Opt
+        float estimate(GridTrack track, @Opt float basis, LayoutPartialTree tree);
     }
 
     /// `impl Fn(&GridTrack) -> f32`
@@ -142,8 +143,10 @@ public final class TrackSizing {
         }
     }
 
-    /// This struct captures a bunch of variables which are used to compute the intrinsic sizes of children so that those variables
-    /// don't have to be passed around all over the place below. It then has methods that implement the intrinsic sizing computations
+    /// This struct captures a bunch of variables which are used to compute the intrinsic sizes of children so that
+    /// those variables
+    /// don't have to be passed around all over the place below. It then has methods that implement the intrinsic sizing
+    /// computations
     private static final class IntrinsicSizeMeasurer {
         /// The layout tree
         private final LayoutPartialTree tree;
@@ -171,7 +174,8 @@ public final class TrackSizing {
         }
 
         /// Compute the available_space to be passed to the child sizing functions
-        /// These are estimates based on either the max track sizing function or the provisional base size in the opposite
+        /// These are estimates based on either the max track sizing function or the provisional base size in the
+        /// opposite
         /// axis to the one currently being sized.
         /// https://www.w3.org/TR/css-grid-1/#algo-overview
         SizeOptF32 gridAreaSize(GridItem item, List<GridTrack> axisTracks) {
@@ -215,17 +219,19 @@ public final class TrackSizing {
 
         /// The minimum contribution of an item is the smallest outer size it can have.
         /// Specifically:
-        ///   - If the item’s computed preferred size behaves as auto or depends on the size of its containing block in the relevant axis:
-        ///     Its minimum contribution is the outer size that would result from assuming the item’s used minimum size as its preferred size;
+        ///   - If the item’s computed preferred size behaves as auto or depends on the size of its containing block in
+        /// the relevant axis:
+        ///     Its minimum contribution is the outer size that would result from assuming the item’s used minimum size
+        /// as its preferred size;
         ///   - Else the item’s minimum contribution is its min-content contribution.
         ///
-        /// Because the minimum contribution often depends on the size of the item's content, it is considered a type of intrinsic size contribution.
+        /// Because the minimum contribution often depends on the size of the item's content, it is considered a type of
+        /// intrinsic size contribution.
         float minimumContribution(GridItem item, List<GridTrack> axisTracks) {
             SizeOptF32 gridAreaSize = gridAreaSize(item, axisTracks);
             SizeOptF32 availableSpace = gridAreaSize.with(axis, OptF32.NONE);
             SizeF32 marginAxisSums = marginsAxisSumsWithBaselineShims(item, availableSpace.width());
-            float contribution =
-                    item.minimumContributionCached(tree, axis, axisTracks, gridAreaSize, innerNodeSize);
+            float contribution = item.minimumContributionCached(tree, axis, axisTracks, gridAreaSize, innerNodeSize);
             return contribution + marginAxisSums.get(axis);
         }
     }
@@ -245,23 +251,21 @@ public final class TrackSizing {
         // As items never cross the outermost gutters in a grid, we can simplify our calculations by
         // treating Start and End the same. The safety modifier doesn't influence gutter weight;
         // overflow fallback is handled when offsets are computed.
-        int outerGutterWeight =
-                switch (alignment.keyword()) {
-                    case START, FLEX_START, END, FLEX_END, CENTER -> 1;
-                    // Normal is resolved to Stretch in `compute_grid_layout`
-                    case NORMAL, STRETCH -> 0;
-                    case SPACE_BETWEEN -> 0;
-                    case SPACE_AROUND -> 1;
-                    case SPACE_EVENLY -> 1;
-                };
+        int outerGutterWeight = switch (alignment.keyword()) {
+            case START, FLEX_START, END, FLEX_END, CENTER -> 1;
+            // Normal is resolved to Stretch in `compute_grid_layout`
+            case NORMAL, STRETCH -> 0;
+            case SPACE_BETWEEN -> 0;
+            case SPACE_AROUND -> 1;
+            case SPACE_EVENLY -> 1;
+        };
 
-        int innerGutterWeight =
-                switch (alignment.keyword()) {
-                    case FLEX_START, START, FLEX_END, END, CENTER, NORMAL, STRETCH -> 0;
-                    case SPACE_BETWEEN -> 1;
-                    case SPACE_AROUND -> 2;
-                    case SPACE_EVENLY -> 1;
-                };
+        int innerGutterWeight = switch (alignment.keyword()) {
+            case FLEX_START, START, FLEX_END, END, CENTER, NORMAL, STRETCH -> 0;
+            case SPACE_BETWEEN -> 1;
+            case SPACE_AROUND -> 2;
+            case SPACE_EVENLY -> 1;
+        };
 
         if (innerGutterWeight == 0) {
             return 0.0f;
@@ -278,8 +282,8 @@ public final class TrackSizing {
                 }
                 trackSizeSum += estimate;
             }
-            float freeSpace = OptF32.unwrapOr(
-                    OptF32.map(trackSizeSum, sum -> F32.max(0.0f, axisInnerNodeSize - sum)), 0.0f);
+            float freeSpace =
+                    OptF32.unwrapOr(OptF32.map(trackSizeSum, sum -> F32.max(0.0f, axisInnerNodeSize - sum)), 0.0f);
 
             int weightedTrackCount = (((tracks.size() - 3) / 2) * innerGutterWeight) + (2 * outerGutterWeight);
 
@@ -290,8 +294,7 @@ public final class TrackSizing {
     }
 
     /// Convert origin-zero coordinates track placement in grid track vector indexes
-    public static void resolveItemTrackIndexes(
-            List<GridItem> items, TrackCounts columnCounts, TrackCounts rowCounts) {
+    public static void resolveItemTrackIndexes(List<GridItem> items, TrackCounts columnCounts, TrackCounts rowCounts) {
         for (GridItem item : items) {
             item.columnIndexes = item.column.map(line -> line.intoTrackVecIndex(columnCounts));
             item.rowIndexes = item.row.map(line -> line.intoTrackVecIndex(rowCounts));
@@ -305,15 +308,11 @@ public final class TrackSizing {
             item.crossesFlexibleColumn =
                     anyMatch(columns, item.trackRangeExcludingLines(AbstractAxis.INLINE), GridTrack::isFlexible);
             item.crossesIntrinsicColumn = anyMatch(
-                    columns,
-                    item.trackRangeExcludingLines(AbstractAxis.INLINE),
-                    GridTrack::hasIntrinsicSizingFunction);
+                    columns, item.trackRangeExcludingLines(AbstractAxis.INLINE), GridTrack::hasIntrinsicSizingFunction);
             item.crossesFlexibleRow =
                     anyMatch(rows, item.trackRangeExcludingLines(AbstractAxis.BLOCK), GridTrack::isFlexible);
             item.crossesIntrinsicRow = anyMatch(
-                    rows,
-                    item.trackRangeExcludingLines(AbstractAxis.BLOCK),
-                    GridTrack::hasIntrinsicSizingFunction);
+                    rows, item.trackRangeExcludingLines(AbstractAxis.BLOCK), GridTrack::hasIntrinsicSizingFunction);
         }
     }
 
@@ -367,8 +366,7 @@ public final class TrackSizing {
         boolean allTracksFinal = true;
         for (GridTrack track : axisTracks) {
             if (!(track.baseSize == track.growthLimit
-                    && OptF32.isSome(
-                            track.minTrackSizingFunction.definiteValue(percentageBasis, tree::calc)))) {
+                    && OptF32.isSome(track.minTrackSizingFunction.definiteValue(percentageBasis, tree::calc)))) {
                 allTracksFinal = false;
                 break;
             }
@@ -408,10 +406,14 @@ public final class TrackSizing {
         // Distributes free space (if any) to tracks with FINITE growth limits, up to their limits.
         maximiseTracks(axisTracks, availableGridSpace.get(axis));
 
-        // For the purpose of the final two expansion steps ("Expand Flexible Tracks" and "Stretch auto Tracks"), we only want to expand
-        // into space generated by the grid container's size (as defined by either it's preferred size style or by it's parent node through
-        // something like stretch alignment), not just any available space. To do this we map definite available space to AvailableSpace::MaxContent
-        // in the case that inner_node_size is None. A min-content constraint in the block axis is also mapped to AvailableSpace::MaxContent,
+        // For the purpose of the final two expansion steps ("Expand Flexible Tracks" and "Stretch auto Tracks"), we
+        // only want to expand
+        // into space generated by the grid container's size (as defined by either it's preferred size style or by it's
+        // parent node through
+        // something like stretch alignment), not just any available space. To do this we map definite available space
+        // to AvailableSpace::MaxContent
+        // in the case that inner_node_size is None. A min-content constraint in the block axis is also mapped to
+        // AvailableSpace::MaxContent,
         // as the min-content block size of a grid container is its max-content block size.
         AvailableSpace axisAvailableSpaceForExpansion;
         if (OptF32.isSome(innerNodeSize.get(axis))) {
@@ -425,7 +427,8 @@ public final class TrackSizing {
         }
 
         // 11.7. Expand Flexible Tracks
-        // This step sizes flexible tracks using the largest value it can assign to an fr without exceeding the available space.
+        // This step sizes flexible tracks using the largest value it can assign to an fr without exceeding the
+        // available space.
         expandFlexibleTracks(
                 tree,
                 axis,
@@ -439,7 +442,8 @@ public final class TrackSizing {
                 getTrackSizeEstimate);
 
         // 11.8. Stretch auto Tracks
-        // This step expands tracks that have an auto max track sizing function by dividing any remaining positive, definite free space equally amongst them.
+        // This step expands tracks that have an auto max track sizing function by dividing any remaining positive,
+        // definite free space equally amongst them.
         if (axisAlignment.equals(AlignContent.STRETCH)) {
             stretchAutoTracks(axisTracks, axisMinSize, axisAvailableSpaceForExpansion);
         }
@@ -466,8 +470,7 @@ public final class TrackSizing {
 
     /// Add any planned growth limit increases to the growth limit after a round of distributing space to growth limits
     /// Reset the planed growth limit increase to zero ready for the next round.
-    private static void flushPlannedGrowthLimitIncreases(
-            List<GridTrack> tracks, boolean setInfinitelyGrowable) {
+    private static void flushPlannedGrowthLimitIncreases(List<GridTrack> tracks, boolean setInfinitelyGrowable) {
         for (GridTrack track : tracks) {
             if (track.growthLimitPlannedIncrease > 0.0f) {
                 track.growthLimit = track.growthLimit == Float.POSITIVE_INFINITY
@@ -492,8 +495,8 @@ public final class TrackSizing {
             //     Note: Indefinite lengths cannot occur, as they’re treated as auto.
             // - An intrinsic sizing function
             //     Use an initial base size of zero.
-            track.baseSize = OptF32.unwrapOr(
-                    track.minTrackSizingFunction.definiteValue(axisInnerNodeSize, tree::calc), 0.0f);
+            track.baseSize =
+                    OptF32.unwrapOr(track.minTrackSizingFunction.definiteValue(axisInnerNodeSize, tree::calc), 0.0f);
 
             // For each track, if the track’s max track sizing function is:
             // - A fixed sizing function
@@ -503,10 +506,10 @@ public final class TrackSizing {
             // - A flexible sizing function
             //     Use an initial growth limit of infinity.
             track.growthLimit = OptF32.unwrapOr(
-                    track.maxTrackSizingFunction.definiteValue(axisInnerNodeSize, tree::calc),
-                    Float.POSITIVE_INFINITY);
+                    track.maxTrackSizingFunction.definiteValue(axisInnerNodeSize, tree::calc), Float.POSITIVE_INFINITY);
 
-            // In all cases, if the growth limit is less than the base size, increase the growth limit to match the base size.
+            // In all cases, if the growth limit is less than the base size, increase the growth limit to match the base
+            // size.
             if (track.growthLimit < track.baseSize) {
                 track.growthLimit = track.baseSize;
             }
@@ -528,9 +531,11 @@ public final class TrackSizing {
         List<GridItem> remainingItems = sortedItems;
         while (!remainingItems.isEmpty()) {
             // Get the row index of the current row
-            int currentRow = remainingItems.get(0).placement(otherAxis).start().value();
+            int currentRow =
+                    remainingItems.getFirst().placement(otherAxis).start().value();
 
-            // Find the item index of the first item that is in a different row (or None if we've reached the end of the list)
+            // Find the item index of the first item that is in a different row (or None if we've reached the end of the
+            // list)
             int nextRowFirstItem = -1;
             for (int i = 0; i < remainingItems.size(); i++) {
                 if (remainingItems.get(i).placement(otherAxis).start().value() != currentRow) {
@@ -617,8 +622,7 @@ public final class TrackSizing {
 
     /// `margin_box_baseline` — items are aligned by the distance from the top of
     /// their margin box to their baseline.
-    private static float marginBoxBaseline(
-            GridItem item, SizeOptF32 innerNodeSize, LayoutPartialTree tree) {
+    private static float marginBoxBaseline(GridItem item, SizeOptF32 innerNodeSize, LayoutPartialTree tree) {
         return OptF32.unwrapOr(item.baseline, 0.0f)
                 + item.margin.top().resolveOrZero(innerNodeSize.width(), tree::calc);
     }
@@ -645,7 +649,8 @@ public final class TrackSizing {
         //
         // Items that cross a flexible track are all processed together in a single batch (regardless of their span), so
         // they only need to be moved to the end of the list. And the order in which items within a batch are processed
-        // does not affect the result, so the remaining items only need to be sorted if any of them span more than one track.
+        // does not affect the result, so the remaining items only need to be sorted if any of them span more than one
+        // track.
         FrontBackVecBuilder<GridItem> partitionedItems = FrontBackVecBuilder.withCapacity(items.size());
         boolean needsSort = false;
         for (GridItem item : items) {
@@ -665,26 +670,29 @@ public final class TrackSizing {
         }
 
         // Step 2, Step 3 and Step 4
-        // 2 & 3. Iterate over items that don't cross a flex track. Items should have already been sorted in ascending order
+        // 2 & 3. Iterate over items that don't cross a flex track. Items should have already been sorted in ascending
+        // order
         // of the number of tracks they span. Step 2 is the 1 track case and has an optimised implementation
         // 4. Next, repeat the previous step instead considering (together, rather than grouped by span size) all items
         // that do span a track with a flexible sizing function while
 
         // Compute item's intrinsic (content-based) sizes
-        // Note: For items with a specified minimum size of auto (the initial value), the minimum contribution is usually equivalent
+        // Note: For items with a specified minimum size of auto (the initial value), the minimum contribution is
+        // usually equivalent
         // to the min-content contribution—but can differ in some cases, see §6.6 Automatic Minimum Size of Grid Items.
         // Also, minimum contribution <= min-content contribution <= max-content contribution.
 
         @Opt float axisInnerNodeSize = innerNodeSize.get(axis);
-        IntrinsicSizeMeasurer itemSizer = new IntrinsicSizeMeasurer(
-                tree, otherAxisTracks, getTrackSizeEstimate, axis, innerNodeSize);
+        IntrinsicSizeMeasurer itemSizer =
+                new IntrinsicSizeMeasurer(tree, otherAxisTracks, getTrackSizeEstimate, axis, innerNodeSize);
 
         ItemBatcher batchedItemIterator = new ItemBatcher(axis);
         ItemBatcher.Batch batch;
         while ((batch = batchedItemIterator.next(sortedItems)) != null) {
-            // 2. Size tracks to fit non-spanning items: For each track with an intrinsic track sizing function and not a flexible sizing function,
+            // 2. Size tracks to fit non-spanning items: For each track with an intrinsic track sizing function and not
+            // a flexible sizing function,
             // consider the items in it with a span of 1:
-            int batchSpan = batch.items().get(0).span(axis);
+            int batchSpan = batch.items().getFirst().span(axis);
             if (!batch.isFlex() && batchSpan == 1) {
                 for (GridItem item : batch.items()) {
                     int trackIndex = item.placementIndexes(axis).start() + 1;
@@ -693,32 +701,33 @@ public final class TrackSizing {
                     // Handle base sizes
                     float newBaseSize;
                     if (track.minTrackSizingFunction.isMinContent()) {
-                        newBaseSize =
-                                F32.max(track.baseSize, itemSizer.minContentContribution(item, axisTracks));
+                        newBaseSize = F32.max(track.baseSize, itemSizer.minContentContribution(item, axisTracks));
                     } else if (track.minTrackSizingFunction.isMaxContent()) {
-                        newBaseSize =
-                                F32.max(track.baseSize, itemSizer.maxContentContribution(item, axisTracks));
+                        newBaseSize = F32.max(track.baseSize, itemSizer.maxContentContribution(item, axisTracks));
                         // If the container size is indefinite and has not yet been resolved then percentage sized
                         // tracks are treated as auto
                     } else if (track.minTrackSizingFunction.behavesAsAuto(axisInnerNodeSize)) {
                         float space;
                         // QUIRK: The spec says that:
                         //
-                        //   If the grid container is being sized under a min- or max-content constraint, use the items’ limited
+                        //   If the grid container is being sized under a min- or max-content constraint, use the items’
+                        // limited
                         //   min-content contributions in place of their minimum contributions here.
                         //
-                        // However, in practice browsers only seem to apply this rule if the item is not a scroll container
-                        // (note that overflow:hidden counts as a scroll container), giving the automatic minimum size of scroll
+                        // However, in practice browsers only seem to apply this rule if the item is not a scroll
+                        // container
+                        // (note that overflow:hidden counts as a scroll container), giving the automatic minimum size
+                        // of scroll
                         // containers (zero) precedence over the min-content contributions.
                         if ((axisAvailableGridSpace == AvailableSpace.MIN_CONTENT
                                         || axisAvailableGridSpace == AvailableSpace.MAX_CONTENT)
                                 && !item.overflow.get(axis).isScrollContainer()) {
                             float axisMinimumSize = itemSizer.minimumContribution(item, axisTracks);
                             float axisMinContentSize = itemSizer.minContentContribution(item, axisTracks);
-                            @Opt float limit = track.maxTrackSizingFunction.definiteLimit(
-                                    axisInnerNodeSize, itemSizer::calc);
-                            space = F32.max(
-                                    F32.maybeMinO(axisMinContentSize, limit), axisMinimumSize);
+                            @Opt
+                            float limit =
+                                    track.maxTrackSizingFunction.definiteLimit(axisInnerNodeSize, itemSizer::calc);
+                            space = F32.max(F32.maybeMinO(axisMinContentSize, limit), axisMinimumSize);
                         } else {
                             space = itemSizer.minimumContribution(item, axisTracks);
                         }
@@ -731,22 +740,26 @@ public final class TrackSizing {
 
                     // Handle growth limits
                     //
-                    // Computing an item's contributions calls into the child, so they are only computed if they are used.
-                    // The min-content contribution is computed for every item in an intrinsic track (even where only the
-                    // max-content contribution determines the growth limit), as the check for whether track sizing needs
+                    // Computing an item's contributions calls into the child, so they are only computed if they are
+                    // used.
+                    // The min-content contribution is computed for every item in an intrinsic track (even where only
+                    // the
+                    // max-content contribution determines the growth limit), as the check for whether track sizing
+                    // needs
                     // to be re-run compares each such item's min-content contribution against the one cached here.
                     track = axisTracks.get(trackIndex);
                     MaxTrackSizingFunction maxTrackSizingFunction = track.maxTrackSizingFunction;
                     float fitContentLimit = track.fitContentLimit();
-                    @Opt float minContentContribution = track.hasIntrinsicSizingFunction()
+                    @Opt
+                    float minContentContribution = track.hasIntrinsicSizingFunction()
                             ? itemSizer.minContentContribution(item, axisTracks)
                             : OptF32.NONE;
                     @Opt float plannedIncrease;
                     if (maxTrackSizingFunction.isFitContent()) {
                         // Always increase the growth limit to at least the size of the *fit-content limited*
                         // max-content contribution
-                        float maxContentContribution = F32.min(
-                                itemSizer.maxContentContribution(item, axisTracks), fitContentLimit);
+                        float maxContentContribution =
+                                F32.min(itemSizer.maxContentContribution(item, axisTracks), fitContentLimit);
 
                         // If item is not a scroll container, then increase the growth limit to at least the
                         // size of the min-content contribution
@@ -755,8 +768,7 @@ public final class TrackSizing {
                                 ? F32.max(minContentContribution, maxContentContribution)
                                 : maxContentContribution;
                     } else if (maxTrackSizingFunction.isMaxContentAlike()
-                            || (maxTrackSizingFunction.usesPercentage()
-                                    && OptF32.isNone(axisInnerNodeSize))) {
+                            || (maxTrackSizingFunction.usesPercentage() && OptF32.isNone(axisInnerNodeSize))) {
                         // If the container size is indefinite and has not yet been resolved then percentage sized
                         // tracks should be treated as auto (this matches Chrome's behaviour and seems sensible)
                         plannedIncrease = itemSizer.maxContentContribution(item, axisTracks);
@@ -767,8 +779,7 @@ public final class TrackSizing {
                     }
                     if (OptF32.isSome(plannedIncrease)) {
                         GridTrack t = axisTracks.get(trackIndex);
-                        t.growthLimitPlannedIncrease =
-                                F32.max(t.growthLimitPlannedIncrease, plannedIncrease);
+                        t.growthLimitPlannedIncrease = F32.max(t.growthLimitPlannedIncrease, plannedIncrease);
                     }
                 }
 
@@ -798,21 +809,22 @@ public final class TrackSizing {
                 //
                 // QUIRK: The spec says that:
                 //
-                //   If the grid container is being sized under a min- or max-content constraint, use the items’ limited min-content contributions
+                //   If the grid container is being sized under a min- or max-content constraint, use the items’ limited
+                // min-content contributions
                 //   in place of their minimum contributions here.
                 //
-                // However, in practice browsers only seem to apply this rule if the item is not a scroll container (note that overflow:hidden counts as
-                // a scroll container), giving the automatic minimum size of scroll containers (zero) precedence over the min-content contributions.
+                // However, in practice browsers only seem to apply this rule if the item is not a scroll container
+                // (note that overflow:hidden counts as
+                // a scroll container), giving the automatic minimum size of scroll containers (zero) precedence over
+                // the min-content contributions.
                 float space;
                 if ((axisAvailableGridSpace == AvailableSpace.MIN_CONTENT
                                 || axisAvailableGridSpace == AvailableSpace.MAX_CONTENT)
                         && !item.overflow.get(axis).isScrollContainer()) {
                     float axisMinimumSize = itemSizer.minimumContribution(item, axisTracks);
                     float axisMinContentSize = itemSizer.minContentContribution(item, axisTracks);
-                    @Opt float limit = item.spannedTrackLimit(
-                            axis, axisTracks, axisInnerNodeSize, itemSizer::calc);
-                    float limitedMinContent =
-                            F32.max(F32.maybeMinO(axisMinContentSize, limit), axisMinimumSize);
+                    @Opt float limit = item.spannedTrackLimit(axis, axisTracks, axisInnerNodeSize, itemSizer::calc);
+                    float limitedMinContent = F32.max(F32.maybeMinO(axisMinContentSize, limit), axisMinimumSize);
 
                     // For items crossing flexible tracks, browsers hand the content-derived contribution to
                     // the flexible tracks only in proportion to the crossed flex factor sum, clamped at one
@@ -824,8 +836,7 @@ public final class TrackSizing {
                     // `grid-template-rows: 0fr` to `1fr` collapse animation pattern relies on.
                     if (batch.isFlex()) {
                         TrackCounts.TrackRange spanRange = item.trackRangeExcludingLines(axis);
-                        List<GridTrack> spannedTracks =
-                                axisTracks.subList(spanRange.start(), spanRange.end());
+                        List<GridTrack> spannedTracks = axisTracks.subList(spanRange.start(), spanRange.end());
                         float inflexibleSizes = 0.0f;
                         for (GridTrack t : spannedTracks) {
                             if (!t.isFlexible()) {
@@ -844,8 +855,8 @@ public final class TrackSizing {
                 TrackCounts.TrackRange trackRange = item.trackRangeExcludingLines(axis);
                 List<GridTrack> tracks = axisTracks.subList(trackRange.start(), trackRange.end());
                 if (space > 0.0f) {
-                    Predicate<GridTrack> hasIntrinsicMinTrackSizingFunction = t -> OptF32.isNone(
-                            t.minTrackSizingFunction.definiteValue(axisInnerNodeSize, itemSizer::calc));
+                    Predicate<GridTrack> hasIntrinsicMinTrackSizingFunction = t ->
+                            OptF32.isNone(t.minTrackSizingFunction.definiteValue(axisInnerNodeSize, itemSizer::calc));
                     if (item.overflow.get(axis).isScrollContainer()) {
                         distributeItemSpaceToBaseSize(
                                 batch.isFlex(),
@@ -868,13 +879,13 @@ public final class TrackSizing {
             flushPlannedBaseSizeIncreases(axisTracks);
 
             // 2. For content-based minimums:
-            // Next continue to increase the base size of tracks with a min track sizing function of min-content or max-content
+            // Next continue to increase the base size of tracks with a min track sizing function of min-content or
+            // max-content
             // by distributing extra space as needed to account for these items' min-content contributions.
             Predicate<GridTrack> hasMinOrMaxContentMinTrackSizingFunction =
                     t -> t.minTrackSizingFunction.isMinOrMaxContent();
             for (GridItem item : batch.items()) {
-                if (!item.spansTrackMatching(
-                        axis, axisTracks, hasMinOrMaxContentMinTrackSizingFunction)) {
+                if (!item.spansTrackMatching(axis, axisTracks, hasMinOrMaxContentMinTrackSizingFunction)) {
                     continue;
                 }
                 float space = itemSizer.minContentContribution(item, axisTracks);
@@ -904,8 +915,10 @@ public final class TrackSizing {
 
             // 3. For max-content minimums:
 
-            // If the grid container is being sized under a max-content constraint, continue to increase the base size of tracks with
-            // a min track sizing function of auto or max-content by distributing extra space as needed to account for these items'
+            // If the grid container is being sized under a max-content constraint, continue to increase the base size
+            // of tracks with
+            // a min track sizing function of auto or max-content by distributing extra space as needed to account for
+            // these items'
             // limited max-content contributions.
 
             // Wrapping the method on GridTrack is necessary in order to resolve percentage fit-content arguments.
@@ -914,13 +927,11 @@ public final class TrackSizing {
                     if (!item.spansTrackMatching(
                             axis,
                             axisTracks,
-                            t -> hasAutoMinTrackSizingFunction(t)
-                                    || hasMaxContentMinTrackSizingFunction(t))) {
+                            t -> hasAutoMinTrackSizingFunction(t) || hasMaxContentMinTrackSizingFunction(t))) {
                         continue;
                     }
                     float axisMaxContentSize = itemSizer.maxContentContribution(item, axisTracks);
-                    @Opt float limit = item.spannedTrackLimit(
-                            axis, axisTracks, axisInnerNodeSize, itemSizer::calc);
+                    @Opt float limit = item.spannedTrackLimit(axis, axisTracks, axisInnerNodeSize, itemSizer::calc);
                     float space = F32.maybeMinO(axisMaxContentSize, limit);
 
                     // As for the intrinsic minimums above: scale the space beyond the spanned inflexible
@@ -929,8 +940,7 @@ public final class TrackSizing {
                     // the scaling already applied to the min-content contribution.
                     if (batch.isFlex()) {
                         TrackCounts.TrackRange spanRange = item.trackRangeExcludingLines(axis);
-                        List<GridTrack> spannedTracks =
-                                axisTracks.subList(spanRange.start(), spanRange.end());
+                        List<GridTrack> spannedTracks = axisTracks.subList(spanRange.start(), spanRange.end());
                         float inflexibleSizes = 0.0f;
                         for (GridTrack t : spannedTracks) {
                             if (!t.isFlexible()) {
@@ -947,9 +957,12 @@ public final class TrackSizing {
                         // distribute space only to those tracks. Otherwise distribute space to tracks with an Auto min
                         // track sizing function.
                         //
-                        // Note: this prioritisation of MaxContent over Auto is not mentioned in the spec (which suggests that
-                        // we ought to distribute space evenly between MaxContent and Auto tracks). But it is implemented like
-                        // this in both Chrome and Firefox (and it does have a certain logic to it), so we implement it too for
+                        // Note: this prioritisation of MaxContent over Auto is not mentioned in the spec (which
+                        // suggests that
+                        // we ought to distribute space evenly between MaxContent and Auto tracks). But it is
+                        // implemented like
+                        // this in both Chrome and Firefox (and it does have a certain logic to it), so we implement it
+                        // too for
                         // compatibility.
                         //
                         // See: https://www.w3.org/TR/css-grid-1/#track-size-max-content-min
@@ -982,13 +995,13 @@ public final class TrackSizing {
                 flushPlannedBaseSizeIncreases(axisTracks);
             }
 
-            // In all cases, continue to increase the base size of tracks with a min track sizing function of max-content by distributing
+            // In all cases, continue to increase the base size of tracks with a min track sizing function of
+            // max-content by distributing
             // extra space as needed to account for these items' max-content contributions.
             Predicate<GridTrack> hasMaxContentMinTrackSizingFunctionPredicate =
                     TrackSizing::hasMaxContentMinTrackSizingFunction;
             for (GridItem item : batch.items()) {
-                if (!item.spansTrackMatching(
-                        axis, axisTracks, hasMaxContentMinTrackSizingFunctionPredicate)) {
+                if (!item.spansTrackMatching(axis, axisTracks, hasMaxContentMinTrackSizingFunctionPredicate)) {
                     continue;
                 }
                 float space = itemSizer.maxContentContribution(item, axisTracks);
@@ -1006,7 +1019,8 @@ public final class TrackSizing {
             }
             flushPlannedBaseSizeIncreases(axisTracks);
 
-            // 4. If at this point any track’s growth limit is now less than its base size, increase its growth limit to match its base size.
+            // 4. If at this point any track’s growth limit is now less than its base size, increase its growth limit to
+            // match its base size.
             for (GridTrack track : axisTracks) {
                 if (track.growthLimit < track.baseSize) {
                     track.growthLimit = track.baseSize;
@@ -1016,49 +1030,47 @@ public final class TrackSizing {
             // If a track is a flexible track, then it has flexible max track sizing function
             // It cannot also have an intrinsic max track sizing function, so these steps do not apply.
             if (!batch.isFlex()) {
-                // 5. For intrinsic maximums: Next increase the growth limit of tracks with an intrinsic max track sizing function by
+                // 5. For intrinsic maximums: Next increase the growth limit of tracks with an intrinsic max track
+                // sizing function by
                 // distributing extra space as needed to account for these items' min-content contributions.
                 Predicate<GridTrack> hasIntrinsicMaxTrackSizingFunction =
                         t -> !t.maxTrackSizingFunction.hasDefiniteValue(axisInnerNodeSize);
                 for (GridItem item : batch.items()) {
-                    if (!item.spansTrackMatching(
-                            axis, axisTracks, hasIntrinsicMaxTrackSizingFunction)) {
+                    if (!item.spansTrackMatching(axis, axisTracks, hasIntrinsicMaxTrackSizingFunction)) {
                         continue;
                     }
                     float space = itemSizer.minContentContribution(item, axisTracks);
                     TrackCounts.TrackRange trackRange = item.trackRangeExcludingLines(axis);
-                    List<GridTrack> tracks =
-                            axisTracks.subList(trackRange.start(), trackRange.end());
+                    List<GridTrack> tracks = axisTracks.subList(trackRange.start(), trackRange.end());
                     if (space > 0.0f) {
-                        distributeItemSpaceToGrowthLimit(
-                                space, tracks, hasIntrinsicMaxTrackSizingFunction);
+                        distributeItemSpaceToGrowthLimit(space, tracks, hasIntrinsicMaxTrackSizingFunction);
                     }
                 }
-                // Mark any tracks whose growth limit changed from infinite to finite in this step as infinitely growable for the next step.
+                // Mark any tracks whose growth limit changed from infinite to finite in this step as infinitely
+                // growable for the next step.
                 flushPlannedGrowthLimitIncreases(axisTracks, true);
 
-                // 6. For max-content maximums: Lastly continue to increase the growth limit of tracks with a max track sizing function of max-content
-                // by distributing extra space as needed to account for these items' max-content contributions. However, limit the growth of any
+                // 6. For max-content maximums: Lastly continue to increase the growth limit of tracks with a max track
+                // sizing function of max-content
+                // by distributing extra space as needed to account for these items' max-content contributions. However,
+                // limit the growth of any
                 // fit-content() tracks by their fit-content() argument.
                 Predicate<GridTrack> hasMaxContentMaxTrackSizingFunction =
                         t -> t.maxTrackSizingFunction.isMaxContentAlike()
-                                || (t.maxTrackSizingFunction.usesPercentage()
-                                        && OptF32.isNone(axisInnerNodeSize));
+                                || (t.maxTrackSizingFunction.usesPercentage() && OptF32.isNone(axisInnerNodeSize));
                 for (GridItem item : batch.items()) {
-                    if (!item.spansTrackMatching(
-                            axis, axisTracks, hasMaxContentMaxTrackSizingFunction)) {
+                    if (!item.spansTrackMatching(axis, axisTracks, hasMaxContentMaxTrackSizingFunction)) {
                         continue;
                     }
                     float space = itemSizer.maxContentContribution(item, axisTracks);
                     TrackCounts.TrackRange trackRange = item.trackRangeExcludingLines(axis);
-                    List<GridTrack> tracks =
-                            axisTracks.subList(trackRange.start(), trackRange.end());
+                    List<GridTrack> tracks = axisTracks.subList(trackRange.start(), trackRange.end());
                     if (space > 0.0f) {
-                        distributeItemSpaceToGrowthLimit(
-                                space, tracks, hasMaxContentMaxTrackSizingFunction);
+                        distributeItemSpaceToGrowthLimit(space, tracks, hasMaxContentMaxTrackSizingFunction);
                     }
                 }
-                // Mark any tracks whose growth limit changed from infinite to finite in this step as infinitely growable for the next step.
+                // Mark any tracks whose growth limit changed from infinite to finite in this step as infinitely
+                // growable for the next step.
                 flushPlannedGrowthLimitIncreases(axisTracks, false);
             }
         }
@@ -1080,10 +1092,10 @@ public final class TrackSizing {
     /// The latter condition was added in order to match Chrome. But I believe it is due to the provision
     /// under minmax here https://www.w3.org/TR/css-grid-1/#track-sizes which states that:
     ///
-    ///    "If the max is less than the min, then the max will be floored by the min (essentially yielding minmax(min, min))"
+    ///    "If the max is less than the min, then the max will be floored by the min (essentially yielding minmax(min,
+    /// min))"
     private static boolean hasAutoMinTrackSizingFunction(GridTrack track) {
-        return track.minTrackSizingFunction.isAuto()
-                && !track.maxTrackSizingFunction.isMinContent();
+        return track.minTrackSizingFunction.isAuto() && !track.maxTrackSizingFunction.isMinContent();
     }
 
     /// Whether a track has a MaxContent min track sizing function
@@ -1129,24 +1141,14 @@ public final class TrackSizing {
             }
             if (flexFactorSum > 0.0f) {
                 distributeItemSpaceToBaseSizeInner(
-                        space,
-                        tracks,
-                        filter,
-                        GridTrack::flexFactor,
-                        trackLimit,
-                        intrinsicContributionType);
+                        space, tracks, filter, GridTrack::flexFactor, trackLimit, intrinsicContributionType);
             } else {
                 distributeItemSpaceToBaseSizeInner(
                         space, tracks, filter, t -> 1.0f, trackLimit, intrinsicContributionType);
             }
         } else {
             distributeItemSpaceToBaseSizeInner(
-                    space,
-                    tracks,
-                    trackIsAffected,
-                    t -> 1.0f,
-                    trackLimit,
-                    intrinsicContributionType);
+                    space, tracks, trackIsAffected, t -> 1.0f, trackLimit, intrinsicContributionType);
         }
     }
 
@@ -1183,12 +1185,7 @@ public final class TrackSizing {
         //   - We run out of growable tracks to distribute to
 
         extraSpace = distributeSpaceUpToLimits(
-                extraSpace,
-                tracks,
-                trackIsAffected,
-                trackDistributionProportion,
-                getBaseSize,
-                trackLimit);
+                extraSpace, tracks, trackIsAffected, trackDistributionProportion, getBaseSize, trackLimit);
 
         // 3. Distribute remaining span beyond limits (if any)
         if (extraSpace > DISTRIBUTE_BASE_SIZE_THRESHOLD) {
@@ -1259,28 +1256,22 @@ public final class TrackSizing {
         // growth limit is still infinite), in which case it is the track's fit-content() argument if it has one, or
         // infinity if it does not. As the affected size of a track that isn't growable is its growth limit, those
         // tracks won't receive any space in this step.
-        TrackFloatFn growthLimitOrBaseSize =
-                t -> t.growthLimit == Float.POSITIVE_INFINITY ? t.baseSize : t.growthLimit;
+        TrackFloatFn growthLimitOrBaseSize = t -> t.growthLimit == Float.POSITIVE_INFINITY ? t.baseSize : t.growthLimit;
         float remaining = distributeSpaceUpToLimits(
                 extraSpace,
                 tracks,
-                t -> trackIsAffected.test(t)
-                        && (t.infinitelyGrowable || t.growthLimit == Float.POSITIVE_INFINITY),
+                t -> trackIsAffected.test(t) && (t.infinitelyGrowable || t.growthLimit == Float.POSITIVE_INFINITY),
                 t -> 1.0f,
                 growthLimitOrBaseSize,
                 GridTrack::fitContentLimit);
 
         // 3. Distribute space beyond limits
-        // If space remains after all tracks are frozen, unfreeze and continue to distribute space to the item-incurred increase
+        // If space remains after all tracks are frozen, unfreeze and continue to distribute space to the item-incurred
+        // increase
         // ...when handling any intrinsic growth limit: all affected tracks.
         if (remaining > 0.0f) {
             distributeSpaceUpToLimits(
-                    remaining,
-                    tracks,
-                    trackIsAffected,
-                    t -> 1.0f,
-                    growthLimitOrBaseSize,
-                    GridTrack::fitContentLimit);
+                    remaining, tracks, trackIsAffected, t -> 1.0f, growthLimitOrBaseSize, GridTrack::fitContentLimit);
         }
 
         // 4. For each affected track, if the track’s item-incurred increase is larger than the track’s planned increase
@@ -1323,7 +1314,8 @@ public final class TrackSizing {
     }
 
     /// 11.7. Expand Flexible Tracks
-    /// This step sizes flexible tracks using the largest value it can assign to an fr without exceeding the available space.
+    /// This step sizes flexible tracks using the largest value it can assign to an fr without exceeding the available
+    /// space.
     private static void expandFlexibleTracks(
             LayoutPartialTree tree,
             AbstractAxis axis,
@@ -1335,8 +1327,8 @@ public final class TrackSizing {
             AvailableSpace axisAvailableSpaceForExpansion,
             SizeOptF32 innerNodeSize,
             TrackSizeEstimate getTrackSizeEstimate) {
-        IntrinsicSizeMeasurer itemSizer = new IntrinsicSizeMeasurer(
-                tree, otherAxisTracks, getTrackSizeEstimate, axis, innerNodeSize);
+        IntrinsicSizeMeasurer itemSizer =
+                new IntrinsicSizeMeasurer(tree, otherAxisTracks, getTrackSizeEstimate, axis, innerNodeSize);
 
         // First, find the grid’s used flex fraction:
         float flexFraction;
@@ -1376,15 +1368,15 @@ public final class TrackSizing {
             float flexFractionFromItems = 0.0f;
             boolean seenItem = false;
             for (GridItem item : items) {
-                // For each grid item that crosses a flexible track, the result of finding the size of an fr using all the grid tracks
+                // For each grid item that crosses a flexible track, the result of finding the size of an fr using all
+                // the grid tracks
                 // that the item crosses and a space to fill of the item’s max-content contribution.
                 if (!item.crossesFlexibleTrack(axis)) {
                     continue;
                 }
                 float maxContentContribution = itemSizer.maxContentContribution(item, axisTracks);
                 TrackCounts.TrackRange range = item.trackRangeExcludingLines(axis);
-                float v = findSizeOfFr(
-                        axisTracks.subList(range.start(), range.end()), maxContentContribution);
+                float v = findSizeOfFr(axisTracks.subList(range.start(), range.end()), maxContentContribution);
                 if (!seenItem || Float.compare(v, flexFractionFromItems) > 0) {
                     flexFractionFromItems = v;
                     seenItem = true;
@@ -1392,8 +1384,10 @@ public final class TrackSizing {
             }
             float flexFraction0 = F32.max(flexFractionFromTracks, flexFractionFromItems);
 
-            // If using this flex fraction would cause the grid to be smaller than the grid container’s min-width/height (or larger than the
-            // grid container’s max-width/height), then redo this step, treating the free space as definite and the available grid space as equal
+            // If using this flex fraction would cause the grid to be smaller than the grid container’s min-width/height
+            // (or larger than the
+            // grid container’s max-width/height), then redo this step, treating the free space as definite and the
+            // available grid space as equal
             // to the grid container’s inner size when it’s sized to its min-width/height (max-width/height).
             // (Note: min_size takes precedence over max_size)
             float hypotheticalGridSize = 0.0f;
@@ -1437,8 +1431,10 @@ public final class TrackSizing {
         }
 
         // If the product of the hypothetical fr size (computed below) and any flexible track’s flex factor
-        // is less than the track’s base size, then we must restart this algorithm treating all such tracks as inflexible.
-        // We therefore wrap the entire algorithm in a loop, with an hypothetical_fr_size of INFINITY such that the above
+        // is less than the track’s base size, then we must restart this algorithm treating all such tracks as
+        // inflexible.
+        // We therefore wrap the entire algorithm in a loop, with an hypothetical_fr_size of INFINITY such that the
+        // above
         // condition can never be true for the first iteration.
         float hypotheticalFrSize = Float.POSITIVE_INFINITY;
         float previousIterHypotheticalFrSize;
@@ -1449,7 +1445,8 @@ public final class TrackSizing {
         int maxIterations = tracks.size() + 1;
         for (int iteration = 0; iteration < maxIterations; iteration++) {
             // Let leftover space be the space to fill minus the base sizes of the non-flexible grid tracks.
-            // Let flex factor sum be the sum of the flex factors of the flexible tracks. If this value is less than 1, set it to 1 instead.
+            // Let flex factor sum be the sum of the flex factors of the flexible tracks. If this value is less than 1,
+            // set it to 1 instead.
             // We compute both of these in a single loop to avoid iterating over the data twice
             float usedSpace = 0.0f;
             float naiveFlexFactorSum = 0.0f;
@@ -1469,7 +1466,8 @@ public final class TrackSizing {
             previousIterHypotheticalFrSize = hypotheticalFrSize;
             hypotheticalFrSize = leftoverSpace / flexFactor;
 
-            // If the product of the hypothetical fr size and a flexible track’s flex factor is less than the track’s base size,
+            // If the product of the hypothetical fr size and a flexible track’s flex factor is less than the track’s
+            // base size,
             // restart this algorithm treating all such tracks as inflexible.
             // We keep track of the hypothetical_fr_size
             boolean hypotheticalFrSizeIsValid = true;
@@ -1493,11 +1491,10 @@ public final class TrackSizing {
     }
 
     /// 11.8. Stretch auto Tracks
-    /// This step expands tracks that have an auto max track sizing function by dividing any remaining positive, definite free space equally amongst them.
+    /// This step expands tracks that have an auto max track sizing function by dividing any remaining positive,
+    /// definite free space equally amongst them.
     private static void stretchAutoTracks(
-            List<GridTrack> axisTracks,
-            @Opt float axisMinSize,
-            AvailableSpace axisAvailableSpaceForExpansion) {
+            List<GridTrack> axisTracks, @Opt float axisMinSize, AvailableSpace axisAvailableSpaceForExpansion) {
         int numAutoTracks = 0;
         for (GridTrack track : axisTracks) {
             if (track.maxTrackSizingFunction.isAuto()) {
@@ -1550,8 +1547,7 @@ public final class TrackSizing {
             }
             float trackDistributionProportionSum = 0.0f;
             for (GridTrack track : tracks) {
-                if (trackAffectedProperty.apply(track) + track.itemIncurredIncrease
-                                < trackLimit.apply(track)
+                if (trackAffectedProperty.apply(track) + track.itemIncurredIncrease < trackLimit.apply(track)
                         && trackIsAffected.test(track)) {
                     trackDistributionProportionSum += trackDistributionProportion.apply(track);
                 }
@@ -1565,13 +1561,11 @@ public final class TrackSizing {
             float minIncreaseLimit = Float.NaN;
             boolean foundIncreaseLimit = false;
             for (GridTrack track : tracks) {
-                if (trackAffectedProperty.apply(track) + track.itemIncurredIncrease
-                                < trackLimit.apply(track)
+                if (trackAffectedProperty.apply(track) + track.itemIncurredIncrease < trackLimit.apply(track)
                         && trackIsAffected.test(track)) {
-                    float limit = (trackLimit.apply(track)
-                                    - trackAffectedProperty.apply(track)
-                                    - track.itemIncurredIncrease)
-                            / trackDistributionProportion.apply(track);
+                    float limit =
+                            (trackLimit.apply(track) - trackAffectedProperty.apply(track) - track.itemIncurredIncrease)
+                                    / trackDistributionProportion.apply(track);
                     if (!foundIncreaseLimit || Float.compare(limit, minIncreaseLimit) < 0) {
                         minIncreaseLimit = limit;
                         foundIncreaseLimit = true;
@@ -1581,11 +1575,9 @@ public final class TrackSizing {
             if (!foundIncreaseLimit) {
                 // `min_by(...).unwrap()` — cannot fire: proportion_sum > 0 implies
                 // at least one matching track existed.
-                throw new IllegalStateException(
-                        "distribute_space_up_to_limits: no growable track found");
+                throw new IllegalStateException("distribute_space_up_to_limits: no growable track found");
             }
-            float iterationItemIncurredIncrease =
-                    F32.min(minIncreaseLimit, remaining / trackDistributionProportionSum);
+            float iterationItemIncurredIncrease = F32.min(minIncreaseLimit, remaining / trackDistributionProportionSum);
 
             for (GridTrack track : tracks) {
                 if (!trackIsAffected.test(track)) {

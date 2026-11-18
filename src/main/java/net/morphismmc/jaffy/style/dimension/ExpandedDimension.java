@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/dimension.rs — `ExpandedDimension`.
+// JAFFY-UPSTREAM: src/style/dimension.rs
+// JAFFY-NOTE: `ExpandedDimension`
 package net.morphismmc.jaffy.style.dimension;
 
 public sealed interface ExpandedDimension {
@@ -47,12 +48,12 @@ public sealed interface ExpandedDimension {
     /// `PartialEq` -> rustEq: f32 fields compare IEEE (`==`), handles identity.
     default boolean rustEq(ExpandedDimension other) {
         return switch (this) {
-            case Length l -> other instanceof Length o && l.val == o.val;
-            case Percent p -> other instanceof Percent o && p.val == o.val;
-            case FitContentPx f -> other instanceof FitContentPx o && f.val == o.val;
-            case FitContentPercent f -> other instanceof FitContentPercent o && f.val == o.val;
-            case FitContentCalc f -> other instanceof FitContentCalc o && f.handle == o.handle;
-            case Calc c -> other instanceof Calc o && c.handle == o.handle;
+            case Length(float v) -> other instanceof Length(float ov) && v == ov;
+            case Percent(float v) -> other instanceof Percent(float ov) && v == ov;
+            case FitContentPx(float v) -> other instanceof FitContentPx(float ov) && v == ov;
+            case FitContentPercent(float v) -> other instanceof FitContentPercent(float ov) && v == ov;
+            case FitContentCalc(Object h) -> other instanceof FitContentCalc(Object oh) && h == oh;
+            case Calc(Object h) -> other instanceof Calc(Object oh) && h == oh;
             default -> getClass() == other.getClass();
         };
     }

@@ -1,6 +1,17 @@
+// JAFFY-UPSTREAM: benches/benches/flexbox.rs
+
 package net.morphismmc.jaffy.bench.flexbox;
 
 import java.util.concurrent.TimeUnit;
+
+import net.morphismmc.jaffy.bench.BenchTree;
+import net.morphismmc.jaffy.bench.GenStyle;
+import net.morphismmc.jaffy.bench.JaffyStyles;
+import net.morphismmc.jaffy.bench.JaffyTreeBuilder;
+import net.morphismmc.jaffy.bench.Rng;
+import net.morphismmc.jaffy.bench.VfyjxfStyles;
+import net.morphismmc.jaffy.bench.VfyjxfTreeBuilder;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -13,14 +24,6 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
-
-import net.morphismmc.jaffy.bench.BenchTree;
-import net.morphismmc.jaffy.bench.GenStyle;
-import net.morphismmc.jaffy.bench.JaffyStyles;
-import net.morphismmc.jaffy.bench.JaffyTreeBuilder;
-import net.morphismmc.jaffy.bench.Rng;
-import net.morphismmc.jaffy.bench.VfyjxfStyles;
-import net.morphismmc.jaffy.bench.VfyjxfTreeBuilder;
 
 /// Port of upstream `benches/benches/flexbox.rs` — all six benchmark groups:
 /// `huge_nested`, `wide`, `absolute`, `deep_random`, `deep_auto`,
@@ -42,8 +45,7 @@ public class FlexboxBench {
         @Override
         public net.morphismmc.jaffy.style.Style leafStyle(Rng rng) {
             return net.morphismmc.jaffy.style.Style.DEFAULT.withSize(
-                    new net.morphismmc.jaffy.geometry.Size<>(
-                            JaffyStyles.dimension(rng), JaffyStyles.dimension(rng)));
+                    new net.morphismmc.jaffy.geometry.Size<>(JaffyStyles.dimension(rng), JaffyStyles.dimension(rng)));
         }
 
         @Override
@@ -56,8 +58,7 @@ public class FlexboxBench {
         @Override
         public dev.vfyjxf.taffy.style.TaffyStyle leafStyle(Rng rng) {
             dev.vfyjxf.taffy.style.TaffyStyle s = new dev.vfyjxf.taffy.style.TaffyStyle();
-            s.size = dev.vfyjxf.taffy.geometry.TaffySize.of(
-                    VfyjxfStyles.dimension(rng), VfyjxfStyles.dimension(rng));
+            s.size = dev.vfyjxf.taffy.geometry.TaffySize.of(VfyjxfStyles.dimension(rng), VfyjxfStyles.dimension(rng));
             return s;
         }
 
@@ -181,10 +182,12 @@ public class FlexboxBench {
     @SuppressWarnings("unchecked")
     static <S, N> BenchTree<S, N> builderFor(String lib, GenStyle<?> gen) {
         return switch (lib) {
-            case "jaffy" -> (BenchTree<S, N>) new JaffyTreeBuilder(
-                    new Rng(STANDARD_RNG_SEED), (GenStyle<net.morphismmc.jaffy.style.Style>) gen);
-            default -> (BenchTree<S, N>) new VfyjxfTreeBuilder(
-                    new Rng(STANDARD_RNG_SEED), (GenStyle<dev.vfyjxf.taffy.style.TaffyStyle>) gen);
+            case "jaffy" ->
+                (BenchTree<S, N>) new JaffyTreeBuilder(
+                        new Rng(STANDARD_RNG_SEED), (GenStyle<net.morphismmc.jaffy.style.Style>) gen);
+            default ->
+                (BenchTree<S, N>) new VfyjxfTreeBuilder(
+                        new Rng(STANDARD_RNG_SEED), (GenStyle<dev.vfyjxf.taffy.style.TaffyStyle>) gen);
         };
     }
 
@@ -197,7 +200,8 @@ public class FlexboxBench {
 
         @Override
         BenchTree<?, ?> build(String lib) {
-            BenchTree<?, ?> t = builderFor(lib,
+            BenchTree<?, ?> t = builderFor(
+                    lib,
                     "jaffy".equals(lib)
                             ? new JaffyFixed(JaffyStyles.HUGE_NESTED)
                             : new VfyjxfFixed(VfyjxfStyles.hugeNested()));
@@ -221,8 +225,7 @@ public class FlexboxBench {
 
         @Override
         BenchTree<?, ?> build(String lib) {
-            BenchTree<?, ?> t = builderFor(lib,
-                    "jaffy".equals(lib) ? new JaffyRandom() : new VfyjxfRandom());
+            BenchTree<?, ?> t = builderFor(lib, "jaffy".equals(lib) ? new JaffyRandom() : new VfyjxfRandom());
             t.buildFlatHierarchy(nodeCount);
             t.enableRounding();
             return t;
@@ -243,8 +246,7 @@ public class FlexboxBench {
 
         @Override
         BenchTree<?, ?> build(String lib) {
-            BenchTree<?, ?> t = builderFor(lib,
-                    "jaffy".equals(lib) ? new JaffyAbsolute() : new VfyjxfAbsolute());
+            BenchTree<?, ?> t = builderFor(lib, "jaffy".equals(lib) ? new JaffyAbsolute() : new VfyjxfAbsolute());
             t.buildFlatHierarchy(nodeCount);
             t.enableRounding();
             return t;
@@ -265,8 +267,7 @@ public class FlexboxBench {
 
         @Override
         BenchTree<?, ?> build(String lib) {
-            BenchTree<?, ?> t = builderFor(lib,
-                    "jaffy".equals(lib) ? new JaffyRandom() : new VfyjxfRandom());
+            BenchTree<?, ?> t = builderFor(lib, "jaffy".equals(lib) ? new JaffyRandom() : new VfyjxfRandom());
             t.buildDeepHierarchy(nodeCount, 2);
             t.enableRounding();
             return t;
@@ -287,7 +288,8 @@ public class FlexboxBench {
 
         @Override
         BenchTree<?, ?> build(String lib) {
-            BenchTree<?, ?> t = builderFor(lib,
+            BenchTree<?, ?> t = builderFor(
+                    lib,
                     "jaffy".equals(lib)
                             ? new JaffyFixed(JaffyStyles.DEEP_AUTO)
                             : new VfyjxfFixed(VfyjxfStyles.deepAuto()));
@@ -311,8 +313,7 @@ public class FlexboxBench {
 
         @Override
         BenchTree<?, ?> build(String lib) {
-            BenchTree<?, ?> t = builderFor(lib,
-                    "jaffy".equals(lib) ? new JaffySuperDeep() : new VfyjxfSuperDeep());
+            BenchTree<?, ?> t = builderFor(lib, "jaffy".equals(lib) ? new JaffySuperDeep() : new VfyjxfSuperDeep());
             t.buildSuperDeepHierarchy(depth, 3);
             t.enableRounding();
             return t;

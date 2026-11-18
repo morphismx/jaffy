@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `TraversePartialTree` trait.
+// JAFFY-UPSTREAM: src/tree/traits.rs
+// JAFFY-NOTE: `TraversePartialTree` trait
 //
 // GAT `ChildIter<'a>: Iterator<Item = NodeId>` -> fastutil `LongIterator`
 // (GAP-017); `NodeId` -> `long` (GAP-015); `usize` -> `int` (GAP-014).
@@ -6,7 +7,6 @@
 package net.morphismmc.jaffy.tree.traits;
 
 import it.unimi.dsi.fastutil.longs.LongIterator;
-
 
 /// Taffy's abstraction for downward tree traversal.
 ///

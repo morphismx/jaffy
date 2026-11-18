@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/block.rs — `BlockContext<'_>`
+// JAFFY-UPSTREAM: src/compute/block.rs
+// JAFFY-NOTE: `BlockContext<'_>`
 // (`float_layout` feature always on).
 //
 // Rust `&'bfc mut BlockFormattingContext` -> a direct reference; root and
@@ -14,13 +15,12 @@ import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.style.Direction;
 import net.morphismmc.jaffy.style.float_.Clear;
 import net.morphismmc.jaffy.style.float_.FloatDirection;
+import net.morphismmc.jaffy.util.Sys;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
-import net.morphismmc.just.math.OptI32;
 import net.morphismmc.just.math.Unsigned;
-import net.morphismmc.jaffy.util.Sys;
-import org.jspecify.annotations.Nullable;
 
+import org.jspecify.annotations.Nullable;
 
 /// Context for each individual Block within a Block Formatting Context.
 ///
@@ -147,15 +147,9 @@ public final class BlockContext {
             this.adjoiningFloats[direction.ordinal()] = true;
         }
         PointF32 pos = this.bfc.floatContext.placeFloatedBox(
-                id,
-                floatedBox,
-                minY + this.yOffset,
-                this.contentBoxInsets,
-                direction,
-                clear);
+                id, floatedBox, minY + this.yOffset, this.contentBoxInsets, direction, clear);
         pos = new PointF32(pos.x() - this.insets.left(), pos.y() - this.yOffset);
-        this.floatContentContribution =
-                Sys.f32Max(this.floatContentContribution, pos.y() + floatedBox.height());
+        this.floatContentContribution = Sys.f32Max(this.floatContentContribution, pos.y() + floatedBox.height());
         return pos;
     }
 
@@ -173,11 +167,15 @@ public final class BlockContext {
     public java.util.List<PlacedFloat> floatsPlacedSince(FloatMark mark) {
         var floatContext = this.bfc.floatContext;
         java.util.List<PlacedFloat> out = new java.util.ArrayList<>();
-        for (PlacedFloatedBox placed : floatContext.leftFloats().subList(mark.left(), floatContext.leftFloats().size())) {
+        for (PlacedFloatedBox placed : floatContext
+                .leftFloats()
+                .subList(mark.left(), floatContext.leftFloats().size())) {
             PointF32 pos = floatContext.placedPosition(placed, FloatDirection.LEFT);
             out.add(new PlacedFloat(placed.id(), new PointF32(pos.x() - this.insets.left(), pos.y() - this.yOffset)));
         }
-        for (PlacedFloatedBox placed : floatContext.rightFloats().subList(mark.right(), floatContext.rightFloats().size())) {
+        for (PlacedFloatedBox placed : floatContext
+                .rightFloats()
+                .subList(mark.right(), floatContext.rightFloats().size())) {
             PointF32 pos = floatContext.placedPosition(placed, FloatDirection.RIGHT);
             out.add(new PlacedFloat(placed.id(), new PointF32(pos.x() - this.insets.left(), pos.y() - this.yOffset)));
         }
@@ -187,14 +185,10 @@ public final class BlockContext {
     /// Search a space suitable for laying out non-floated content of the given
     /// height into.
     public ContentSlot findContentSlot(float minY, float height, Clear clear, @Opt @Unsigned int after) {
-        ContentSlot slot = this.bfc.floatContext.findContentSlot(
-                minY + this.yOffset, height, this.contentBoxInsets, clear, after);
+        ContentSlot slot =
+                this.bfc.floatContext.findContentSlot(minY + this.yOffset, height, this.contentBoxInsets, clear, after);
         return new ContentSlot(
-                slot.segmentId(),
-                slot.x() - this.insets.left(),
-                slot.y() - this.yOffset,
-                slot.width(),
-                slot.height());
+                slot.segmentId(), slot.x() - this.insets.left(), slot.y() - this.yOffset, slot.width(), slot.height());
     }
 
     /// Search for a space suitable for laying out a box that establishes an
@@ -222,9 +216,7 @@ public final class BlockContext {
     /// property.
     public @Opt float clearedThreshold(Clear clear) {
         @Opt float threshold = this.bfc.floatContext.clearedThreshold(clear);
-        return OptF32.isSome(threshold)
-                ? threshold - this.yOffset
-                : threshold;
+        return OptF32.isSome(threshold) ? threshold - this.yOffset : threshold;
     }
 
     /// Whether a float that is adjoining the current margin-collapse strut has
@@ -261,9 +253,7 @@ public final class BlockContext {
     /// placed while the position of the block's top strut was still
     /// unresolved.
     boolean[] topAdjoiningFloats() {
-        return this.topAdjoiningFloats != null
-                ? this.topAdjoiningFloats
-                : this.adjoiningFloats;
+        return this.topAdjoiningFloats != null ? this.topAdjoiningFloats : this.adjoiningFloats;
     }
 
     /// Update the height that descendant floats consume with the height that

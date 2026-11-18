@@ -1,8 +1,7 @@
-package net.morphismmc.jaffy.compute.flexbox;
+// JAFFY-UPSTREAM: src/compute/flexbox.rs
+// JAFFY-NOTE: the `Constants`-style algorithm constants struct
 
-import net.morphismmc.just.math.Opt;
-import net.morphismmc.just.math.OptI32;
-import net.morphismmc.just.math.Unsigned;
+package net.morphismmc.jaffy.compute.flexbox;
 
 import net.morphismmc.jaffy.geometry.PointBool;
 import net.morphismmc.jaffy.geometry.PointF32;
@@ -13,6 +12,9 @@ import net.morphismmc.jaffy.style.Direction;
 import net.morphismmc.jaffy.style.alignment.AlignContent;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.flex.FlexDirection;
+import net.morphismmc.just.math.Opt;
+import net.morphismmc.just.math.OptI32;
+import net.morphismmc.just.math.Unsigned;
 
 final class AlgoConstants {
     /// The direction of the current segment being laid out
@@ -34,7 +36,9 @@ final class AlgoConstants {
     /// for every multi-line container, `None` for `nowrap`.
     /// (`flexbox_balance`-gated; `Option<u16>` -> `@Opt @Unsigned int`,
     /// `OptI32.NONE`)
-    @Opt @Unsigned int lineCount;
+    @Opt
+    @Unsigned
+    int lineCount;
 
     /// The item's min_size style
     SizeOptF32 minSize;

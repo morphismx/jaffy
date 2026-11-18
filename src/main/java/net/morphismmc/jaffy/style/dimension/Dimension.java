@@ -1,15 +1,17 @@
-// JAFFY: port of upstream src/style/dimension.rs — `Dimension` (GAP-013).
+// JAFFY-UPSTREAM: src/style/dimension.rs
+// JAFFY-NOTE: `Dimension` (GAP-013)
 //
 // `impl Rect<Dimension>` (from_length/from_percent) lives in RectDimensionExt.
 // serde/parse impls are feature-gated: deferred.
 package net.morphismmc.jaffy.style.dimension;
 
+import net.morphismmc.jaffy.style.CompactBits;
+import net.morphismmc.jaffy.style.CompactLength;
 import net.morphismmc.jaffy.util.CalcResolver;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
+
 import org.jspecify.annotations.Nullable;
-import net.morphismmc.jaffy.style.CompactBits;
-import net.morphismmc.jaffy.style.CompactLength;
 
 public sealed interface Dimension {
 
@@ -48,7 +50,7 @@ public sealed interface Dimension {
 
         @Override
         public boolean rustEq(Dimension other) {
-            return other instanceof Primitive p && bits == p.bits;
+            return other instanceof Primitive(long oBits) && bits == oBits;
         }
     }
 
@@ -88,7 +90,7 @@ public sealed interface Dimension {
 
         @Override
         public boolean rustEq(Dimension other) {
-            return other instanceof Calc c && bits == c.bits && calc == c.calc;
+            return other instanceof Calc(long oBits, Object oCalc) && bits == oBits && calc == oCalc;
         }
     }
 
@@ -104,7 +106,8 @@ public sealed interface Dimension {
     float value();
 
     /// `self.0.calc_value()` — calc() pointer for `calc()`/`fit-content(calc())` (also `pub`)
-    @Nullable Object calcValue();
+    @Nullable
+    Object calcValue();
 
     default boolean isPlainCalc() {
         return CompactBits.isPlainCalc(calcTag());

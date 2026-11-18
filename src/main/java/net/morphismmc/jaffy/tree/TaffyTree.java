@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/taffy_tree.rs — `TaffyTree<NodeContext>`
+// JAFFY-UPSTREAM: src/tree/taffy_tree.rs
+// JAFFY-NOTE: `TaffyTree<NodeContext>`
 // and its TraversePartialTree/TraverseTree/CacheTree/PrintTree impls.
 //
 // `NodeId`/`DefaultKey` -> `long` (GAP-015); `SlotMap<DefaultKey, _>` ->
@@ -19,9 +20,6 @@
 // `None` slot returns null). `clone()`/derive(Clone) intentionally absent.
 package net.morphismmc.jaffy.tree;
 
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongIterator;
-import it.unimi.dsi.fastutil.longs.LongList;
 import net.morphismmc.jaffy.compute.Compute;
 import net.morphismmc.jaffy.compute.Leaf;
 import net.morphismmc.jaffy.geometry.Size;
@@ -30,7 +28,6 @@ import net.morphismmc.jaffy.infra.slotmap.LongSlotMap;
 import net.morphismmc.jaffy.infra.slotmap.SlotMap;
 import net.morphismmc.jaffy.infra.slotmap.SparseSecondaryMap;
 import net.morphismmc.jaffy.style.Display;
-import net.morphismmc.jaffy.style.flex.FlexDirection;
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.tree.cache.ClearState;
@@ -42,8 +39,12 @@ import net.morphismmc.jaffy.tree.traits.CacheTree;
 import net.morphismmc.jaffy.tree.traits.PrintTree;
 import net.morphismmc.jaffy.tree.traits.TraverseTree;
 import net.morphismmc.just.math.Opt;
+
 import org.jspecify.annotations.Nullable;
 
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.longs.LongList;
 
 /// An entire tree of UI nodes. The entry point to Taffy's high-level API.
 ///
@@ -57,8 +58,7 @@ public final class TaffyTree<NodeContext> implements TraverseTree, CacheTree, Pr
     /// NodeContext` (shared reference, GAP-018).
     @FunctionalInterface
     public interface MeasureFn<NodeContext> {
-        LayoutOutput measure(
-                LayoutInput inputs, long nodeId, @Nullable NodeContext nodeContext, Style style);
+        LayoutOutput measure(LayoutInput inputs, long nodeId, @Nullable NodeContext nodeContext, Style style);
     }
 
     /// The {@link NodeData} for each node stored in this tree
@@ -534,10 +534,11 @@ public final class TaffyTree<NodeContext> implements TraverseTree, CacheTree, Pr
         return switch (display) {
             case BLOCK -> "BLOCK";
             case FLOW_ROOT -> "FLOW-ROOT";
-            case FLEX -> switch (node.style.flexDirection()) {
-                case ROW, ROW_REVERSE -> "FLEX ROW";
-                case COLUMN, COLUMN_REVERSE -> "FLEX COL";
-            };
+            case FLEX ->
+                switch (node.style.flexDirection()) {
+                    case ROW, ROW_REVERSE -> "FLEX ROW";
+                    case COLUMN, COLUMN_REVERSE -> "FLEX COL";
+                };
             case GRID -> "GRID";
             case NONE -> throw new IllegalStateException(); // JAFFY(GAP-010) unreachable
         };

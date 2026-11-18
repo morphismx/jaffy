@@ -1,10 +1,11 @@
-// JAFFY: port of upstream src/style/grid.rs —
+// JAFFY-UPSTREAM: src/style/grid.rs
 // `impl Line<OriginZeroGridPlacement>` (alias of
 // `GenericGridPlacement<OriginZeroLine>`; SPECIALIZATIONS Ext pattern).
 package net.morphismmc.jaffy.style.grid;
 
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
 import net.morphismmc.jaffy.geometry.Line;
+
 import org.jspecify.annotations.Nullable;
 
 public final class LineOriginZeroGridPlacementExt {
@@ -21,8 +22,7 @@ public final class LineOriginZeroGridPlacementExt {
     /// If at least one of the start and end positions is a track index then
     /// the other end can be resolved into a track index purely based on the
     /// information contained within the placement specification.
-    public static Line<OriginZeroLine> resolveDefiniteGridLines(
-            Line<GenericGridPlacement<OriginZeroLine>> self) {
+    public static Line<OriginZeroLine> resolveDefiniteGridLines(Line<GenericGridPlacement<OriginZeroLine>> self) {
         var start = self.start();
         var end = self.end();
         if (start instanceof GenericGridPlacement.Line<OriginZeroLine> l1

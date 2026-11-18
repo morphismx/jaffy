@@ -1,8 +1,21 @@
+// JAFFY-UPSTREAM: benches/benches/node_context.rs
+
 package net.morphismmc.jaffy.bench.node_context;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import net.morphismmc.jaffy.geometry.Size;
+import net.morphismmc.jaffy.geometry.SizeF32;
+import net.morphismmc.jaffy.style.Style;
+import net.morphismmc.jaffy.style.available_space.AvailableSpace;
+import net.morphismmc.jaffy.style.flex.FlexDirection;
+import net.morphismmc.jaffy.style.flex.FlexWrap;
+import net.morphismmc.jaffy.tree.TaffyTree;
+import net.morphismmc.jaffy.tree.layout.LayoutOutput;
+import net.morphismmc.just.math.OptF32;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -16,16 +29,6 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
-
-import net.morphismmc.jaffy.geometry.Size;
-import net.morphismmc.jaffy.geometry.SizeF32;
-import net.morphismmc.jaffy.style.Style;
-import net.morphismmc.jaffy.style.available_space.AvailableSpace;
-import net.morphismmc.jaffy.style.flex.FlexDirection;
-import net.morphismmc.jaffy.style.flex.FlexWrap;
-import net.morphismmc.jaffy.tree.TaffyTree;
-import net.morphismmc.jaffy.tree.layout.LayoutOutput;
-import net.morphismmc.just.math.OptF32;
 
 /// Port of upstream `benches/benches/node_context.rs` — node context access,
 /// once per measured leaf per layout and whenever a context is replaced.
@@ -79,14 +82,12 @@ public class NodeContextBench {
         for (int i = 0; i < leafCount; i++) {
             float index = i;
             dev.vfyjxf.taffy.tree.NodeId n = tree.newLeafWithMeasure(
-                    new dev.vfyjxf.taffy.style.TaffyStyle(),
-                    (known, avail) -> vfyjxfMeasure(known, index));
+                    new dev.vfyjxf.taffy.style.TaffyStyle(), (known, avail) -> vfyjxfMeasure(known, index));
             leaves.add(n);
         }
         List<dev.vfyjxf.taffy.tree.NodeId> rows = new ArrayList<>();
         for (int i = 0; i < leaves.size(); i += 16) {
-            List<dev.vfyjxf.taffy.tree.NodeId> chunk =
-                    leaves.subList(i, Math.min(16 + i, leaves.size()));
+            List<dev.vfyjxf.taffy.tree.NodeId> chunk = leaves.subList(i, Math.min(16 + i, leaves.size()));
             dev.vfyjxf.taffy.style.TaffyStyle rs = new dev.vfyjxf.taffy.style.TaffyStyle();
             rs.flexWrap = dev.vfyjxf.taffy.style.FlexWrap.WRAP;
             rows.add(tree.newWithChildren(rs, chunk));
@@ -99,10 +100,7 @@ public class NodeContextBench {
 
     /// `layout`'s measure: `width = known.w ?: (ctx % 100)`, `height = known.h ?: 10`
     static LayoutOutput jaffyMeasure(
-            net.morphismmc.jaffy.tree.layout.LayoutInput input,
-            long nodeId,
-            Float ctx,
-            Style style) {
+            net.morphismmc.jaffy.tree.layout.LayoutInput input, long nodeId, Float ctx, Style style) {
         float kw = input.knownDimensions().width();
         float kh = input.knownDimensions().height();
         float w = OptF32.isSome(kw) ? kw : (ctx != null ? ctx % 100.0f : 0.0f);
@@ -110,8 +108,7 @@ public class NodeContextBench {
         return LayoutOutput.fromOuterSize(new SizeF32(w, h));
     }
 
-    static dev.vfyjxf.taffy.geometry.FloatSize vfyjxfMeasure(
-            dev.vfyjxf.taffy.geometry.FloatSize known, float ctx) {
+    static dev.vfyjxf.taffy.geometry.FloatSize vfyjxfMeasure(dev.vfyjxf.taffy.geometry.FloatSize known, float ctx) {
         float w = known.width == known.width ? known.width : ctx % 100.0f;
         float h = known.height == known.height ? known.height : 10.0f;
         return new dev.vfyjxf.taffy.geometry.FloatSize(w, h);
@@ -119,7 +116,7 @@ public class NodeContextBench {
 
     // -- states ----------------------------------------------------------------
 
-    /** Prebuilt tree + leaf list for `layout` / `replace_and_layout`. */
+    /// Prebuilt tree + leaf list for `layout` / `replace_and_layout`.
     @State(Scope.Benchmark)
     public static class JaffyState {
         @Param({"1000", "10000"})
@@ -177,8 +174,7 @@ public class NodeContextBench {
         for (long leaf : s.leaves) {
             s.tree.markDirty(leaf);
         }
-        s.tree.computeLayoutWithMeasure(
-                s.root, MAX_CONTENT, NodeContextBench::jaffyMeasure);
+        s.tree.computeLayoutWithMeasure(s.root, MAX_CONTENT, NodeContextBench::jaffyMeasure);
         bh.consume(s.tree);
     }
 
@@ -198,8 +194,7 @@ public class NodeContextBench {
         for (int i = 0; i < s.leaves.size(); i++) {
             s.tree.setNodeContext(s.leaves.get(i), (float) i + 1.0f);
         }
-        s.tree.computeLayoutWithMeasure(
-                s.root, MAX_CONTENT, NodeContextBench::jaffyMeasure);
+        s.tree.computeLayoutWithMeasure(s.root, MAX_CONTENT, NodeContextBench::jaffyMeasure);
         bh.consume(s.tree);
     }
 
@@ -207,8 +202,7 @@ public class NodeContextBench {
     public void vfyjxfReplaceAndLayout(VfyjxfState s, Blackhole bh) {
         for (int i = 0; i < s.leaves.size(); i++) {
             float ctx = i + 1.0f;
-            s.tree.setMeasureFunc(
-                    s.leaves.get(i), (known, avail) -> vfyjxfMeasure(known, ctx));
+            s.tree.setMeasureFunc(s.leaves.get(i), (known, avail) -> vfyjxfMeasure(known, ctx));
         }
         s.tree.computeLayout(s.root, dev.vfyjxf.taffy.geometry.TaffySize.maxContent());
         bh.consume(s.tree);

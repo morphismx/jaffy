@@ -1,11 +1,11 @@
-// JAFFY: port of upstream src/tree/layout.rs — `ScrollableOverflow`.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: `ScrollableOverflow`
 // The reversal flags are packed into the sign bits of the stored right/bottom.
 // serde impl deferred; `debug_assert!` omitted (release behaviour, GAP-010
 // convention). `PartialEq` compares `to_bits` — `equals` uses
 // `Float.floatToRawIntBits` accordingly (non-canonical NaN payloads differ).
 package net.morphismmc.jaffy.tree.layout;
 
-import net.morphismmc.jaffy.geometry.Point;
 import net.morphismmc.jaffy.geometry.PointBool;
 import net.morphismmc.jaffy.geometry.RectF32;
 
@@ -83,8 +83,7 @@ public final class ScrollableOverflow {
 
     /// Swap the physical axes, preserving origin directions and signed zeroes.
     public ScrollableOverflow transpose() {
-        return new ScrollableOverflow(
-                new RectF32(packed.top(), packed.bottom(), packed.left(), packed.right()));
+        return new ScrollableOverflow(new RectF32(packed.top(), packed.bottom(), packed.left(), packed.right()));
     }
 
     /// `PartialEq` — compares `to_bits` on all four components, so sign

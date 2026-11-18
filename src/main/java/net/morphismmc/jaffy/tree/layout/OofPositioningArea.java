@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `OofPositioningArea` struct.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: `OofPositioningArea` struct
 // serde impl deferred.
 package net.morphismmc.jaffy.tree.layout;
 

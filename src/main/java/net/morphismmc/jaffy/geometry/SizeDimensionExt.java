@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `impl Size<Dimension>` block.
+// JAFFY-UPSTREAM: src/geometry.rs
+// JAFFY-NOTE: `impl Size<Dimension>` block
 // Per SPECIALIZATIONS.md: object type params keep generics; instance-specific
 // impl blocks become `<Generic><Arg>Ext` static classes.
 package net.morphismmc.jaffy.geometry;

@@ -1,4 +1,5 @@
-// JAFFY: unit tests for SlotMap/SparseSecondaryMap (GAP-015). Expected key
+// JAFFY-UPSTREAM: none
+// JAFFY-NOTE: unit tests for SlotMap/SparseSecondaryMap (GAP-015). Expected key
 // values are the rustc-1.96 + slotmap-1.1.1 measured sequence from GAPS.md.
 package net.morphismmc.jaffy.infra.slotmap;
 
@@ -74,9 +75,9 @@ class SlotMapTest {
     @Test
     void sparseInsertVersionRules() {
         SparseSecondaryMap<Integer> sec = new SparseSecondaryMap<>();
-        long k1v1 = (1L << 32) | 1;   // idx 1, v1
-        long k1v3 = (3L << 32) | 1;   // idx 1, v3 (newer)
-        long k1v2 = (2L << 32) | 1;   // idx 1, v2 — even, invalid key data
+        long k1v1 = (1L << 32) | 1; // idx 1, v1
+        long k1v3 = (3L << 32) | 1; // idx 1, v3 (newer)
+        long k1v2 = (2L << 32) | 1; // idx 1, v2 — even, invalid key data
 
         // null key silently fails
         assertNull(sec.insert(0xFFFFFFFFL, 9));

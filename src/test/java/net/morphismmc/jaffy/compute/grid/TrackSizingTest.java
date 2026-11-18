@@ -1,4 +1,5 @@
-// JAFFY: track_sizing.rs has no upstream test module. These tests cover the
+// JAFFY-UPSTREAM: none
+// JAFFY-NOTE: track_sizing.rs has no upstream test module. These tests cover the
 // observable contracts of the ported functions: the gutter alignment
 // adjustment weights, track-index resolution, cross-track flag detection, and
 // the main algorithm phases (initialisation, intrinsic resolution, flex
@@ -8,10 +9,9 @@ package net.morphismmc.jaffy.compute.grid;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import it.unimi.dsi.fastutil.longs.LongIterator;
-import it.unimi.dsi.fastutil.longs.LongIterators;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.TrackSizing.TrackSizeEstimate;
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
@@ -34,11 +34,15 @@ import net.morphismmc.jaffy.tree.layout.LayoutInput;
 import net.morphismmc.jaffy.tree.layout.LayoutOutput;
 import net.morphismmc.jaffy.tree.traits.LayoutPartialTree;
 import net.morphismmc.just.math.OptF32;
+
 import org.junit.jupiter.api.Test;
+
+import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.longs.LongIterators;
 
 class TrackSizingTest {
 
-    /** Records how often computeChildLayout runs; returns a fixed 10x20 size. */
+    /// Records how often computeChildLayout runs; returns a fixed 10x20 size.
     private static final class StubTree implements LayoutPartialTree {
         int calls = 0;
 
@@ -72,7 +76,7 @@ class TrackSizingTest {
         }
     }
 
-    /** `(track, basis, tree) -> track.base_size` — the estimate reads the provisional base size. */
+    /// `(track, basis, tree) -> track.base_size` — the estimate reads the provisional base size.
     private static final TrackSizeEstimate BASE_SIZE_ESTIMATE = (track, basis, tree) -> track.baseSize;
 
     private static GridTrack gutter() {
@@ -99,13 +103,10 @@ class TrackSizingTest {
         return new Line<>(new OriginZeroLine(start), new OriginZeroLine(end));
     }
 
-    /**
-     * A span-1 item placed on vec index 1 (the first non-gutter track): OriginZero
-     * lines 0..1 -> track vec indexes 0..2 -> range excluding lines = 1..2.
-     */
+    /// A span-1 item placed on vec index 1 (the first non-gutter track): OriginZero
+    /// lines 0..1 -> track vec indexes 0..2 -> range excluding lines = 1..2.
     private static GridItem itemOnFirstTrack() {
-        GridItem item =
-                GridItem.newWithStyleAndOrder(7L, Style.DEFAULT, AlignItems.NORMAL, AlignItems.NORMAL, 0);
+        GridItem item = GridItem.newWithStyleAndOrder(7L, Style.DEFAULT, AlignItems.NORMAL, AlignItems.NORMAL, 0);
         item.column = ozLine(0, 1);
         item.row = ozLine(0, 1);
         item.columnIndexes = new Line<>(0, 2);
@@ -168,8 +169,7 @@ class TrackSizingTest {
     // ---------------------------------------------------------------------
 
     private static List<GridTrack> fiveBase10Tracks() {
-        List<GridTrack> tracks =
-                List.of(gutter(), fixedTrack(10.0f), gutter(), fixedTrack(10.0f), gutter());
+        List<GridTrack> tracks = List.of(gutter(), fixedTrack(10.0f), gutter(), fixedTrack(10.0f), gutter());
         for (GridTrack t : tracks) {
             t.baseSize = 10.0f; // newGridTrack leaves baseSize 0 — set all 5 -> sum 50
         }

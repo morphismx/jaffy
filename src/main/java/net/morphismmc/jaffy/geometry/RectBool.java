@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `Rect<bool>` specialization
+// JAFFY-UPSTREAM: src/geometry.rs
+// JAFFY-NOTE: `Rect<bool>` specialization
 // (SPECIALIZATIONS.md). The `impl Rect<T>` flexbox side pickers
 // (`main_start`/`main_end`/`cross_start`/`cross_end`, `pub(crate)` upstream)
 // become primitive-boolean accessors.

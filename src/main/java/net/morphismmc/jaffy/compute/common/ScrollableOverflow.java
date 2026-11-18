@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/common/scrollable_overflow.rs —
+// JAFFY-UPSTREAM: src/compute/common/scrollable_overflow.rs
 // generic CSS scrollable overflow code shared by all CSS algorithms
 // (`content_size` feature).
 //
@@ -83,7 +83,8 @@ public final class ScrollableOverflow {
                 scrollableOverflowRect.right() + border.left(),
                 scrollableOverflowRect.top() + border.top(),
                 scrollableOverflowRect.bottom() + border.top());
-        boolean isScrollContainer = overflow.x().isScrollContainer() || overflow.y().isScrollContainer();
+        boolean isScrollContainer =
+                overflow.x().isScrollContainer() || overflow.y().isScrollContainer();
         boolean overflowIsContained = contain.containsScrollableOverflow();
         boolean propagatesX = !isScrollContainer && !overflowIsContained && overflow.x() == Overflow.VISIBLE;
         boolean propagatesY = !isScrollContainer && !overflowIsContained && overflow.y() == Overflow.VISIBLE;
@@ -101,12 +102,9 @@ public final class ScrollableOverflow {
                 location.x() + endExtent.width(),
                 location.y() + startExtent.y(),
                 location.y() + endExtent.height());
-        boolean isWhollyUnreachable = (reversed.x()
-                        ? contribution.left() >= parentSize.width()
-                        : contribution.right() <= 0.0f)
-                || (reversed.y()
-                        ? contribution.top() >= parentSize.height()
-                        : contribution.bottom() <= 0.0f);
+        boolean isWhollyUnreachable =
+                (reversed.x() ? contribution.left() >= parentSize.width() : contribution.right() <= 0.0f)
+                        || (reversed.y() ? contribution.top() >= parentSize.height() : contribution.bottom() <= 0.0f);
         if (parentIsScrollContainer && isWhollyUnreachable) {
             return RectF32.ZERO;
         }

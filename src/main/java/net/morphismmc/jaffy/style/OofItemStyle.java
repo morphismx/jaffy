@@ -1,14 +1,16 @@
-// JAFFY: port of upstream src/style/mod.rs — `OofItemStyle` trait.
+// JAFFY-UPSTREAM: src/style/mod.rs
+// JAFFY-NOTE: `OofItemStyle` trait
 // `AlignSelf` is an alias of `AlignItems` upstream; `Option<AlignSelf>` is a
 // `@Nullable AlignItems` (GAP-001). `impl OofItemStyle for &T` has no Java
 // counterpart.
 package net.morphismmc.jaffy.style;
 
 import net.morphismmc.jaffy.geometry.Line;
-import org.jspecify.annotations.Nullable;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.grid.GridPlacement;
 import net.morphismmc.jaffy.style.grid.LineGridPlacementExt;
+
+import org.jspecify.annotations.Nullable;
 
 /// The styles of an out-of-flow (`position: absolute` / `position: fixed`) box that are read by
 /// its containing block's out-of-flow positioning pass

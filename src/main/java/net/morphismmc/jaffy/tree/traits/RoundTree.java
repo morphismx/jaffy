@@ -1,10 +1,11 @@
-// JAFFY: port of upstream src/tree/traits.rs — `RoundTree` trait.
+// JAFFY-UPSTREAM: src/tree/traits.rs
+// JAFFY-NOTE: `RoundTree` trait
 //
 // `usize` -> `int` (GAP-014); `Layout` is an immutable record — Rust's
 // by-value return is a plain return here.
 package net.morphismmc.jaffy.tree.traits;
-import net.morphismmc.jaffy.tree.layout.Layout;
 
+import net.morphismmc.jaffy.tree.layout.Layout;
 
 /// Trait used by the `round_layout` method which takes a tree of unrounded
 /// float-valued layouts and performs rounding to snap the values to the

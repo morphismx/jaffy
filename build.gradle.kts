@@ -2,6 +2,8 @@ plugins {
     `java-library`
     // JMH benchmarks: `gradlew jmh`. Sources under src/jmh/java.
     id("me.champeau.jmh") version "0.7.4"
+    id("com.diffplug.spotless") version "8.10.2"
+    id("dev.openjavaformat.java-format") version "21.0.2"
 }
 
 group = "net.morphismmc"
@@ -168,6 +170,31 @@ val staticCheck = tasks.register("staticCheck") {
         sources.files.forEach { check(it, it.relativeTo(projectDir).path) }
         testSources.files.forEach { check(it, it.relativeTo(projectDir).path) }
 
+        // JAFFY provenance headers (AGENTS.md 注释约定): every source —
+        // package-info included — must carry exactly one `// JAFFY-UPSTREAM:` line.
+        val jaffyLine = Regex("""^// JAFFY-(\w+):\s*(.*?)\s*$""")
+        val upstreamDir = layout.projectDirectory.dir("upstream").asFile
+        val headerSources = sources + testSources + fileTree("src/jmh/java") { include("**/*.java") }
+        headerSources.files.forEach { f ->
+            val rel = f.relativeTo(projectDir).path
+            val tags = f.readLines().take(15).mapNotNull { jaffyLine.find(it) }
+                .map { it.groupValues[1] to it.groupValues[2] }
+            val upstreamTags = tags.filter { it.first == "UPSTREAM" }.map { it.second }
+            if (upstreamTags.size != 1) {
+                violations += "$rel: expected exactly one '// JAFFY-UPSTREAM:' line, found ${upstreamTags.size}"
+            } else {
+                val v = upstreamTags.single()
+                if (v != "none" && !v.startsWith("crate:") && !upstreamDir.resolve(v).exists()) {
+                    violations += "$rel: upstream path '$v' does not exist in upstream/"
+                }
+            }
+            tags.filter { it.first == "FROM" }.map { it.second }.forEach { p ->
+                if (!upstreamDir.resolve(p).exists()) {
+                    violations += "$rel: JAFFY-FROM path '$p' does not exist in upstream/"
+                }
+            }
+        }
+
         if (violations.isNotEmpty()) {
             throw GradleException("staticCheck failed:\n" + violations.joinToString("\n"))
         }
@@ -175,3 +202,43 @@ val staticCheck = tasks.register("staticCheck") {
 }
 
 tasks.named("check") { dependsOn(staticCheck) }
+
+// Export the JAFFY provenance headers as TSV for external tooling:
+//   java_file <TAB> upstream <TAB> JAFFY-FROM(;) <TAB> JAFFY-NOTE(;)
+tasks.register("jaffyFilemap") {
+    description = "Export JAFFY provenance headers to build/jaffy-filemap.tsv."
+    group = "verification"
+    val out = layout.buildDirectory.file("jaffy-filemap.tsv")
+    val headerSources = fileTree("src") { include("**/*.java") } +
+        fileTree("jaffy-gson/src") { include("**/*.java") }
+    inputs.files(headerSources)
+    outputs.file(out)
+    doLast {
+        val keyed = Regex("""^// JAFFY-(\w+):\s*(.*?)\s*$""")
+        val rows = headerSources.files
+            .sortedBy { it.path }.map { f ->
+                var upstream = ""; val from = mutableListOf<String>(); val notes = mutableListOf<String>()
+                f.readLines().take(15).forEach { line ->
+                    keyed.find(line)?.let {
+                        when (it.groupValues[1]) {
+                            "UPSTREAM" -> upstream = it.groupValues[2]
+                            "FROM" -> from += it.groupValues[2]
+                            "NOTE" -> notes += it.groupValues[2]
+                        }
+                    }
+                }
+                listOf(f.relativeTo(projectDir).path, upstream, from.joinToString(";"), notes.joinToString(";"))
+                    .joinToString("\t")
+            }
+        out.get().asFile.writeText("java_file\tupstream\tfrom\tnote\n" + rows.joinToString("\n") + "\n")
+    }
+}
+
+// google-java-format via Spotless (same setup as RetroDFU). The upstream/
+// submodule lives outside src/ and is never targeted.
+spotless {
+    java {
+        target("src/**/*.java")
+        importOrderFile("spotless.importorder")
+    }
+}

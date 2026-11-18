@@ -1,10 +1,12 @@
-// JAFFY: port of upstream src/style/grid.rs — `GridAutoFlow` enum.
+// JAFFY-UPSTREAM: src/style/grid.rs
+// JAFFY-NOTE: `GridAutoFlow` enum
 // The `parse` impl is deferred with the feature.
 package net.morphismmc.jaffy.style.grid;
 
 import net.morphismmc.jaffy.geometry.AbsoluteAxis;
 
-/// The [grid-auto-flow](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow) property controls how the auto-placement algorithm works.
+/// The [grid-auto-flow](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow) property controls how the
+/// auto-placement algorithm works.
 public enum GridAutoFlow {
 
     /// Items are placed by filling each row in turn, adding new rows as necessary

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/cache.rs — `Cache` + private helpers.
+// JAFFY-UPSTREAM: src/tree/cache.rs
+// JAFFY-NOTE: `Cache` + private helpers
 //
 // u64/u32/u16/u8/usize -> long/int (GAP-014). `AtomicU16` -> `int` — atomics are
 // unnecessary: `cache_get` is `&self` upstream only because Rust forbids
@@ -22,14 +23,15 @@ import net.morphismmc.jaffy.geometry.SizeBool;
 import net.morphismmc.jaffy.geometry.SizeF32;
 import net.morphismmc.jaffy.geometry.SizeOptF32;
 import net.morphismmc.jaffy.style.available_space.AvailableSpace;
-import net.morphismmc.just.math.Opt;
-import net.morphismmc.just.math.OptF32;
-import org.jspecify.annotations.Nullable;
 import net.morphismmc.jaffy.tree.layout.CollapsibleMarginSet;
 import net.morphismmc.jaffy.tree.layout.LayoutInput;
 import net.morphismmc.jaffy.tree.layout.LayoutOutput;
 import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
+import net.morphismmc.just.math.Opt;
+import net.morphismmc.just.math.OptF32;
+
+import org.jspecify.annotations.Nullable;
 
 public final class Cache {
 
@@ -150,9 +152,7 @@ public final class Cache {
                     sizeMixedCacheKey(kd, input.availableSpace()),
                     (sizeOptionCacheKey(input.parentSize()) & NON_SIGN_BITS_MASK) | extraBits,
                     // `kdd.zip_map(kd, |is_definite, kd| is_definite || kd.is_none())`
-                    new SizeBool(
-                            kdd.width() || OptF32.isNone(kd.width()),
-                            kdd.height() || OptF32.isNone(kd.height())));
+                    new SizeBool(kdd.width() || OptF32.isNone(kd.width()), kdd.height() || OptF32.isNone(kd.height())));
         }
     }
 
@@ -180,10 +180,9 @@ public final class Cache {
         static CacheMode from(LayoutInput input) {
             int inherentSize = input.sizingMode() == SizingMode.INHERENT_SIZE ? 1 : 0;
             LineBool collapsible = input.verticalMarginsAreCollapsible();
-            return new CacheMode(
-                    (inherentSize * INHERENT_SIZE_BIT)
-                            | ((collapsible.start() ? 1 : 0) * COLLAPSIBLE_START_MARGIN_BIT)
-                            | ((collapsible.end() ? 1 : 0) * COLLAPSIBLE_END_MARGIN_BIT));
+            return new CacheMode((inherentSize * INHERENT_SIZE_BIT)
+                    | ((collapsible.start() ? 1 : 0) * COLLAPSIBLE_START_MARGIN_BIT)
+                    | ((collapsible.end() ? 1 : 0) * COLLAPSIBLE_END_MARGIN_BIT));
         }
     }
 
@@ -212,7 +211,8 @@ public final class Cache {
             T content) {}
 
     /// The cache entry for the node's final layout
-    @Nullable CacheEntry<LayoutOutput> finalLayoutEntry;
+    @Nullable
+    CacheEntry<LayoutOutput> finalLayoutEntry;
     /// The cache entries for the node's preliminary size measurements.
     /// Elements are `CacheEntry<SizeF32>`; `CacheEntry<?>` sidesteps Java's ban
     /// on generic array creation (content is cast at the single read site).
@@ -246,7 +246,8 @@ public final class Cache {
     public Cache copy() {
         Cache c = new Cache();
         CacheEntry<LayoutOutput> fle = finalLayoutEntry;
-        c.finalLayoutEntry = fle == null ? null : new CacheEntry<>(fle.key(), fle.content().copy());
+        c.finalLayoutEntry =
+                fle == null ? null : new CacheEntry<>(fle.key(), fle.content().copy());
         System.arraycopy(measureEntries, 0, c.measureEntries, 0, CACHE_SIZE);
         c.recentlyUsedEntries = recentlyUsedEntries;
         c.nextMeasureEntry = nextMeasureEntry;

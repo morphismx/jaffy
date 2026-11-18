@@ -1,3 +1,6 @@
+// JAFFY-UPSTREAM: none
+// JAFFY-NOTE: bench adapter for the dev.vfyjxf:taffy comparison library
+
 package net.morphismmc.jaffy.bench;
 
 import java.util.ArrayList;
@@ -30,8 +33,7 @@ public final class VfyjxfLayoutTree {
     }
 
     /// `compute_layout(root, space)` convenience
-    public void computeLayout(
-            dev.vfyjxf.taffy.geometry.TaffySize<dev.vfyjxf.taffy.style.AvailableSpace> space) {
+    public void computeLayout(dev.vfyjxf.taffy.geometry.TaffySize<dev.vfyjxf.taffy.style.AvailableSpace> space) {
         tree.computeLayout(root, space);
     }
 }

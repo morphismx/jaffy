@@ -1,11 +1,11 @@
-// JAFFY: port of upstream src/compute/grid/mod.rs — `DetailedGridItemsInfo`.
+// JAFFY-UPSTREAM: src/compute/grid/mod.rs
+// JAFFY-NOTE: `DetailedGridItemsInfo`
 //
 // `#[derive(Debug, Clone, PartialEq)]` -> record (equals/hashCode/toString)
 // + copy(). u16 -> int (GAP-014).
 package net.morphismmc.jaffy.compute.grid;
 
 import net.morphismmc.jaffy.compute.grid.types.grid_item.GridItem;
-
 
 /// Grid area information from the placement algorithm
 ///

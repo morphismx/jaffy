@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/alignment.rs — `AlignContent` (and alias
+// JAFFY-UPSTREAM: src/style/alignment.rs
+// JAFFY-NOTE: `AlignContent`
 // `JustifyContent`, the same type in Rust). serde/parse impls deferred.
 package net.morphismmc.jaffy.style.alignment;
 
@@ -8,8 +9,7 @@ package net.morphismmc.jaffy.style.alignment;
 public record AlignContent(AlignContentKeyword keyword, AlignmentSafety safety) {
 
     /// The layout mode's default alignment. See `AlignContentKeyword.NORMAL`.
-    public static final AlignContent NORMAL =
-            new AlignContent(AlignContentKeyword.NORMAL, AlignmentSafety.DEFAULT);
+    public static final AlignContent NORMAL = new AlignContent(AlignContentKeyword.NORMAL, AlignmentSafety.DEFAULT);
     /// Items are packed toward the start of the axis.
     public static final AlignContent START = new AlignContent(AlignContentKeyword.START, AlignmentSafety.DEFAULT);
     /// Items are packed toward the end of the axis.
@@ -18,13 +18,11 @@ public record AlignContent(AlignContentKeyword keyword, AlignmentSafety safety) 
     public static final AlignContent FLEX_START =
             new AlignContent(AlignContentKeyword.FLEX_START, AlignmentSafety.DEFAULT);
     /// Items are packed towards the flex-relative end of the axis.
-    public static final AlignContent FLEX_END =
-            new AlignContent(AlignContentKeyword.FLEX_END, AlignmentSafety.DEFAULT);
+    public static final AlignContent FLEX_END = new AlignContent(AlignContentKeyword.FLEX_END, AlignmentSafety.DEFAULT);
     /// Items are centered around the middle of the axis.
     public static final AlignContent CENTER = new AlignContent(AlignContentKeyword.CENTER, AlignmentSafety.DEFAULT);
     /// Items are stretched to fill the container.
-    public static final AlignContent STRETCH =
-            new AlignContent(AlignContentKeyword.STRETCH, AlignmentSafety.DEFAULT);
+    public static final AlignContent STRETCH = new AlignContent(AlignContentKeyword.STRETCH, AlignmentSafety.DEFAULT);
     /// First and last items flush with container edges (no gap).
     public static final AlignContent SPACE_BETWEEN =
             new AlignContent(AlignContentKeyword.SPACE_BETWEEN, AlignmentSafety.DEFAULT);
@@ -35,8 +33,7 @@ public record AlignContent(AlignContentKeyword keyword, AlignmentSafety safety) 
     public static final AlignContent SPACE_AROUND =
             new AlignContent(AlignContentKeyword.SPACE_AROUND, AlignmentSafety.DEFAULT);
     /// Like `START`, but falls back to `START` on overflow.
-    public static final AlignContent SAFE_START =
-            new AlignContent(AlignContentKeyword.START, AlignmentSafety.SAFE);
+    public static final AlignContent SAFE_START = new AlignContent(AlignContentKeyword.START, AlignmentSafety.SAFE);
     /// Like `END`, but falls back to `START` on overflow.
     public static final AlignContent SAFE_END = new AlignContent(AlignContentKeyword.END, AlignmentSafety.SAFE);
     /// Like `FLEX_START`, but falls back to `START` on overflow.
@@ -46,8 +43,7 @@ public record AlignContent(AlignContentKeyword keyword, AlignmentSafety safety) 
     public static final AlignContent SAFE_FLEX_END =
             new AlignContent(AlignContentKeyword.FLEX_END, AlignmentSafety.SAFE);
     /// Like `CENTER`, but falls back to `START` on overflow.
-    public static final AlignContent SAFE_CENTER =
-            new AlignContent(AlignContentKeyword.CENTER, AlignmentSafety.SAFE);
+    public static final AlignContent SAFE_CENTER = new AlignContent(AlignContentKeyword.CENTER, AlignmentSafety.SAFE);
 
     /// `Default` impl — `#[default]` derives from field defaults = `NORMAL`
     public static final AlignContent DEFAULT = NORMAL;

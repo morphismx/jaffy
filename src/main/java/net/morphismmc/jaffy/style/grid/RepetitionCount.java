@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `RepetitionCount` enum +
+// JAFFY-UPSTREAM: src/style/grid.rs
+// JAFFY-NOTE: `RepetitionCount` enum
 // `TryFrom<&str>`. The `parse` impl is deferred with the feature.
 package net.morphismmc.jaffy.style.grid;
 

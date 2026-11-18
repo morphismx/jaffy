@@ -1,4 +1,5 @@
-/// JSpecify null-marked package: unannotated type usages are non-null (GAP-001).
+// JAFFY-UPSTREAM: crate:slotmap
+// JAFFY-NOTE: taffy dependency; no src/ counterpart
 @NullMarked
 package net.morphismmc.jaffy.infra.slotmap;
 

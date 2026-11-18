@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/util/math.rs `mod tests` — the three scalar
+// JAFFY-UPSTREAM: src/util/math.rs
+// JAFFY-NOTE: `mod tests` — the three scalar
 // modules map 1:1, plus coverage for the Size-level blanket impls and
 // AvailableSpace impls that upstream leaves untested.
 package net.morphismmc.jaffy.util;
@@ -143,8 +144,8 @@ class MaybeMathTest {
             assertTrue(a.maybeAddO(b).rustEq(new SizeOptF32(8.0f, OptF32.NONE)));
             assertTrue(a.maybeSubO(b).rustEq(new SizeOptF32(-2.0f, OptF32.NONE)));
             assertTrue(new SizeOptF32(3.0f, 9.0f)
-                        .maybeClampO(new SizeOptF32(4.0f, OptF32.NONE), new SizeOptF32(8.0f, 6.0f))
-                        .rustEq(new SizeOptF32(4.0f, 6.0f)));
+                    .maybeClampO(new SizeOptF32(4.0f, OptF32.NONE), new SizeOptF32(8.0f, 6.0f))
+                    .rustEq(new SizeOptF32(4.0f, 6.0f)));
         }
 
         @Test

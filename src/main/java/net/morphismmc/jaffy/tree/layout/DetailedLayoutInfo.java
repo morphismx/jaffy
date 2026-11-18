@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `DetailedLayoutInfo` enum.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: `DetailedLayoutInfo` enum
 // `Box<DetailedGridInfo<S>>` -> `DetailedGridInfo` directly (reference type);
 // `S: CheapCloneStr` = `String` (GAP-017). serde impl deferred.
 package net.morphismmc.jaffy.tree.layout;

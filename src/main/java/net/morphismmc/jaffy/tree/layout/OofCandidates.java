@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `OofCandidates`.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: `OofCandidates`
 // Lazily-allocated `Option<Box<Vec<OofCandidate>>>` -> nullable `List` field:
 // the empty list performs no allocation. Mutable container (upstream `&mut self`
 // methods). `IntoIterator for &OofCandidates` -> `Iterable<OofCandidate>`.
@@ -11,6 +12,7 @@ import java.util.List;
 import net.morphismmc.jaffy.geometry.LineF32;
 import net.morphismmc.jaffy.geometry.Point;
 import net.morphismmc.jaffy.geometry.PointF32;
+
 import org.jspecify.annotations.Nullable;
 
 /// A list of {@link OofCandidate}s.

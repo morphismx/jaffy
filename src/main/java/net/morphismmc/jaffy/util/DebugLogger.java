@@ -1,4 +1,4 @@
-// JAFFY: upstream/src/util/debug.rs -> net.morphismmc.jaffy.util.DebugLogger
+// JAFFY-UPSTREAM: src/util/debug.rs
 // Ported at L0 per WORKFLOW.md §2 cycle note (only the Features wiring remains L9).
 //
 // Rust item correspondence:
@@ -23,6 +23,7 @@ package net.morphismmc.jaffy.util;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.morphismmc.jaffy.Features;
 
 public final class DebugLogger {
@@ -46,7 +47,7 @@ public final class DebugLogger {
     public void popNode() {
         synchronized (stack) {
             if (!stack.isEmpty()) {
-                stack.remove(stack.size() - 1);
+                stack.removeLast();
             }
         }
     }
@@ -54,7 +55,7 @@ public final class DebugLogger {
     /// `log` — `{space:level$}{key}: {message}` with `level = stack.len() * 4` and `\n`.
     public void log(String message) {
         synchronized (stack) {
-            String key = stack.isEmpty() ? EMPTY_STRING : stack.get(stack.size() - 1);
+            String key = stack.isEmpty() ? EMPTY_STRING : stack.getLast();
             int level = stack.size() * 4;
             System.out.print(" ".repeat(level) + key + ": " + message + "\n"); // JAFFY(GAP-016)
         }
@@ -63,7 +64,7 @@ public final class DebugLogger {
     /// `labelled_log`
     public void labelledLog(String label, String message) {
         synchronized (stack) {
-            String key = stack.isEmpty() ? EMPTY_STRING : stack.get(stack.size() - 1);
+            String key = stack.isEmpty() ? EMPTY_STRING : stack.getLast();
             int level = stack.size() * 4;
             System.out.print(" ".repeat(level) + key + ": " + label + " " + message + "\n"); // JAFFY(GAP-016)
         }
@@ -72,7 +73,7 @@ public final class DebugLogger {
     /// `debug_log` — identical framing to `log`; the message is the caller's `{:?}` output.
     public void debugLog(String message) {
         synchronized (stack) {
-            String key = stack.isEmpty() ? EMPTY_STRING : stack.get(stack.size() - 1);
+            String key = stack.isEmpty() ? EMPTY_STRING : stack.getLast();
             int level = stack.size() * 4;
             System.out.print(" ".repeat(level) + key + ": " + message + "\n"); // JAFFY(GAP-016)
         }
@@ -81,7 +82,7 @@ public final class DebugLogger {
     /// `labelled_debug_log`
     public void labelledDebugLog(String label, String message) {
         synchronized (stack) {
-            String key = stack.isEmpty() ? EMPTY_STRING : stack.get(stack.size() - 1);
+            String key = stack.isEmpty() ? EMPTY_STRING : stack.getLast();
             int level = stack.size() * 4;
             System.out.print(" ".repeat(level) + key + ": " + label + " " + message + "\n"); // JAFFY(GAP-016)
         }

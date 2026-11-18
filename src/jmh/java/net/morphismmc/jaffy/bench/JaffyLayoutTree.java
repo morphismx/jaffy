@@ -1,3 +1,5 @@
+// JAFFY-UPSTREAM: benches/src/lib.rs
+
 package net.morphismmc.jaffy.bench;
 
 import java.util.ArrayList;

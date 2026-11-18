@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `Baselines` struct.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: `Baselines` struct
 // serde impl deferred.
 package net.morphismmc.jaffy.tree.layout;
 

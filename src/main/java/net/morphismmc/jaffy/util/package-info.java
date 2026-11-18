@@ -1,4 +1,4 @@
-/// JSpecify null-marked package: unannotated type usages are non-null (GAP-001).
+// JAFFY-UPSTREAM: src/util/
 @NullMarked
 package net.morphismmc.jaffy.util;
 

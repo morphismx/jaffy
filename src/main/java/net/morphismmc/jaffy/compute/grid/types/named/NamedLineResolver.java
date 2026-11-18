@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/types/named.rs — `NamedLineResolver`
+// JAFFY-UPSTREAM: src/compute/grid/types/named.rs
+// JAFFY-NOTE: `NamedLineResolver`
 // plus the module-private free functions `split_area_edge_name`,
 // `upsert_line_name_map` and `oz_line` (kept here as package-private statics).
 //
@@ -17,14 +18,13 @@
 //   which only affects the Debug/toString text ordering.
 package net.morphismmc.jaffy.compute.grid.types.named;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntArrays;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import net.morphismmc.jaffy.compute.grid.types.coordinates.Coordinates;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.GridLine;
 import net.morphismmc.jaffy.geometry.AbsoluteAxis;
@@ -38,8 +38,11 @@ import net.morphismmc.jaffy.style.grid.GridPlacement;
 import net.morphismmc.jaffy.style.grid.GridTemplateArea;
 import net.morphismmc.jaffy.style.grid.GridTemplateRepetition;
 import net.morphismmc.jaffy.style.grid.RepetitionCount;
+
 import org.jspecify.annotations.Nullable;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntArrays;
 
 /// Resolver that takes grid lines names and area names as input and can then be used to
 /// resolve line names of grid placement properties into line numbers.
@@ -76,9 +79,15 @@ public final class NamedLineResolver {
     /// `(&str, GridAreaEnd)` returned by `split_area_edge_name`
     record AreaEdgeName(String areaName, GridAreaEnd end) {}
 
-    private NamedLineResolver(int areaColumnCount, int areaRowCount, int explicitColumnCount,
-            int explicitRowCount, Map<String, IntArrayList> rowLines, Map<String, IntArrayList> columnLines,
-            Map<String, AreaLines> areas, List<LineNamePair> columnLineNamePairs,
+    private NamedLineResolver(
+            int areaColumnCount,
+            int areaRowCount,
+            int explicitColumnCount,
+            int explicitRowCount,
+            Map<String, IntArrayList> rowLines,
+            Map<String, IntArrayList> columnLines,
+            Map<String, AreaLines> areas,
+            List<LineNamePair> columnLineNamePairs,
             List<LineNamePair> rowLineNamePairs) {
         this.areaColumnCount = areaColumnCount;
         this.areaRowCount = areaRowCount;
@@ -112,8 +121,8 @@ public final class NamedLineResolver {
     /// Utility function to create or update an entry in a line name map
     ///
     /// `areas` must already contain the edges of the areas defined by `grid-template-areas`
-    static void upsertLineNameMap(Map<String, IntArrayList> map, Map<String, AreaLines> areas,
-            GridAreaAxis axis, String key, int value) {
+    static void upsertLineNameMap(
+            Map<String, IntArrayList> map, Map<String, AreaLines> areas, GridAreaAxis axis, String key, int value) {
         // A line named `foo-start` or `foo-end` is also an edge of the (implicitly) named area `foo`. Record it as such
         // if it is the first such line. If `foo` is also an area defined by `grid-template-areas`, then the line which
         // that area generated also has this name.
@@ -127,7 +136,8 @@ public final class NamedLineResolver {
             }
             int edgeLine = area.lineRaw(axis, edge.end());
             areaLine = edgeLine;
-            areas.put(edge.areaName(),
+            areas.put(
+                    edge.areaName(),
                     area.withLine(axis, edge.end(), edgeLine == 0 ? value : Integer.min(edgeLine, value)));
         }
 
@@ -196,8 +206,9 @@ public final class NamedLineResolver {
                         upsertLineNameMap(columnLines, areas, GridAreaAxis.COLUMN, lineName, currentLine);
                     }
 
-                    if (trackIter.hasNext() && trackIter.next()
-                            instanceof GenericGridTemplateComponent.Repeat<GridTemplateRepetition> comp) {
+                    if (trackIter.hasNext()
+                            && trackIter.next()
+                                    instanceof GenericGridTemplateComponent.Repeat<GridTemplateRepetition> comp) {
                         GridTemplateRepetition repeat = comp.repetition();
                         int repeatCount = switch (repeat.count()) {
                             case RepetitionCount.Count c -> c.count();
@@ -214,7 +225,8 @@ public final class NamedLineResolver {
                         int linesPerRepetition = repeat.trackCount();
                         if (!(lineNameSetCount == 0 || lineNameSetCount == linesPerRepetition + 1)) {
                             throw new AssertionError(
-                                    "grid template repetition must have no line name sets or exactly track count + 1 of them ("
+                                    "grid template repetition must have no line name sets or exactly track count + 1"
+                                            + " of them ("
                                             + linesPerRepetition + " tracks but " + lineNameSetCount
                                             + " line name sets)");
                         }
@@ -258,8 +270,9 @@ public final class NamedLineResolver {
                         upsertLineNameMap(rowLines, areas, GridAreaAxis.ROW, lineName, currentLine);
                     }
 
-                    if (trackIter.hasNext() && trackIter.next()
-                            instanceof GenericGridTemplateComponent.Repeat<GridTemplateRepetition> comp) {
+                    if (trackIter.hasNext()
+                            && trackIter.next()
+                                    instanceof GenericGridTemplateComponent.Repeat<GridTemplateRepetition> comp) {
                         GridTemplateRepetition repeat = comp.repetition();
                         int repeatCount = switch (repeat.count()) {
                             case RepetitionCount.Count c -> c.count();
@@ -276,7 +289,8 @@ public final class NamedLineResolver {
                         int linesPerRepetition = repeat.trackCount();
                         if (!(lineNameSetCount == 0 || lineNameSetCount == linesPerRepetition + 1)) {
                             throw new AssertionError(
-                                    "grid template repetition must have no line name sets or exactly track count + 1 of them ("
+                                    "grid template repetition must have no line name sets or exactly track count + 1"
+                                            + " of them ("
                                             + linesPerRepetition + " tracks but " + lineNameSetCount
                                             + " line name sets)");
                         }
@@ -317,8 +331,15 @@ public final class NamedLineResolver {
             dedup(lines);
         }
 
-        return new NamedLineResolver(areaColumnCount, areaRowCount, 0 /* overwritten later */,
-                0 /* overwritten later */, rowLines, columnLines, areas, columnLineNamePairs,
+        return new NamedLineResolver(
+                areaColumnCount,
+                areaRowCount,
+                0 /* overwritten later */,
+                0 /* overwritten later */,
+                rowLines,
+                columnLines,
+                areas,
+                columnLineNamePairs,
                 rowLineNamePairs);
     }
 
@@ -437,9 +458,16 @@ public final class NamedLineResolver {
         f.append("Grid Areas (row-start / column-start / row-end / column-end):\n");
         for (Map.Entry<String, AreaLines> e : areas.entrySet()) {
             AreaLines area = e.getValue();
-            f.append(e.getKey()).append(": ").append(area.rowStart()).append(" / ")
-                    .append(area.columnStart()).append(" / ").append(area.rowEnd()).append(" / ")
-                    .append(area.columnEnd()).append('\n');
+            f.append(e.getKey())
+                    .append(": ")
+                    .append(area.rowStart())
+                    .append(" / ")
+                    .append(area.columnStart())
+                    .append(" / ")
+                    .append(area.rowEnd())
+                    .append(" / ")
+                    .append(area.columnEnd())
+                    .append('\n');
         }
 
         f.append("Grid Rows:\n");

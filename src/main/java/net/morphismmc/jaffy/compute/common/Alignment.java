@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/common/alignment.rs — generic CSS
+// JAFFY-UPSTREAM: src/compute/common/alignment.rs
+// JAFFY-NOTE: generic CSS
 // alignment code shared by the Flexbox and CSS Grid algorithms.
 //
 // `pub(crate)` fns -> public static methods on a class named for the module
@@ -8,12 +9,12 @@
 // NORMAL precondition is a caller contract documented in the javadoc).
 package net.morphismmc.jaffy.compute.common;
 
+import net.morphismmc.jaffy.style.Overflow;
 import net.morphismmc.jaffy.style.alignment.AlignContent;
 import net.morphismmc.jaffy.style.alignment.AlignContentKeyword;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.alignment.AlignItemsKeyword;
 import net.morphismmc.jaffy.style.alignment.AlignmentSafety;
-import net.morphismmc.jaffy.style.Overflow;
 import net.morphismmc.just.math.F32;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
@@ -130,11 +131,12 @@ public final class Alignment {
             };
         }
         float clamped = F32.max(freeSpace, 0.0f);
-        return gap + switch (alignmentMode) {
-            case START, FLEX_START, END, FLEX_END, CENTER, NORMAL, STRETCH -> 0.0f;
-            case SPACE_BETWEEN -> clamped / (numItems - 1);
-            case SPACE_AROUND -> clamped / numItems;
-            case SPACE_EVENLY -> clamped / (numItems + 1);
-        };
+        return gap
+                + switch (alignmentMode) {
+                    case START, FLEX_START, END, FLEX_END, CENTER, NORMAL, STRETCH -> 0.0f;
+                    case SPACE_BETWEEN -> clamped / (numItems - 1);
+                    case SPACE_AROUND -> clamped / numItems;
+                    case SPACE_EVENLY -> clamped / (numItems + 1);
+                };
     }
 }

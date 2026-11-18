@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/types/cell_occupancy.rs `mod tests`.
+// JAFFY-UPSTREAM: src/compute/grid/types/cell_occupancy.rs
+// JAFFY-NOTE: `mod tests`
 // `Range<i16>` -> start/end ints; `Option` -> @Nullable; `SmallVec::spilled()`
 // has no Java equivalent (ArrayList has no inline capacity) — the semantic
 // content of `!spilled()` is "at most 2 intervals remain after merging".
@@ -7,14 +8,15 @@ package net.morphismmc.jaffy.compute.grid.types.cell_occupancy;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.types.TrackCounts;
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
 import net.morphismmc.jaffy.geometry.AbsoluteAxis;
 import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.just.math.OptI16;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
 
 class CellOccupancyTest {
 
@@ -124,12 +126,11 @@ class CellOccupancyTest {
 
         @Test
         void negativeExpansionPreservesOccupancy() {
-            CellOccupancyMatrix matrix = CellOccupancyMatrix.withTrackCounts(
-                    TrackCounts.fromRaw(0, 2, 0), TrackCounts.fromRaw(0, 2, 0));
+            CellOccupancyMatrix matrix =
+                    CellOccupancyMatrix.withTrackCounts(TrackCounts.fromRaw(0, 2, 0), TrackCounts.fromRaw(0, 2, 0));
             matrix.markAreaAs(AbsoluteAxis.HORIZONTAL, line(0, 1), line(0, 1), CellOccupancyState.AUTO_PLACED);
             // Expand by marking an area in negative tracks
-            matrix.markAreaAs(
-                    AbsoluteAxis.HORIZONTAL, line(-2, -1), line(-1, 0), CellOccupancyState.AUTO_PLACED);
+            matrix.markAreaAs(AbsoluteAxis.HORIZONTAL, line(-2, -1), line(-1, 0), CellOccupancyState.AUTO_PLACED);
 
             assertEquals(TrackCounts.fromRaw(2, 2, 0), matrix.trackCounts(AbsoluteAxis.HORIZONTAL));
             assertEquals(TrackCounts.fromRaw(1, 2, 0), matrix.trackCounts(AbsoluteAxis.VERTICAL));
@@ -151,8 +152,8 @@ class CellOccupancyTest {
         @Test
         void autoPlacedItemOnlyAdvancesCursorInFirstSecondaryTrack() {
             for (AbsoluteAxis axis : new AbsoluteAxis[] {AbsoluteAxis.HORIZONTAL, AbsoluteAxis.VERTICAL}) {
-                CellOccupancyMatrix matrix = CellOccupancyMatrix.withTrackCounts(
-                        TrackCounts.fromRaw(0, 4, 0), TrackCounts.fromRaw(0, 4, 0));
+                CellOccupancyMatrix matrix =
+                        CellOccupancyMatrix.withTrackCounts(TrackCounts.fromRaw(0, 4, 0), TrackCounts.fromRaw(0, 4, 0));
                 matrix.markAreaAs(axis, line(1, 3), line(1, 4), CellOccupancyState.AUTO_PLACED);
 
                 assertEquals(new OriginZeroLine(3), matrix.autoPlacementCursor(axis, new OriginZeroLine(1)));
@@ -166,8 +167,8 @@ class CellOccupancyTest {
         @Test
         void cursorsSurviveIntervalMergingAndGridExpansion() {
             for (AbsoluteAxis axis : new AbsoluteAxis[] {AbsoluteAxis.HORIZONTAL, AbsoluteAxis.VERTICAL}) {
-                CellOccupancyMatrix matrix = CellOccupancyMatrix.withTrackCounts(
-                        TrackCounts.fromRaw(0, 4, 0), TrackCounts.fromRaw(0, 4, 0));
+                CellOccupancyMatrix matrix =
+                        CellOccupancyMatrix.withTrackCounts(TrackCounts.fromRaw(0, 4, 0), TrackCounts.fromRaw(0, 4, 0));
                 matrix.markAreaAs(axis, line(2, 4), line(1, 2), CellOccupancyState.AUTO_PLACED);
                 matrix.markAreaAs(axis, line(4, 8), line(0, 2), CellOccupancyState.AUTO_PLACED);
                 matrix.markAreaAs(axis, line(8, 10), line(1, 2), CellOccupancyState.DEFINITELY_PLACED);
@@ -188,8 +189,8 @@ class CellOccupancyTest {
         @Test
         void alternatingSpansMergeOccupancyAndSkipTheOccupiedPrefix() {
             for (AbsoluteAxis axis : new AbsoluteAxis[] {AbsoluteAxis.HORIZONTAL, AbsoluteAxis.VERTICAL}) {
-                CellOccupancyMatrix matrix = CellOccupancyMatrix.withTrackCounts(
-                        TrackCounts.fromRaw(0, 0, 0), TrackCounts.fromRaw(0, 0, 0));
+                CellOccupancyMatrix matrix =
+                        CellOccupancyMatrix.withTrackCounts(TrackCounts.fromRaw(0, 0, 0), TrackCounts.fromRaw(0, 0, 0));
                 for (int i = 0; i < 128; i++) {
                     matrix.markAreaAs(axis, line(i, i + 1), line(i % 2, 2), CellOccupancyState.AUTO_PLACED);
                 }
@@ -199,16 +200,14 @@ class CellOccupancyTest {
                 // `!track.intervals.spilled()` — SmallVec inline capacity is 2; merging
                 // means the interval count never exceeded the inline capacity
                 assertTrue(track.intervals.size() <= 2);
-                assertEquals(
-                        new OriginZeroLine(128),
-                        matrix.lineAreaCollisionJump(axis, line(0, 1), line(1, 2)));
+                assertEquals(new OriginZeroLine(128), matrix.lineAreaCollisionJump(axis, line(0, 1), line(1, 2)));
             }
         }
 
         @Test
         void collisionJumpReturnsNextSearchPosition() {
-            CellOccupancyMatrix matrix = CellOccupancyMatrix.withTrackCounts(
-                    TrackCounts.fromRaw(0, 4, 0), TrackCounts.fromRaw(0, 4, 0));
+            CellOccupancyMatrix matrix =
+                    CellOccupancyMatrix.withTrackCounts(TrackCounts.fromRaw(0, 4, 0), TrackCounts.fromRaw(0, 4, 0));
             matrix.markAreaAs(AbsoluteAxis.HORIZONTAL, line(1, 3), line(0, 1), CellOccupancyState.AUTO_PLACED);
 
             // Jump past the end of the last colliding interval
@@ -224,14 +223,12 @@ class CellOccupancyTest {
 
         @Test
         void occupiedTrackJumpSkipsNonEmptyTracks() {
-            CellOccupancyMatrix matrix = CellOccupancyMatrix.withTrackCounts(
-                    TrackCounts.fromRaw(0, 4, 0), TrackCounts.fromRaw(0, 4, 0));
+            CellOccupancyMatrix matrix =
+                    CellOccupancyMatrix.withTrackCounts(TrackCounts.fromRaw(0, 4, 0), TrackCounts.fromRaw(0, 4, 0));
             matrix.markAreaAs(AbsoluteAxis.HORIZONTAL, line(0, 1), line(1, 2), CellOccupancyState.AUTO_PLACED);
 
             // Vertical (row) tracks: row 1 is occupied
-            assertEquals(
-                    new OriginZeroLine(2),
-                    matrix.occupiedTrackJump(AbsoluteAxis.VERTICAL, line(0, 4)));
+            assertEquals(new OriginZeroLine(2), matrix.occupiedTrackJump(AbsoluteAxis.VERTICAL, line(0, 4)));
             assertNull(matrix.occupiedTrackJump(AbsoluteAxis.VERTICAL, line(2, 4)));
         }
     }

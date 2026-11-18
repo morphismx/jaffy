@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/taffy_tree.rs — `mod tests`.
+// JAFFY-UPSTREAM: src/tree/taffy_tree.rs
+// JAFFY-NOTE: `mod tests`
 //
 // `TaffyTree<()>` -> `TaffyTree<Void>`; `TaffyTree<Size<f32>>` ->
 // `TaffyTree<SizeF32>`; `TaffyResult` -> direct value (Err -> TaffyException); `Size::MAX_CONTENT`
@@ -24,6 +25,7 @@ import net.morphismmc.jaffy.style.flex.FlexDirection;
 import net.morphismmc.jaffy.tree.layout.Layout;
 import net.morphismmc.jaffy.tree.layout.LayoutInput;
 import net.morphismmc.jaffy.tree.layout.LayoutOutput;
+
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
@@ -38,8 +40,8 @@ class TaffyTreeTest {
                 inputs,
                 style,
                 (val, basis) -> 0.0f,
-                (knownDimensions, availableSpace) -> knownDimensions.unwrapOr(
-                        nodeContext != null ? nodeContext : SizeF32.ZERO));
+                (knownDimensions, availableSpace) ->
+                        knownDimensions.unwrapOr(nodeContext != null ? nodeContext : SizeF32.ZERO));
     }
 
     private static Size<AvailableSpace> maxContent() {
@@ -158,9 +160,8 @@ class TaffyTreeTest {
 
         // The root's height comes entirely from its child's 1px bottom border
         long child = taffy.newLeaf(Style.DEFAULT.withBorder(new Rect<>(
-                        LengthPercentage.length(0.0f), LengthPercentage.length(0.0f),
-                        LengthPercentage.length(0.0f), LengthPercentage.length(1.0f))))
-                ;
+                LengthPercentage.length(0.0f), LengthPercentage.length(0.0f),
+                LengthPercentage.length(0.0f), LengthPercentage.length(1.0f))));
         long root = taffy.newWithChildren(Style.DEFAULT, new long[] {child});
 
         taffy.computeLayout(root, minContent());
@@ -454,28 +455,25 @@ class TaffyTreeTest {
         TaffyTree<Void> taffy = new TaffyTree<>();
         long nodeResult = taffy.newLeaf(Style.DEFAULT.withSize(dimSize(10, 10)));
         long node = nodeResult;
-        taffy.computeLayout(
-                node, new Size<>(new AvailableSpace.Definite(100.0f), new AvailableSpace.Definite(100.0f)));
+        taffy.computeLayout(node, new Size<>(new AvailableSpace.Definite(100.0f), new AvailableSpace.Definite(100.0f)));
     }
 
     @Test
     void makeSureLayoutLocationIsTopLeft() {
         TaffyTree<Void> taffy = new TaffyTree<>();
 
-        long node = taffy.newLeaf(Style.DEFAULT.withSize(
-                        new Size<>(Dimension.fromPercent(1.0), Dimension.fromPercent(1.0))))
-                ;
+        long node = taffy.newLeaf(
+                Style.DEFAULT.withSize(new Size<>(Dimension.fromPercent(1.0), Dimension.fromPercent(1.0))));
 
         long root = taffy.newWithChildren(
-                        Style.DEFAULT
-                                .withSize(dimSize(100, 100))
-                                .withPadding(new Rect<>(
-                                        LengthPercentage.length(10.0f),
-                                        LengthPercentage.length(20.0f),
-                                        LengthPercentage.length(30.0f),
-                                        LengthPercentage.length(40.0f))),
-                        new long[] {node})
-                ;
+                Style.DEFAULT
+                        .withSize(dimSize(100, 100))
+                        .withPadding(new Rect<>(
+                                LengthPercentage.length(10.0f),
+                                LengthPercentage.length(20.0f),
+                                LengthPercentage.length(30.0f),
+                                LengthPercentage.length(40.0f))),
+                new long[] {node});
 
         taffy.computeLayout(root, maxContent());
 

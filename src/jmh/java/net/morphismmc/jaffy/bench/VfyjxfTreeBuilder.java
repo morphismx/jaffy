@@ -1,7 +1,10 @@
+// JAFFY-UPSTREAM: benches/src/taffy_helpers.rs
+
 package net.morphismmc.jaffy.bench;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.jspecify.annotations.Nullable;
 
 /// `BuildTree` adapter for the independent dev.vfyjxf:taffy port —
@@ -25,8 +28,7 @@ public final class VfyjxfTreeBuilder
         this.nodes.add(root);
     }
 
-    public static VfyjxfTreeBuilder withSeed(
-            long seed, GenStyle<dev.vfyjxf.taffy.style.TaffyStyle> styleGenerator) {
+    public static VfyjxfTreeBuilder withSeed(long seed, GenStyle<dev.vfyjxf.taffy.style.TaffyStyle> styleGenerator) {
         return new VfyjxfTreeBuilder(new Rng(seed), styleGenerator);
     }
 

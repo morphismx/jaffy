@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/layout.rs — `SizingMode` enum.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: `SizingMode` enum
 // serde impl deferred.
 package net.morphismmc.jaffy.tree.layout;
 
@@ -8,5 +9,5 @@ public enum SizingMode {
     /// Only content contributions should be taken into account
     CONTENT_SIZE,
     /// Inherent size styles should be taken into account in addition to content contributions
-    INHERENT_SIZE;
+    INHERENT_SIZE
 }

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/dimension.rs — `LengthPercentage` (GAP-013).
+// JAFFY-UPSTREAM: src/style/dimension.rs
+// JAFFY-NOTE: `LengthPercentage` (GAP-013)
 //
 // Rust `pub struct LengthPercentage(pub(crate) CompactLength)` newtype ->
 // sealed interface with Primitive(bits)/Calc(bits, calc) records, same bit
@@ -9,12 +10,13 @@
 // instantiations live in util.*Ext classes.
 package net.morphismmc.jaffy.style.dimension;
 
+import net.morphismmc.jaffy.style.CompactBits;
+import net.morphismmc.jaffy.style.CompactLength;
 import net.morphismmc.jaffy.util.CalcResolver;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
+
 import org.jspecify.annotations.Nullable;
-import net.morphismmc.jaffy.style.CompactBits;
-import net.morphismmc.jaffy.style.CompactLength;
 
 public sealed interface LengthPercentage {
 
@@ -51,7 +53,7 @@ public sealed interface LengthPercentage {
 
         @Override
         public boolean rustEq(LengthPercentage other) {
-            return other instanceof Primitive p && bits == p.bits;
+            return other instanceof Primitive(long oBits) && bits == oBits;
         }
     }
 
@@ -91,7 +93,7 @@ public sealed interface LengthPercentage {
 
         @Override
         public boolean rustEq(LengthPercentage other) {
-            return other instanceof Calc c && bits == c.bits && calc == c.calc;
+            return other instanceof Calc(long oBits, Object oCalc) && bits == oBits && calc == oCalc;
         }
     }
 
@@ -107,7 +109,8 @@ public sealed interface LengthPercentage {
     float value();
 
     /// `self.0.calc_value()`
-    @Nullable Object calcValue();
+    @Nullable
+    Object calcValue();
 
     /// `self.0.is_plain_calc()`
     default boolean isPlainCalc() {

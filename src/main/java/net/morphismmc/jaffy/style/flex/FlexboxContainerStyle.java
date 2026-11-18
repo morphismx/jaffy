@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/flex.rs — `FlexboxContainerStyle` trait
+// JAFFY-UPSTREAM: src/style/flex.rs
+// JAFFY-NOTE: `FlexboxContainerStyle` trait
 // (`flexbox`; `flexLineCount` is `flexbox_balance`, in the default set).
 // `impl ... for &T` has no Java counterpart.
 package net.morphismmc.jaffy.style.flex;

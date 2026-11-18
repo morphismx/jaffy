@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/mod.rs — `BoxGenerationMode` enum.
+// JAFFY-UPSTREAM: src/style/mod.rs
+// JAFFY-NOTE: `BoxGenerationMode` enum
 package net.morphismmc.jaffy.style;
 
 /// An abstracted version of the CSS `display` property where any value other than "none" is represented by "normal"

@@ -1,4 +1,5 @@
-// JAFFY: serde impls of upstream/src/tree/layout.rs.
+// JAFFY-UPSTREAM: src/tree/layout.rs
+// JAFFY-NOTE: serde impls
 //
 // Every type here derives `Serialize` only upstream — there is no Deserialize
 // impl, so the read side fails (a JsonParseException is the runtime equivalent
@@ -7,11 +8,8 @@
 // `LayoutOutput.oof_candidates` is `#[serde(skip_serializing)]`.
 package net.morphismmc.jaffy.gson;
 
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+
 import net.morphismmc.jaffy.geometry.Size;
 import net.morphismmc.jaffy.style.available_space.AvailableSpace;
 import net.morphismmc.jaffy.tree.layout.Baselines;
@@ -24,6 +22,11 @@ import net.morphismmc.jaffy.tree.layout.RequestedAxis;
 import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.layout.ScrollableOverflow;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
+
+import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
 final class LayoutSerde {
 

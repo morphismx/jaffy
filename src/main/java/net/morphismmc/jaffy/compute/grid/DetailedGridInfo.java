@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/grid/mod.rs —
+// JAFFY-UPSTREAM: src/compute/grid/mod.rs
 // `DetailedGridInfo<S: CheapCloneStr>` (specialised to String, GAP-017).
 //
 // `impl fmt::Write` -> StringBuilder (infallible); `Option<(Point, Size)>`
@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.jspecify.annotations.Nullable;
-
 import net.morphismmc.jaffy.compute.grid.types.named.AreaLines;
 import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.jaffy.geometry.LineF32;
@@ -24,6 +22,7 @@ import net.morphismmc.jaffy.style.grid.GridAreaAxis;
 import net.morphismmc.jaffy.style.grid.GridPlacement;
 import net.morphismmc.just.math.F32;
 
+import org.jspecify.annotations.Nullable;
 
 /// Information from the computation of grid
 public final class DetailedGridInfo {
@@ -90,13 +89,9 @@ public final class DetailedGridInfo {
     /// Resolve the physical grid area for an absolutely positioned box from its grid placement.
     /// The padding box and returned area use coordinates relative to the grid container's border box.
     public RectF32 resolveAbsoluteGridArea(
-            Line<GridPlacement> gridRow,
-            Line<GridPlacement> gridColumn,
-            Direction direction,
-            RectF32 paddingBox) {
+            Line<GridPlacement> gridRow, Line<GridPlacement> gridColumn, Direction direction, RectF32 paddingBox) {
         LineF32 cols = columns.resolveAbsoluteGridAxis(
-                gridColumn, areas, GridAreaAxis.COLUMN, paddingBox.left(), paddingBox.right(),
-                direction.isRtl());
+                gridColumn, areas, GridAreaAxis.COLUMN, paddingBox.left(), paddingBox.right(), direction.isRtl());
         LineF32 rs = rows.resolveAbsoluteGridAxis(
                 gridRow, areas, GridAreaAxis.ROW, paddingBox.top(), paddingBox.bottom(), false);
         return new RectF32(cols.start(), cols.end(), rs.start(), rs.end());
@@ -124,8 +119,7 @@ public final class DetailedGridInfo {
         float right = F32.max(startCol.end(), endCol.end());
         float top = rows.positions.get(item.rowStart() - 1).start();
         float bottom = rows.positions.get(item.rowEnd() - 2).end();
-        return new ItemGridArea(
-                new PointF32(left, top), new SizeF32(right - left, bottom - top));
+        return new ItemGridArea(new PointF32(left, top), new SizeF32(right - left, bottom - top));
     }
 
     /// `PartialEq`
@@ -151,7 +145,7 @@ public final class DetailedGridInfo {
     /// `Debug` — approximate Rust field format
     @Override
     public String toString() {
-        return "DetailedGridInfo { rows: " + rows + ", columns: " + columns
-                + ", items: " + items + ", areas: " + areas + " }";
+        return "DetailedGridInfo { rows: " + rows + ", columns: " + columns + ", items: " + items + ", areas: " + areas
+                + " }";
     }
 }

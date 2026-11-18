@@ -1,4 +1,6 @@
-// JAFFY: serde impls of upstream/src/style/grid.rs +
+// JAFFY-UPSTREAM: src/style/grid.rs
+// JAFFY-FROM: src/compute/grid/types/coordinates.rs
+// JAFFY-NOTE: serde impls
 // src/compute/grid/types/coordinates.rs (GridLine).
 //
 // Enum wire shapes are serde's default external tagging: unit variants as
@@ -7,16 +9,12 @@
 // map to int; `Vec`/`GridTrackVec` map to List.
 package net.morphismmc.jaffy.gson;
 
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import net.morphismmc.jaffy.compute.grid.types.coordinates.GridLine;
 import net.morphismmc.jaffy.geometry.MinMax;
 import net.morphismmc.jaffy.style.grid.GenericGridTemplateComponent;
@@ -29,6 +27,12 @@ import net.morphismmc.jaffy.style.grid.MaxTrackSizingFunction;
 import net.morphismmc.jaffy.style.grid.MinTrackSizingFunction;
 import net.morphismmc.jaffy.style.grid.NamedGridLine;
 import net.morphismmc.jaffy.style.grid.RepetitionCount;
+
+import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 
 final class GridSerde {
 
@@ -112,26 +116,25 @@ final class GridSerde {
                 throw new JsonParseException("expected externally tagged GridPlacement");
             }
             String tag = in.nextName();
-            GridPlacement value =
-                    switch (tag) {
-                        case "Line" -> new GridPlacement.Line(GRID_LINE.read(in));
-                        case "NamedLine" -> {
-                            in.beginArray();
-                            String name = in.nextString();
-                            int index = JsonSupport.readI16(in);
-                            in.endArray();
-                            yield new GridPlacement.NamedLine(name, index);
-                        }
-                        case "Span" -> new GridPlacement.Span(JsonSupport.readU16(in));
-                        case "NamedSpan" -> {
-                            in.beginArray();
-                            String name = in.nextString();
-                            int span = JsonSupport.readU16(in);
-                            in.endArray();
-                            yield new GridPlacement.NamedSpan(name, span);
-                        }
-                        default -> throw new JsonParseException("unknown variant `" + tag + "` for GridPlacement");
-                    };
+            GridPlacement value = switch (tag) {
+                case "Line" -> new GridPlacement.Line(GRID_LINE.read(in));
+                case "NamedLine" -> {
+                    in.beginArray();
+                    String name = in.nextString();
+                    int index = JsonSupport.readI16(in);
+                    in.endArray();
+                    yield new GridPlacement.NamedLine(name, index);
+                }
+                case "Span" -> new GridPlacement.Span(JsonSupport.readU16(in));
+                case "NamedSpan" -> {
+                    in.beginArray();
+                    String name = in.nextString();
+                    int span = JsonSupport.readU16(in);
+                    in.endArray();
+                    yield new GridPlacement.NamedSpan(name, span);
+                }
+                default -> throw new JsonParseException("unknown variant `" + tag + "` for GridPlacement");
+            };
             if (in.hasNext()) {
                 throw new JsonParseException("expected single variant key in GridPlacement");
             }
@@ -201,8 +204,7 @@ final class GridSerde {
                 }
 
                 @Override
-                public MinMax<MinTrackSizingFunction, MaxTrackSizingFunction> read(JsonReader in)
-                        throws IOException {
+                public MinMax<MinTrackSizingFunction, MaxTrackSizingFunction> read(JsonReader in) throws IOException {
                     JsonSupport.strict(in);
                     Set<String> seen = new HashSet<>();
                     MinTrackSizingFunction min = null;

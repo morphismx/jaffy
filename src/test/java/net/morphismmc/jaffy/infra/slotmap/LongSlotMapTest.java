@@ -1,4 +1,5 @@
-// JAFFY: unit tests for LongSlotMap — primitive-long specialization of
+// JAFFY-UPSTREAM: none
+// JAFFY-NOTE: unit tests for LongSlotMap — primitive-long specialization
 // SlotMap<Option<NodeId>>. Key semantics are identical to SlotMapTest's
 // measured sequence (GAP-015); value 0L is the `None` sentinel (GAP-001).
 package net.morphismmc.jaffy.infra.slotmap;

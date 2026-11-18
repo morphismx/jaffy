@@ -1,22 +1,25 @@
-// JAFFY: serde impls of upstream/src/style/alignment.rs.
+// JAFFY-UPSTREAM: src/style/alignment.rs
+// JAFFY-NOTE: serde impls
 //
 // AlignItems/AlignContent use custom impls serializing a single tag string per
 // public spelling (e.g. "FlexStart", "SafeCenter", "UnsafeEnd"); the keyword
 // and safety enums themselves are plain derived unit variants.
 package net.morphismmc.jaffy.gson;
 
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 import net.morphismmc.jaffy.style.alignment.AlignContent;
 import net.morphismmc.jaffy.style.alignment.AlignContentKeyword;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.alignment.AlignItemsKeyword;
 import net.morphismmc.jaffy.style.alignment.AlignmentSafety;
+
+import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
 final class AlignmentSerde {
 
@@ -62,11 +65,12 @@ final class AlignmentSerde {
             case NORMAL -> "Normal";
             case BASELINE -> "Baseline";
             case STRETCH -> "Stretch";
-            default -> switch (safety) {
-                case DEFAULT -> JsonSupport.serdeName(kw);
-                case SAFE -> "Safe" + JsonSupport.serdeName(kw);
-                case UNSAFE -> "Unsafe" + JsonSupport.serdeName(kw);
-            };
+            default ->
+                switch (safety) {
+                    case DEFAULT -> JsonSupport.serdeName(kw);
+                    case SAFE -> "Safe" + JsonSupport.serdeName(kw);
+                    case UNSAFE -> "Unsafe" + JsonSupport.serdeName(kw);
+                };
         };
     }
 
@@ -126,11 +130,12 @@ final class AlignmentSerde {
             case SPACE_BETWEEN -> "SpaceBetween";
             case SPACE_EVENLY -> "SpaceEvenly";
             case SPACE_AROUND -> "SpaceAround";
-            default -> switch (safety) {
-                case DEFAULT -> JsonSupport.serdeName(kw);
-                case SAFE -> "Safe" + JsonSupport.serdeName(kw);
-                case UNSAFE -> "Unsafe" + JsonSupport.serdeName(kw);
-            };
+            default ->
+                switch (safety) {
+                    case DEFAULT -> JsonSupport.serdeName(kw);
+                    case SAFE -> "Safe" + JsonSupport.serdeName(kw);
+                    case UNSAFE -> "Unsafe" + JsonSupport.serdeName(kw);
+                };
         };
     }
 
@@ -163,7 +168,7 @@ final class AlignmentSerde {
 
             @Override
             public E read(JsonReader in) throws IOException {
-            JsonSupport.strict(in);
+                JsonSupport.strict(in);
                 return JsonSupport.readEnum(in, type);
             }
         };

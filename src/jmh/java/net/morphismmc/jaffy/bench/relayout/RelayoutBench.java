@@ -1,11 +1,21 @@
+// JAFFY-UPSTREAM: benches/benches/relayout.rs
+
 package net.morphismmc.jaffy.bench.relayout;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import net.morphismmc.jaffy.bench.JaffyStyles;
+import net.morphismmc.jaffy.bench.VfyjxfStyles;
+import net.morphismmc.jaffy.geometry.Size;
+import net.morphismmc.jaffy.style.available_space.AvailableSpace;
+import net.morphismmc.jaffy.tree.TaffyTree;
+
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
@@ -13,16 +23,8 @@ import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
-
-import net.morphismmc.jaffy.bench.JaffyStyles;
-import net.morphismmc.jaffy.bench.VfyjxfStyles;
-import net.morphismmc.jaffy.geometry.Size;
-import net.morphismmc.jaffy.style.Style;
-import net.morphismmc.jaffy.style.available_space.AvailableSpace;
-import net.morphismmc.jaffy.tree.TaffyTree;
 
 /// Port of upstream `benches/benches/relayout.rs` — incremental re-layout
 /// dominated by layout cache lookups (rounding disabled; it would visit every
@@ -56,12 +58,7 @@ public class RelayoutBench {
     /// `build_subtree` — auto-sized containers with `fanout` children each and
     /// fixed-size leaves at `depth`; returns the first leaf via `firstLeaf`.
     private static long jaffySubtree(
-            TaffyTree<Void> tree,
-            String containers,
-            int fanout,
-            int depth,
-            int maxDepth,
-            long[] firstLeaf) {
+            TaffyTree<Void> tree, String containers, int fanout, int depth, int maxDepth, long[] firstLeaf) {
         if (depth == maxDepth) {
             long n = tree.newLeaf(JaffyStyles.leafStyle(10.0f));
             if (firstLeaf[0] == 0) {
@@ -107,6 +104,7 @@ public class RelayoutBench {
     public static class JaffyRelayoutState {
         @Param({"wide", "balanced", "deep"})
         String shape;
+
         @Param({"flex", "block", "grid", "mixed"})
         String containers;
 
@@ -130,6 +128,7 @@ public class RelayoutBench {
     public static class VfyjxfRelayoutState {
         @Param({"wide", "balanced", "deep"})
         String shape;
+
         @Param({"flex", "block", "grid", "mixed"})
         String containers;
 
@@ -151,8 +150,8 @@ public class RelayoutBench {
 
     private static final Size<AvailableSpace> SPACE =
             new Size<>(new AvailableSpace.Definite(2000.0f), AvailableSpace.MAX_CONTENT);
-    private static final dev.vfyjxf.taffy.geometry.TaffySize<dev.vfyjxf.taffy.style.AvailableSpace>
-            VFYJXF_SPACE = dev.vfyjxf.taffy.geometry.TaffySize.of(
+    private static final dev.vfyjxf.taffy.geometry.TaffySize<dev.vfyjxf.taffy.style.AvailableSpace> VFYJXF_SPACE =
+            dev.vfyjxf.taffy.geometry.TaffySize.of(
                     dev.vfyjxf.taffy.style.AvailableSpace.definite(2000.0f),
                     dev.vfyjxf.taffy.style.AvailableSpace.MAX_CONTENT);
 
@@ -217,8 +216,8 @@ public class RelayoutBench {
 
     private static final Size<AvailableSpace> SPACE_2500 =
             new Size<>(new AvailableSpace.Definite(2500.0f), AvailableSpace.MAX_CONTENT);
-    private static final dev.vfyjxf.taffy.geometry.TaffySize<dev.vfyjxf.taffy.style.AvailableSpace>
-            VFYJXF_2500 = dev.vfyjxf.taffy.geometry.TaffySize.of(
+    private static final dev.vfyjxf.taffy.geometry.TaffySize<dev.vfyjxf.taffy.style.AvailableSpace> VFYJXF_2500 =
+            dev.vfyjxf.taffy.geometry.TaffySize.of(
                     dev.vfyjxf.taffy.style.AvailableSpace.definite(2500.0f),
                     dev.vfyjxf.taffy.style.AvailableSpace.MAX_CONTENT);
 

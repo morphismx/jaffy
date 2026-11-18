@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.tree.traits
- */
+// JAFFY-UPSTREAM: src/tree/traits.rs
 @NullMarked
 package net.morphismmc.jaffy.tree.traits;
 

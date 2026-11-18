@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `LayoutContainingBlock` trait.
+// JAFFY-UPSTREAM: src/tree/traits.rs
+// JAFFY-NOTE: `LayoutContainingBlock` trait
 //
 // GAT `OofItemStyle<'a>` -> `Style` (GAP-017); `&[NodeId]` -> `long[]`;
 // `&DetailedLayoutInfo` -> `DetailedLayoutInfo` (immutable, shared reference).
@@ -6,7 +7,6 @@ package net.morphismmc.jaffy.tree.traits;
 
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.tree.layout.DetailedLayoutInfo;
-
 
 /// Extends {@link LayoutPartialTree} with the operations needed by the
 /// out-of-flow positioning pass (`compute_oof_layout`), which lays out the

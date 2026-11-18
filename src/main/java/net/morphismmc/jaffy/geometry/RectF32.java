@@ -1,11 +1,12 @@
-// JAFFY: port of upstream src/geometry.rs — `Rect<f32>` specialization
+// JAFFY-UPSTREAM: src/geometry.rs
+// JAFFY-NOTE: `Rect<f32>` specialization
 // (SPECIALIZATIONS.md). Generic Rect<T> methods duplicated per GAP-006 rules.
 package net.morphismmc.jaffy.geometry;
 
 import net.morphismmc.jaffy.style.flex.FlexDirection;
-import net.morphismmc.just.math.F32;
 import net.morphismmc.just.function.FloatBinaryOperator;
 import net.morphismmc.just.function.FloatUnaryOperator;
+import net.morphismmc.just.math.F32;
 
 public record RectF32(float left, float right, float top, float bottom) {
 
@@ -52,8 +53,7 @@ public record RectF32(float left, float right, float top, float bottom) {
 
     /// `map` producing `Rect<Option<f32>>` — same closure shape, Option-encoded result (GAP-006 O suffix)
     public RectOptF32 mapO(FloatUnaryOperator f) {
-        return new RectOptF32(
-                f.applyAsFloat(left), f.applyAsFloat(right), f.applyAsFloat(top), f.applyAsFloat(bottom));
+        return new RectOptF32(f.applyAsFloat(left), f.applyAsFloat(right), f.applyAsFloat(top), f.applyAsFloat(bottom));
     }
 
     /// Returns a `Line<f32>` representing the left and right properties

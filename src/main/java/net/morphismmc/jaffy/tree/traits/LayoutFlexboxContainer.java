@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/tree/traits.rs — `LayoutFlexboxContainer`
+// JAFFY-UPSTREAM: src/tree/traits.rs
+// JAFFY-NOTE: `LayoutFlexboxContainer`
 // trait (`flexbox` feature).
 //
 // GATs `FlexboxContainerStyle<'a>`/`FlexboxItemStyle<'a>` -> `Style` (GAP-017:
@@ -6,7 +7,6 @@
 package net.morphismmc.jaffy.tree.traits;
 
 import net.morphismmc.jaffy.style.Style;
-
 
 /// Extends {@link LayoutPartialTree} with getters for the styles required
 /// for Flexbox layout.

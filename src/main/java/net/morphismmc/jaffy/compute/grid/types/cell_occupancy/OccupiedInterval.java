@@ -1,11 +1,10 @@
-// JAFFY: port of upstream src/compute/grid/types/cell_occupancy.rs —
+// JAFFY-UPSTREAM: src/compute/grid/types/cell_occupancy.rs
 // `OccupiedInterval` (module-private -> package-private).
 //
 // `range: Range<i16>` -> mutable `start`/`end` int fields (`last.range.end =
 // range.end` mutates the range in place, GAP-018); `i16` -> int (GAP-014).
 // Clone -> copy(); PartialEq -> equals; Debug -> toString (GAP-016).
 package net.morphismmc.jaffy.compute.grid.types.cell_occupancy;
-
 
 /// A run of occupied cells within a single track. The range is in OriginZero line coordinates
 /// along the track (so for a row track, the range spans column lines and vice versa).
@@ -36,10 +35,7 @@ final class OccupiedInterval {
     /// `PartialEq`
     @Override
     public boolean equals(Object o) {
-        return o instanceof OccupiedInterval other
-                && start == other.start
-                && end == other.end
-                && state == other.state;
+        return o instanceof OccupiedInterval other && start == other.start && end == other.end && state == other.state;
     }
 
     @Override

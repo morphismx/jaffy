@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `AbstractAxis` enum.
+// JAFFY-UPSTREAM: src/geometry.rs
+// JAFFY-NOTE: `AbstractAxis` enum
 package net.morphismmc.jaffy.geometry;
 
 public enum AbstractAxis {

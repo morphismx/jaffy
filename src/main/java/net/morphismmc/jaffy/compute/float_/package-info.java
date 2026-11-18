@@ -1,6 +1,4 @@
-/**
- * net.morphismmc.jaffy.compute.float_
- */
+// JAFFY-UPSTREAM: src/compute/float.rs
 @NullMarked
 package net.morphismmc.jaffy.compute.float_;
 

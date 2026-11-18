@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `InBothAbsAxis<T>` (Rust `pub(crate)`).
+// JAFFY-UPSTREAM: src/geometry.rs
+// JAFFY-NOTE: `InBothAbsAxis<T>` (Rust `pub(crate)`)
 //
 // Container that holds an item in each absolute axis without specifying
 // what kind of item it is. (Rust pub(crate) — public here since jaffy is one module.)

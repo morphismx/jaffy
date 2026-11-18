@@ -1,17 +1,18 @@
-// JAFFY: port of upstream src/tree/taffy_tree.rs — `NodeData`.
+// JAFFY-UPSTREAM: src/tree/taffy_tree.rs
+// JAFFY-NOTE: `NodeData`
 //
 // private struct -> package-private mutable class; `Copy`/`Clone`-style
 // field rewrites reassign the immutable records (Layout/DetailedLayoutInfo);
 // `ChildrenVec<NodeId>` -> `LongArrayList` (primitive longs, no boxing).
 package net.morphismmc.jaffy.tree;
 
-import it.unimi.dsi.fastutil.longs.LongArrayList;
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.tree.cache.Cache;
 import net.morphismmc.jaffy.tree.cache.ClearState;
 import net.morphismmc.jaffy.tree.layout.DetailedLayoutInfo;
 import net.morphismmc.jaffy.tree.layout.Layout;
 
+import it.unimi.dsi.fastutil.longs.LongArrayList;
 
 /// Layout information for a given node. Stored in a {@link TaffyTree}.
 final class NodeData {

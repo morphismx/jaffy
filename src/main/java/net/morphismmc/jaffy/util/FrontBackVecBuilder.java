@@ -1,4 +1,4 @@
-// JAFFY: upstream/src/util/front_back_vec_builder.rs -> net.morphismmc.jaffy.util.FrontBackVecBuilder
+// JAFFY-UPSTREAM: src/util/front_back_vec_builder.rs
 //
 // Rust item correspondence:
 //   struct FrontBackVecBuilder<T>   -> FrontBackVecBuilder<T>
@@ -59,8 +59,7 @@ public final class FrontBackVecBuilder<T> {
     /// custom message is not reproduced).
     public IntoVec<T> intoVec() {
         if (frontLen + backLen != vec.size()) {
-            throw new AssertionError(
-                    "the number of items pushed to a FrontBackVecBuilder must equal its capacity");
+            throw new AssertionError("the number of items pushed to a FrontBackVecBuilder must equal its capacity");
         }
         return new IntoVec<>(vec, frontLen);
     }

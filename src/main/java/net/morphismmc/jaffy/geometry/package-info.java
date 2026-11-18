@@ -1,4 +1,4 @@
-/// JSpecify null-marked package: unannotated type usages are non-null (GAP-001).
+// JAFFY-UPSTREAM: src/geometry.rs
 @NullMarked
 package net.morphismmc.jaffy.geometry;
 

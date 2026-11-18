@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/geometry.rs — `Point<T>` (generic record).
+// JAFFY-UPSTREAM: src/geometry.rs
+// JAFFY-NOTE: `Point<T>` (generic record)
 //
 // `set` (Rust &mut) returns a new record here (GAP-005).
 package net.morphismmc.jaffy.geometry;

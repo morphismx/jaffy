@@ -1,14 +1,16 @@
-// JAFFY: port of upstream src/style/grid.rs — `GridItemStyle` trait (`grid`).
+// JAFFY-UPSTREAM: src/style/grid.rs
+// JAFFY-NOTE: `GridItemStyle` trait (`grid`)
 // `Option<AlignSelf>`/aliases are `AlignItems` + nullable (GAP-001/017).
 // `impl ... for &T` has no Java counterpart.
 package net.morphismmc.jaffy.style.grid;
 
 import net.morphismmc.jaffy.geometry.AbsoluteAxis;
 import net.morphismmc.jaffy.geometry.Line;
-import org.jspecify.annotations.Nullable;
 import net.morphismmc.jaffy.style.CoreStyle;
 import net.morphismmc.jaffy.style.Style;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
+
+import org.jspecify.annotations.Nullable;
 
 /// The set of styles required for a CSS Grid item (child of a CSS Grid container)
 public interface GridItemStyle extends CoreStyle {

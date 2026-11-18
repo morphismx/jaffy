@@ -1,4 +1,5 @@
-// JAFFY: tests for the upstream src/style/mod.rs port (Style + traits).
+// JAFFY-UPSTREAM: src/style/mod.rs
+// JAFFY-NOTE: tests for the upstream  port (Style + traits)
 // Upstream has no non-parse test module for this file; these assert the
 // documented DEFAULT field values and the overridden trait methods.
 package net.morphismmc.jaffy.style;
@@ -6,11 +7,9 @@ package net.morphismmc.jaffy.style;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+
 import net.morphismmc.jaffy.geometry.AbsoluteAxis;
 import net.morphismmc.jaffy.geometry.AbstractAxis;
-import net.morphismmc.just.math.OptF32;
-import org.junit.jupiter.api.Test;
-import net.morphismmc.jaffy.geometry.Line;
 import net.morphismmc.jaffy.style.alignment.AlignContent;
 import net.morphismmc.jaffy.style.alignment.AlignItems;
 import net.morphismmc.jaffy.style.block.BlockItemStyle;
@@ -28,6 +27,9 @@ import net.morphismmc.jaffy.style.grid.GridTemplateAreas;
 import net.morphismmc.jaffy.style.grid.GridTemplateComponent;
 import net.morphismmc.jaffy.style.grid.GridTemplateRepetition;
 import net.morphismmc.jaffy.style.grid.LineGridPlacementExt;
+import net.morphismmc.just.math.OptF32;
+
+import org.junit.jupiter.api.Test;
 
 class StyleTest {
 
@@ -79,14 +81,49 @@ class StyleTest {
         assertFalse(Style.DEFAULT.isBlock());
         // display: none -> BoxGenerationMode::None
         var none = new Style(
-                Display.NONE, false, false, false, BoxSizing.BORDER_BOX, Direction.LTR,
-                Style.DEFAULT.overflow(), 0.0f, Contain.NONE, Float.NONE, Clear.NONE, Position.STATIC, Style.DEFAULT.inset(),
-                Style.DEFAULT.size(), Style.DEFAULT.minSize(), Style.DEFAULT.maxSize(), OptF32.NONE,
-                Style.DEFAULT.margin(), Style.DEFAULT.padding(), Style.DEFAULT.border(),
-                AlignItems.NORMAL, null, AlignItems.NORMAL, null, AlignContent.NORMAL,
-                AlignContent.NORMAL, Style.DEFAULT.gap(), TextAlign.AUTO, FlexDirection.ROW,
-                FlexWrap.NO_WRAP, 1, Dimension.AUTO, 0.0f, 1.0f, List.of(), List.of(), List.of(),
-                List.of(), GridAutoFlow.ROW, null, List.of(), List.of(), LineGridPlacementExt.DEFAULT,
+                Display.NONE,
+                false,
+                false,
+                false,
+                BoxSizing.BORDER_BOX,
+                Direction.LTR,
+                Style.DEFAULT.overflow(),
+                0.0f,
+                Contain.NONE,
+                Float.NONE,
+                Clear.NONE,
+                Position.STATIC,
+                Style.DEFAULT.inset(),
+                Style.DEFAULT.size(),
+                Style.DEFAULT.minSize(),
+                Style.DEFAULT.maxSize(),
+                OptF32.NONE,
+                Style.DEFAULT.margin(),
+                Style.DEFAULT.padding(),
+                Style.DEFAULT.border(),
+                AlignItems.NORMAL,
+                null,
+                AlignItems.NORMAL,
+                null,
+                AlignContent.NORMAL,
+                AlignContent.NORMAL,
+                Style.DEFAULT.gap(),
+                TextAlign.AUTO,
+                FlexDirection.ROW,
+                FlexWrap.NO_WRAP,
+                1,
+                Dimension.AUTO,
+                0.0f,
+                1.0f,
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                GridAutoFlow.ROW,
+                null,
+                List.of(),
+                List.of(),
+                LineGridPlacementExt.DEFAULT,
                 LineGridPlacementExt.DEFAULT);
         assertEquals(BoxGenerationMode.NONE, none.boxGenerationMode());
 
@@ -107,18 +144,15 @@ class StyleTest {
     @Test
     void gridContainerStyleOverrides() {
         // Stored counts win over the derived-max default
-        var areas = new GridTemplateAreas(
-                List.of(new GridTemplateArea("a", 0, 2, 0, 3)),
-                7,
-                9);
+        var areas = new GridTemplateAreas(List.of(new GridTemplateArea("a", 0, 2, 0, 3)), 7, 9);
         var s = Style.DEFAULT.withGridTemplateAreas(areas);
         assertSame(areas, s.gridTemplateAreas());
         assertEquals(7, s.gridTemplateAreaRowCount());
         assertEquals(9, s.gridTemplateAreaColumnCount());
 
         // grid_template_tracks axis dispatch
-        var s2 = Style.DEFAULT.withGridTemplateColumns(
-                        List.of(GridTemplateComponent.fromLength(10.0)))
+        var s2 = Style.DEFAULT
+                .withGridTemplateColumns(List.of(GridTemplateComponent.fromLength(10.0)))
                 .withGridTemplateRows(List.of(GridTemplateComponent.fromLength(20.0)));
         assertEquals(1, s2.gridTemplateTracks(AbsoluteAxis.HORIZONTAL).size());
         var row = (GenericGridTemplateComponent.Single<GridTemplateRepetition>)
@@ -134,10 +168,13 @@ class StyleTest {
 
     @Test
     void gridItemStyleDefaults() {
-        var s = Style.DEFAULT.withGridColumn(
-                LineGridPlacementExt.fromLineIndex(2));
+        var s = Style.DEFAULT.withGridColumn(LineGridPlacementExt.fromLineIndex(2));
         assertSame(s.gridRow(), LineGridPlacementExt.DEFAULT);
-        assertEquals(2, ((GridPlacement.Line) s.gridPlacement(AbsoluteAxis.HORIZONTAL).start()).line().asI16());
+        assertEquals(
+                2,
+                ((GridPlacement.Line) s.gridPlacement(AbsoluteAxis.HORIZONTAL).start())
+                        .line()
+                        .asI16());
     }
 
     @Test

@@ -1,4 +1,5 @@
-// JAFFY: entry point of the `serde` feature port — a Gson configured to
+// JAFFY-UPSTREAM: none
+// JAFFY-NOTE: entry point of the `serde` feature port — a Gson configured to
 // produce serde_json-identical JSON for every serde-decorated upstream type.
 //
 // Registration mirrors upstream's impl coverage:
@@ -15,14 +16,8 @@
 // escapes quotes, backslashes and control characters.
 package net.morphismmc.jaffy.gson;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+
 import net.morphismmc.jaffy.compute.grid.types.coordinates.GridLine;
 import net.morphismmc.jaffy.geometry.FloatInsets;
 import net.morphismmc.jaffy.geometry.LineBool;
@@ -78,6 +73,14 @@ import net.morphismmc.jaffy.tree.layout.RequestedAxis;
 import net.morphismmc.jaffy.tree.layout.RunMode;
 import net.morphismmc.jaffy.tree.layout.ScrollableOverflow;
 import net.morphismmc.jaffy.tree.layout.SizingMode;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 
 public final class JaffyGson {
 
@@ -161,8 +164,7 @@ public final class JaffyGson {
         b.registerTypeHierarchyAdapter(GridPlacement.class, GridSerde.GRID_PLACEMENT);
         b.registerTypeHierarchyAdapter(RepetitionCount.class, GridSerde.REPETITION_COUNT);
         b.registerTypeHierarchyAdapter(
-                GenericGridTemplateComponent.class,
-                GridSerde.componentAdapter(GridSerde.GRID_TEMPLATE_REPETITION));
+                GenericGridTemplateComponent.class, GridSerde.componentAdapter(GridSerde.GRID_TEMPLATE_REPETITION));
         b.registerTypeHierarchyAdapter(GenericRepetition.class, GridSerde.GRID_TEMPLATE_REPETITION);
         b.registerTypeHierarchyAdapter(GenericGridPlacement.class, genericPlacementRuntime());
 
@@ -173,8 +175,7 @@ public final class JaffyGson {
         b.registerTypeAdapter(BoxSizing.class, StyleSerde.BOX_SIZING);
         b.registerTypeAdapter(Overflow.class, StyleSerde.OVERFLOW);
         b.registerTypeAdapter(Direction.class, StyleSerde.DIRECTION);
-        b.registerTypeAdapter(
-                net.morphismmc.jaffy.style.float_.Float.class, StyleSerde.FLOAT);
+        b.registerTypeAdapter(net.morphismmc.jaffy.style.float_.Float.class, StyleSerde.FLOAT);
         b.registerTypeAdapter(FloatDirection.class, StyleSerde.FLOAT_DIRECTION);
         b.registerTypeAdapter(Clear.class, StyleSerde.CLEAR);
         b.registerTypeAdapter(TextAlign.class, StyleSerde.TEXT_ALIGN);
@@ -211,8 +212,8 @@ public final class JaffyGson {
                     case GenericGridPlacement.Auto<?> a -> out.value("Auto");
                     case GenericGridPlacement.Line<?> l -> {
                         if (!(l.line() instanceof GridLine gl)) {
-                            throw new JsonParseException(
-                                    "no serde impl for coordinate type " + l.line().getClass());
+                            throw new JsonParseException("no serde impl for coordinate type "
+                                    + l.line().getClass());
                         }
                         out.beginObject();
                         out.name("Line");
@@ -242,8 +243,7 @@ public final class JaffyGson {
                 GenericGridPlacement<?> value = switch (tag) {
                     case "Line" -> new GenericGridPlacement.Line<>(GridSerde.GRID_LINE.read(in));
                     case "Span" -> new GenericGridPlacement.Span<>(JsonSupport.readU16(in));
-                    default -> throw new JsonParseException(
-                            "unknown variant `" + tag + "` for GenericGridPlacement");
+                    default -> throw new JsonParseException("unknown variant `" + tag + "` for GenericGridPlacement");
                 };
                 if (in.hasNext()) {
                     throw new JsonParseException("expected single variant key");

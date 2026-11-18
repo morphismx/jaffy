@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/grid.rs — `impl Line<GridPlacement<S>>`
+// JAFFY-UPSTREAM: src/style/grid.rs
+// JAFFY-NOTE: `impl Line<GridPlacement<S>>`
 // blocks (SPECIALIZATIONS Ext pattern; CustomIdent=String per GAP-017).
 package net.morphismmc.jaffy.style.grid;
 
@@ -10,8 +11,7 @@ public final class LineGridPlacementExt {
     private LineGridPlacementExt() {}
 
     /// `Default` impl — `Line { start: Auto, end: Auto }`
-    public static final Line<GridPlacement> DEFAULT =
-            new Line<>(GridPlacement.AUTO, GridPlacement.AUTO);
+    public static final Line<GridPlacement> DEFAULT = new Line<>(GridPlacement.AUTO, GridPlacement.AUTO);
 
     /// `TaffyGridLine for Line<GridPlacement<S>>` — `Line { start: Line(index), end: Auto }`
     public static Line<GridPlacement> fromLineIndex(int index) {

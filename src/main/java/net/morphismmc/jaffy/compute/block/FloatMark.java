@@ -1,7 +1,7 @@
-// JAFFY: port of upstream src/compute/block.rs — `FloatMark` (`float_layout`
+// JAFFY-UPSTREAM: src/compute/block.rs
+// JAFFY-NOTE: `FloatMark`
 // feature is always on).
 package net.morphismmc.jaffy.compute.block;
-
 
 /// A mark of how many floats a Block Formatting Context held when it was
 /// taken. See {@link BlockContext#floatMark}.

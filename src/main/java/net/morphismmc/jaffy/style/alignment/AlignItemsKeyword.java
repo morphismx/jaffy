@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/alignment.rs — `AlignItemsKeyword`.
+// JAFFY-UPSTREAM: src/style/alignment.rs
+// JAFFY-NOTE: `AlignItemsKeyword`
 package net.morphismmc.jaffy.style.alignment;
 
 /// The position-keyword half of [`AlignItems`] (and its aliases `AlignSelf`,

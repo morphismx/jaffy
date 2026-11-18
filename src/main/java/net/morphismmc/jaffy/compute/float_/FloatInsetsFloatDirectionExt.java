@@ -1,4 +1,4 @@
-// JAFFY: port of upstream src/compute/float.rs —
+// JAFFY-UPSTREAM: src/compute/float.rs
 // `impl Index<FloatDirection> for FloatInsets` and
 // `impl IndexMut<FloatDirection> for FloatInsets`.
 //
@@ -9,7 +9,6 @@ package net.morphismmc.jaffy.compute.float_;
 
 import net.morphismmc.jaffy.geometry.FloatInsets;
 import net.morphismmc.jaffy.style.float_.FloatDirection;
-
 
 /// `Index`/`IndexMut` for `FloatInsets` keyed by `FloatDirection`.
 public final class FloatInsetsFloatDirectionExt {

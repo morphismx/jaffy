@@ -1,4 +1,5 @@
-// JAFFY: behavior tests for upstream src/compute/grid/types/grid_track.rs.
+// JAFFY-UPSTREAM: src/compute/grid/types/grid_track.rs
+// JAFFY-NOTE: behavior tests for upstream
 // Upstream has no inline test module for this file; these cover the public
 // surface (constructors, collapse, predicates, fit-content limit, copy).
 package net.morphismmc.jaffy.compute.grid.types.grid_track;
@@ -9,8 +10,8 @@ import net.morphismmc.jaffy.style.dimension.LengthPercentage;
 import net.morphismmc.jaffy.style.grid.MaxTrackSizingFunction;
 import net.morphismmc.jaffy.style.grid.MinTrackSizingFunction;
 import net.morphismmc.just.math.OptF32;
-import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.Test;
 
 class GridTrackTest {
 
@@ -64,26 +65,27 @@ class GridTrackTest {
 
     @Test
     void percentageDetection() {
-        GridTrack fixed = GridTrack.newGridTrack(
-                MinTrackSizingFunction.fromLength(10.0), MaxTrackSizingFunction.length(20.0f));
+        GridTrack fixed =
+                GridTrack.newGridTrack(MinTrackSizingFunction.fromLength(10.0), MaxTrackSizingFunction.length(20.0f));
         assertFalse(fixed.usesPercentage());
 
-        GridTrack percentMin = GridTrack.newGridTrack(
-                MinTrackSizingFunction.fromPercent(0.5), MaxTrackSizingFunction.length(20.0f));
+        GridTrack percentMin =
+                GridTrack.newGridTrack(MinTrackSizingFunction.fromPercent(0.5), MaxTrackSizingFunction.length(20.0f));
         assertTrue(percentMin.usesPercentage());
 
-        GridTrack percentMax = GridTrack.newGridTrack(
-                MinTrackSizingFunction.ZERO, MaxTrackSizingFunction.percent(0.5f));
+        GridTrack percentMax =
+                GridTrack.newGridTrack(MinTrackSizingFunction.ZERO, MaxTrackSizingFunction.percent(0.5f));
         assertTrue(percentMax.usesPercentage());
     }
 
     @Test
     void intrinsicDetection() {
-        GridTrack fixed = GridTrack.newGridTrack(
-                MinTrackSizingFunction.fromLength(10.0), MaxTrackSizingFunction.length(20.0f));
+        GridTrack fixed =
+                GridTrack.newGridTrack(MinTrackSizingFunction.fromLength(10.0), MaxTrackSizingFunction.length(20.0f));
         assertFalse(fixed.hasIntrinsicSizingFunction());
 
-        GridTrack intrinsicMax = GridTrack.newGridTrack(MinTrackSizingFunction.ZERO, MaxTrackSizingFunction.maxContent());
+        GridTrack intrinsicMax =
+                GridTrack.newGridTrack(MinTrackSizingFunction.ZERO, MaxTrackSizingFunction.maxContent());
         assertTrue(intrinsicMax.hasIntrinsicSizingFunction());
     }
 
@@ -95,14 +97,14 @@ class GridTrackTest {
         assertEquals(42.0f, px.fitContentLimit());
 
         // fit-content(percent) resolves against the definite parent size
-        GridTrack pct = GridTrack.newGridTrack(
-                MinTrackSizingFunction.ZERO, MaxTrackSizingFunction.fitContentPercent(0.5f));
+        GridTrack pct =
+                GridTrack.newGridTrack(MinTrackSizingFunction.ZERO, MaxTrackSizingFunction.fitContentPercent(0.5f));
         pct.resolveFitContentLimit(200.0f, (calc, ctx) -> ctx);
         assertEquals(100.0f, pct.fitContentLimit());
 
         // percentage limit with indefinite parent size resolves to infinity
-        GridTrack indefinite = GridTrack.newGridTrack(
-                MinTrackSizingFunction.ZERO, MaxTrackSizingFunction.fitContentPercent(0.5f));
+        GridTrack indefinite =
+                GridTrack.newGridTrack(MinTrackSizingFunction.ZERO, MaxTrackSizingFunction.fitContentPercent(0.5f));
         indefinite.resolveFitContentLimit(OptF32.NONE, (calc, ctx) -> ctx);
         assertEquals(Float.POSITIVE_INFINITY, indefinite.fitContentLimit());
 
@@ -114,7 +116,8 @@ class GridTrackTest {
 
     @Test
     void fitContentLimitedGrowthLimitIsCapped() {
-        GridTrack track = GridTrack.newGridTrack(MinTrackSizingFunction.ZERO, MaxTrackSizingFunction.fitContentPx(40.0f));
+        GridTrack track =
+                GridTrack.newGridTrack(MinTrackSizingFunction.ZERO, MaxTrackSizingFunction.fitContentPx(40.0f));
         track.growthLimit = 60.0f;
         // fit_content_limit still at default infinity -> growth limit wins
         assertEquals(60.0f, track.fitContentLimitedGrowthLimit());

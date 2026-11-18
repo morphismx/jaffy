@@ -1,13 +1,14 @@
-// JAFFY: port of upstream src/tree/traits.rs — `CacheTree` trait.
+// JAFFY-UPSTREAM: src/tree/traits.rs
+// JAFFY-NOTE: `CacheTree` trait
 //
 // `&LayoutInput` -> `LayoutInput` (immutable record); `Option<LayoutOutput>`
 // -> `@Nullable`.
 package net.morphismmc.jaffy.tree.traits;
 
-import org.jspecify.annotations.Nullable;
 import net.morphismmc.jaffy.tree.layout.LayoutInput;
 import net.morphismmc.jaffy.tree.layout.LayoutOutput;
 
+import org.jspecify.annotations.Nullable;
 
 /// Trait used by the `compute_cached_layout` method which allows cached
 /// layout results to be stored and retrieved.
@@ -17,7 +18,8 @@ import net.morphismmc.jaffy.tree.layout.LayoutOutput;
 public interface CacheTree {
 
     /// Try to retrieve a cached result from the cache
-    @Nullable LayoutOutput cacheGet(long nodeId, LayoutInput inputs);
+    @Nullable
+    LayoutOutput cacheGet(long nodeId, LayoutInput inputs);
 
     /// Store a computed size in the cache
     void cacheStore(long nodeId, LayoutInput inputs, LayoutOutput layoutOutput);

@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/style/compact_length.rs (GAP-013).
+// JAFFY-UPSTREAM: src/style/compact_length.rs
+// JAFFY-NOTE: (GAP-013)
 //
 // Rust `struct CompactLength(CompactLengthInner)` is a 64-bit tagged pointer.
 // Per GAP-013 this becomes a sealed interface: `Primitive` carries the full
@@ -10,11 +11,12 @@
 // serde impls and `from_serialized`/`serialized` are serde-gated: deferred.
 package net.morphismmc.jaffy.style;
 
+import net.morphismmc.jaffy.style.dimension.LengthPercentage;
 import net.morphismmc.jaffy.util.CalcResolver;
 import net.morphismmc.just.math.Opt;
 import net.morphismmc.just.math.OptF32;
+
 import org.jspecify.annotations.Nullable;
-import net.morphismmc.jaffy.style.dimension.LengthPercentage;
 
 public sealed interface CompactLength {
 
@@ -97,7 +99,7 @@ public sealed interface CompactLength {
         @Override
         public boolean rustEq(CompactLength other) {
             // `inner` derives PartialEq on the raw tagged_ptr: bitwise compare.
-            return other instanceof Primitive p && bits == p.bits;
+            return other instanceof Primitive(long oBits) && bits == oBits;
         }
     }
 
@@ -142,7 +144,7 @@ public sealed interface CompactLength {
         public boolean rustEq(CompactLength other) {
             // Rust compares tagged pointers: same address + same tag. Java:
             // identity on the handle + tag equality.
-            return other instanceof Calc c && bits == c.bits && calc == c.calc;
+            return other instanceof Calc(long oBits, Object oCalc) && bits == oBits && calc == oCalc;
         }
     }
 
@@ -158,7 +160,8 @@ public sealed interface CompactLength {
     float value();
 
     /// Get the calc pointer of the `CompactLength` (`Object` handle)
-    @Nullable Object calcValue();
+    @Nullable
+    Object calcValue();
 
     // ---- Predicates ----
 

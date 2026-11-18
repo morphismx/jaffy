@@ -1,4 +1,5 @@
-// JAFFY: port of upstream src/compute/grid/util/test_helpers.rs — test-only
+// JAFFY-UPSTREAM: src/compute/grid/util/test_helpers.rs
+// JAFFY-NOTE: test-only
 // helpers (`#[cfg(test)] pub(super)` upstream -> src/test/java here).
 //
 // The three traits (`CreateParentTestNode`, `CreateChildTestNode`,
@@ -15,6 +16,7 @@ package net.morphismmc.jaffy.compute.grid.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import net.morphismmc.jaffy.compute.grid.types.coordinates.OriginZeroLine;
 import net.morphismmc.jaffy.compute.grid.types.grid_item.GridItem;
 import net.morphismmc.jaffy.compute.grid.types.named.NamedLineResolver;
@@ -30,7 +32,6 @@ import net.morphismmc.jaffy.style.grid.GridPlacement;
 import net.morphismmc.jaffy.style.grid.GridTemplateComponent;
 import net.morphismmc.jaffy.style.grid.LineNonNamedGridPlacementExt;
 
-
 /// Helpers for use in unit tests within the grid module
 public final class TestHelpers {
     private TestHelpers() {}
@@ -39,8 +40,7 @@ public final class TestHelpers {
     /// (col_start, col_end, row_start, row_end) in OriginZero coordinates —
     /// matches the `actual_placement` tuple in upstream placement tests.
     public record OzPlacement(
-            OriginZeroLine columnStart, OriginZeroLine columnEnd,
-            OriginZeroLine rowStart, OriginZeroLine rowEnd) {}
+            OriginZeroLine columnStart, OriginZeroLine columnEnd, OriginZeroLine rowStart, OriginZeroLine rowEnd) {}
 
     /// `(usize, &Style)` pair — upstream reuses the usize for both
     /// `NodeId::from(index)` and `source_order: index as u16`.
@@ -61,10 +61,7 @@ public final class TestHelpers {
     /// Resolve the named lines in the `grid-row`/`grid-column` styles of the given child styles (and convert them to
     /// origin-zero coordinates), as `compute_grid_layout` does before estimating the grid size and placing items
     public static List<InBothAbsAxis<Line<GenericGridPlacement<OriginZeroLine>>>> resolveNamedLines(
-            List<Style> childStyles,
-            NamedLineResolver nameResolver,
-            int explicitColCount,
-            int explicitRowCount) {
+            List<Style> childStyles, NamedLineResolver nameResolver, int explicitColCount, int explicitRowCount) {
         ArrayList<InBothAbsAxis<Line<GenericGridPlacement<OriginZeroLine>>>> placements =
                 new ArrayList<>(childStyles.size());
         for (Style style : childStyles) {
@@ -90,8 +87,7 @@ public final class TestHelpers {
     /// `CreateChildTestNode for (GridPlacement x4)::into_grid_child`
     /// A grid child style with the given `grid-column`/`grid-row` placements.
     public static Style intoGridChild(
-            GridPlacement columnStart, GridPlacement columnEnd,
-            GridPlacement rowStart, GridPlacement rowEnd) {
+            GridPlacement columnStart, GridPlacement columnEnd, GridPlacement rowStart, GridPlacement rowEnd) {
         return Style.DEFAULT
                 .withDisplay(Display.GRID)
                 .withGridColumn(new Line<>(columnStart, columnEnd))
